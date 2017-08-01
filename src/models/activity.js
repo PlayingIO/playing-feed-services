@@ -9,7 +9,7 @@ const options = {
 };
 
 const fields = {
-  feed: { type: 'ObjectId' }, // feed group
+  feed: { type: 'ObjectId', required: true }, // feed group
   actor: { type: 'String', required: true },
   verb: { type: 'String', required: true },
   object: { type: 'String', required: true },

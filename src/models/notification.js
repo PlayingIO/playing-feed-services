@@ -13,4 +13,4 @@ export default function(app, name) {
   const FeedModel = mongoose.model('feed');
   const schema = new mongoose.Schema(fields);
   return FeedModel.discriminator(name, schema);
-} 
+}
