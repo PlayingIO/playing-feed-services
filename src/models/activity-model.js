@@ -10,9 +10,9 @@ const options = {
 
 const fields = {
   feed: { type: 'ObjectId', required: true }, // feed group
-  actor: { type: 'String', required: true },
-  verb: { type: 'String', required: true },
-  object: { type: 'String', required: true },
+  actor: { type: 'String', required: true }, // actor performing the activity
+  verb: { type: 'String', required: true }, // verb of the activity
+  object: { type: 'String', required: true }, // object of the activity
   target: { type: 'String' }, // optional target
   cc: [{ type: 'ObjectId'} ], // list of feeds to be copied
   foreignId: { type: 'String' },

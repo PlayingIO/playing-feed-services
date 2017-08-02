@@ -42,7 +42,11 @@ class FeedService extends Service {
 
   get(id, params) {
     params = params || { query: {} };
+
     let target = params.__action;
+    if (id && id.indexOf('/') > 0) {
+      [id, target] = id.split('/');
+    }
 
     if (target) {
       return this._getFeedGroup(id, target);
