@@ -35,22 +35,40 @@ class ActivityService extends Service {
       const creator = document && document.creator;
       debug('document.create', document);
       if (document && creator) {
-        feeds.get(`document/${document.id}`).then((feed) => {
-          this.create({
-            feed: feed.id,
-            actor: `user:${creator.id}`,
-            verb: 'created',
-            object: `document:${document.id}`,
-            message: 'created the document',
-            cc: [`user:${creator.id}`]
-          });
+        feeds.get(`document:${document.id}`).then((feed) => {
+          if (feed) {
+            this.create({
+              feed: feed.id,
+              actor: `user:${creator.id}`,
+              verb: 'created',
+              object: `document:${document.id}`,
+              message: 'created the document',
+              cc: [`user:${creator.id}`]
+            });
+          }
         });
       }
     });
   }
 
   create(data, params) {
-    return super.create(fp.omit(['cc'], data), params);
+    const feeds = this.app.service('feeds');
+    return super.create(fp.omit(['cc'], data), params)
+      .then((activity) => {
+        if (data.cc && data.cc.length > 0) {
+          return Promise.all(data.cc.map((cc) => {
+            return feeds.get(cc).then((feed) => {
+              if (feed) {
+                data = fp.compose(
+                  fp.assoc('feed', feed.id),
+                  fp.omit(['cc'])
+                )(data);
+                return this.create(data);
+              }
+            });
+          }));
+        }
+      });
   }
 }
 

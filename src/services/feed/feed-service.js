@@ -8,7 +8,7 @@ import defaultHooks from './feed-hooks';
 const debug = makeDebug('playing:interaction-services:feeds');
 
 const defaultOptions = {
-  id: 'group',
+  id: 'id',
   name: 'feeds'
 };
 
@@ -23,17 +23,12 @@ class FeedService extends Service {
     this.hooks(defaultHooks(this.options));
   }
 
-  _getFeedGroup(group, target) {
-    return super.find({ query: {
-      group: group,
-      target: target
-    }}).then((result) => {
+  _getFeedGroup(id) {
+    return super.find({ query: { id }}).then((result) => {
       // create one if not exists
       if (result && result.data.length === 0) {
-        return super.create({
-          group: group,
-          target: target
-        });
+        let [group, target] =  id.split(':');
+        return super.create({ id, group, target });
       } else {
         return result && result.data[0];
       }
@@ -41,18 +36,8 @@ class FeedService extends Service {
   }
 
   get(id, params) {
-    params = params || { query: {} };
-
-    let target = params.__action;
-    if (id && id.indexOf('/') > 0) {
-      [id, target] = id.split('/');
-    }
-
-    if (target) {
-      return this._getFeedGroup(id, target);
-    } else {
-      return super.get(id, params);
-    }
+    assert(id && id.indexOf(':') > 0, 'invalid feed id');
+    return this._getFeedGroup(id);
   }
 }
 
