@@ -25,7 +25,7 @@ class ActivityService extends Service {
 }
 
 export default function init(app, options, hooks) {
-  options = Object.assign({ ModelName: 'document-entry' }, options);
+  options = Object.assign({ ModelName: 'activity' }, options);
   return createService(app, ActivityService, ActivityModel, options);
 }
 

@@ -4,6 +4,7 @@ import { plugins } from 'mostly-feathers-mongoose';
 /*
  * notification is similar to aggregated feeds can be marked as seen or read.
  */
+
 const fields = {
   aggregation: { type: 'Mixed', required: true }
 };
