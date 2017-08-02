@@ -40,9 +40,10 @@ class ActivityService extends Service {
             this.create({
               feed: feed.id,
               actor: `user:${creator.id}`,
-              verb: 'created',
+              verb: 'documentCreated',
               object: `document:${document.id}`,
               message: 'created the document',
+              title: document.title,
               cc: [`user:${creator.id}`]
             });
           }
@@ -53,7 +54,7 @@ class ActivityService extends Service {
 
   create(data, params) {
     const feeds = this.app.service('feeds');
-    return super.create(fp.omit(['cc'], data), params)
+    return super.create(fp.dissoc('cc', data), params)
       .then((activity) => {
         if (data.cc && data.cc.length > 0) {
           return Promise.all(data.cc.map((cc) => {
@@ -61,7 +62,7 @@ class ActivityService extends Service {
               if (feed) {
                 data = fp.compose(
                   fp.assoc('feed', feed.id),
-                  fp.omit(['cc'])
+                  fp.dissoc('cc')
                 )(data);
                 return this.create(data);
               }
