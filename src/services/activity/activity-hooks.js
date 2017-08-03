@@ -17,9 +17,9 @@ module.exports = function(options = {}) {
     },
     after: {
       all: [
-        hooks.populate('actor'),
-        hooks.populate('object'),
-        hooks.populate('target'),
+        hooks.populate('actor', { retained: true }),
+        hooks.populate('object', { retained: false }),
+        hooks.populate('target', { retained: false }),
         hooks.presentEntity(ActivityEntity, options),
         hooks.responder()
       ]
