@@ -42,6 +42,7 @@ class ActivityService extends Service {
               actor: `user:${creator.id}`,
               verb: 'documentCreated',
               object: `document:${document.id}`,
+              foreignId: document.id,
               message: 'created the document',
               title: document.title,
               cc: [`user:${creator.id}`]
