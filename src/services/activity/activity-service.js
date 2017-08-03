@@ -5,6 +5,8 @@ import { plural } from 'pluralize';
 import fp from 'ramda';
 import ActivityModel from '~/models/activity-model';
 import defaultHooks from './activity-hooks';
+import subDocumentEvents from './subscriptions/document-events';
+import subFavoriteEvents from './subscriptions/favorite-events';
 
 const debug = makeDebug('playing:interaction-services:activities');
 
@@ -21,36 +23,8 @@ class ActivityService extends Service {
   setup(app) {
     super.setup(app);
     this.hooks(defaultHooks(this.options));
-    this._subDocumentEvents();
-  }
-
-  _subDocumentEvents() {
-    const feeds = this.app.service('feeds');
-    this.app.trans.add({
-      pubsub$: true,
-      topic: 'playing.events',
-      cmd: 'document.create'
-    }, (resp) => {
-      const document = resp.event;
-      const creator = document && document.creator;
-      debug('document.create', document);
-      if (document && creator) {
-        feeds.get(`document:${document.id}`).then((feed) => {
-          if (feed) {
-            this.create({
-              feed: feed.id,
-              actor: `user:${creator.id}`,
-              verb: 'documentCreated',
-              object: `document:${document.id}`,
-              foreignId: document.id,
-              message: 'created the document',
-              title: document.title,
-              cc: [`user:${creator.id}`]
-            });
-          }
-        });
-      }
-    });
+    subDocumentEvents(this.app, this);
+    subFavoriteEvents(this.app, this);
   }
 
   create(data, params) {
