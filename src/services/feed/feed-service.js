@@ -28,6 +28,9 @@ class FeedService extends Service {
       // create one if not exists
       if (result && result.data.length === 0) {
         let [group, target] =  id.split(':');
+        if (!target || target === 'undefined') {
+          throw new Error('feed target is undefined');
+        }
         return super.create({ id, group, target });
       } else {
         return result && result.data[0];

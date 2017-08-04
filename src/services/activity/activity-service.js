@@ -5,8 +5,6 @@ import { plural } from 'pluralize';
 import fp from 'ramda';
 import ActivityModel from '~/models/activity-model';
 import defaultHooks from './activity-hooks';
-import subDocumentEvents from './subscriptions/document-events';
-import subFavoriteEvents from './subscriptions/favorite-events';
 
 const debug = makeDebug('playing:interaction-services:activities');
 
@@ -23,12 +21,15 @@ class ActivityService extends Service {
   setup(app) {
     super.setup(app);
     this.hooks(defaultHooks(this.options));
-    subDocumentEvents(this.app, this);
-    subFavoriteEvents(this.app, this);
   }
 
   create(data, params) {
     const feeds = this.app.service('feeds');
+    assert(data.feed && data.feed.indexOf(':undefined') === -1, 'data.feed is undefined');
+    assert(data.actor && data.actor.indexOf(':undefined') === -1, 'data.actor is undefined');
+    assert(data.verb, 'data.verb is not provided');
+    assert(data.object && data.object.indexOf(':undefined') === -1, 'data.object is undefined');
+    
     return super.create(fp.dissoc('cc', data), params)
       .then((activity) => {
         if (data.cc && data.cc.length > 0) {
