@@ -1,7 +1,8 @@
 import assert from 'assert';
 import makeDebug from 'debug';
 import { Service, createService } from 'mostly-feathers-mongoose';
-import fp from 'ramda';
+import fp from 'mostly-func';
+
 import FeedModel from '~/models/feed-model';
 import defaultHooks from './feed-hooks';
 

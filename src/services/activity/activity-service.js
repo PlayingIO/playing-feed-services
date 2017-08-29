@@ -1,8 +1,8 @@
 import assert from 'assert';
 import makeDebug from 'debug';
 import { Service, helpers, createService } from 'mostly-feathers-mongoose';
+import fp from 'mostly-func';
 import { plural } from 'pluralize';
-import fp from 'ramda';
 import ActivityModel from '~/models/activity-model';
 import defaultHooks from './activity-hooks';
 
