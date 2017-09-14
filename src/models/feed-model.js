@@ -16,10 +16,12 @@ const fields = {
   realtime: { type: 'Boolean', default: true }
 };
 
-export default function(app, name) {
+export default function model (app, name) {
   const mongoose = app.get('mongoose');
   const schema = new mongoose.Schema(fields, options);
   schema.plugin(timestamps);
   schema.index({ group: 1, target: 1 }, { unique: true });
   return mongoose.model(name, schema);
 }
+
+model.schema = fields;

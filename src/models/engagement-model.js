@@ -18,9 +18,11 @@ const fields = {
   location: { type: 'String' }, // location in your app
 };
 
-export default function(app, name) {
+export default function model (app, name) {
   const mongoose = app.get('mongoose');
   const schema = new mongoose.Schema(fields, options);
   schema.plugin(timestamps);
   return mongoose.model(name, schema);
 }
+
+model.schema = fields;
