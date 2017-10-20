@@ -23,7 +23,7 @@ class ActivityService extends Service {
   }
 
   create(data, params) {
-    const feeds = this.app.service('feeds');
+    const svcFeeds = this.app.service('feeds');
     assert(data.feed && data.feed.indexOf(':undefined') === -1, 'data.feed is undefined');
     assert(data.actor && data.actor.indexOf(':undefined') === -1, 'data.actor is undefined');
     assert(data.verb, 'data.verb is not provided');
@@ -33,7 +33,7 @@ class ActivityService extends Service {
       .then((activity) => {
         if (data.cc && data.cc.length > 0) {
           return Promise.all(data.cc.map((cc) => {
-            return feeds.get(cc).then((feed) => {
+            return svcFeeds.get(cc).then((feed) => {
               if (feed) {
                 data = fp.compose(
                   fp.assoc('feed', feed.id),
