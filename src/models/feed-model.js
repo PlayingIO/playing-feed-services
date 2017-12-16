@@ -10,9 +10,9 @@ const options = {
 };
 
 const fields = {
-  id: { type: 'String', required: true, unique: true  }, // group+target
-  group: { type: 'String', required: true }, // feed group name
-  target: { type: 'String', required: true }, // target id
+  id: { type: 'String', required: true, unique: true }, // group+target
+  group: { type: 'String', required: true },            // feed group name
+  target: { type: 'String', required: true },           // target id
   realtime: { type: 'Boolean', default: true }
 };
 

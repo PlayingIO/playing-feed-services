@@ -13,8 +13,8 @@ const fields = {
   actor: { type: 'String', required: true },  // actor performing the activity
   verb: { type: 'String', required: true },   // verb of the activity
   object: { type: 'String', required: true }, // object of the activity
-  target: { type: 'String' }, // optional target
-  cc: [{ type: 'String'} ],   // list of feeds to be copied
+  target: { type: 'String' },                 // optional target
+  cc: [{ type: 'String'} ],                   // list of feeds to be copied
   foreignId: { type: 'String' },
   // other free form fields as needed
 };
