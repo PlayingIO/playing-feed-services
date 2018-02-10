@@ -12,7 +12,7 @@ const options = {
 const fields = {
   content: { type: 'Mixed', required: true }, // content looking at
   feed: { type: 'ObjectId' },                 // feed looking at
-  location: { type: 'String' },               // location in your app
+  location: { type: String },                 // location in your app
 };
 
 export default function model (app, name) {
