@@ -1,6 +1,6 @@
 {
   "name": "playing-feed-services",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "Feed management microservices for playful applications",
   "author": "Forafish",
   "license": "MIT",
