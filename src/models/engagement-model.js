@@ -1,14 +1,13 @@
-import timestamps from 'mongoose-timestamp';
 import { plugins } from 'mostly-feathers-mongoose';
+
+const options = {
+  timestamps: true,
+  strict: false
+};
 
 /*
  * activity log to track user interactions
  */
-
-const options = {
-  strict: false
-};
-
 const fields = {
   event: { type: String, required: true },    // type of event, ie click, share, search
   content: { type: 'Mixed', required: true }, // content related to
