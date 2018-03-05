@@ -8,12 +8,12 @@ module.exports = function(options = {}) {
       all: [
         auth.authenticate('jwt')
       ],
-      get: [],
-      find: [],
-      create: [],
-      update: [],
-      patch: [],
-      remove: [],
+      update: [
+        hooks.discardFields('id', 'createdAt', 'updatedAt')
+      ],
+      patch: [
+        hooks.discardFields('id', 'createdAt', 'updatedAt')
+      ]
     },
     after: {
       all: [
