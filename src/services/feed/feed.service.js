@@ -3,8 +3,8 @@ import makeDebug from 'debug';
 import { Service, createService } from 'mostly-feathers-mongoose';
 import fp from 'mostly-func';
 
-import FeedModel from '~/models/feed-model';
-import defaultHooks from './feed-hooks';
+import FeedModel from '~/models/feed.model';
+import defaultHooks from './feed.hooks';
 
 const debug = makeDebug('playing:interaction-services:feeds');
 
