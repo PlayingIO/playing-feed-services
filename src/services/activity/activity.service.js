@@ -13,17 +13,17 @@ const defaultOptions = {
 };
 
 class ActivityService extends Service {
-  constructor(options) {
+  constructor (options) {
     options = Object.assign({}, defaultOptions, options);
     super(options);
   }
 
-  setup(app) {
+  setup (app) {
     super.setup(app);
     this.hooks(defaultHooks(this.options));
   }
 
-  create(data, params) {
+  create (data, params) {
     const svcFeeds = this.app.service('feeds');
     assert(data.feed && data.feed.indexOf(':undefined') === -1, 'data.feed is undefined');
     assert(data.actor && data.actor.indexOf(':undefined') === -1, 'data.actor is undefined');
@@ -49,7 +49,7 @@ class ActivityService extends Service {
   }
 }
 
-export default function init(app, options, hooks) {
+export default function init (app, options, hooks) {
   options = Object.assign({ ModelName: 'activity' }, options);
   return createService(app, ActivityService, ActivityModel, options);
 }

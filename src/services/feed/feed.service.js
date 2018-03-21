@@ -14,17 +14,17 @@ const defaultOptions = {
 };
 
 class FeedService extends Service {
-  constructor(options) {
+  constructor (options) {
     options = Object.assign({}, defaultOptions, options);
     super(options);
   }
 
-  setup(app) {
+  setup (app) {
     super.setup(app);
     this.hooks(defaultHooks(this.options));
   }
 
-  _getFeedGroup(id) {
+  _getFeedGroup (id) {
     return super.find({ query: { id }}).then((result) => {
       // create one if not exists
       if (result && result.data.length === 0) {
@@ -39,13 +39,13 @@ class FeedService extends Service {
     });
   }
 
-  get(id, params) {
+  get (id, params) {
     assert(id && id.indexOf(':') > 0, 'invalid feed id');
     return this._getFeedGroup(id);
   }
 }
 
-export default function init(app, options, hooks) {
+export default function init (app, options, hooks) {
   options = Object.assign({ ModelName: 'feed' }, options);
   return createService(app, FeedService, FeedModel, options);
 }
