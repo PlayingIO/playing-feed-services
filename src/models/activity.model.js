@@ -13,9 +13,9 @@ const fields = {
   actor: { type: String, required: true },  // actor performing the activity
   verb: { type: String, required: true },   // verb of the activity
   object: { type: String, required: true }, // object of the activity
-  target: { type: String },                 // optional target
+  target: { type: String },                 // optional target of the activity
   cc: [{ type: String} ],                   // list of feeds to be copied
-  foreignId: { type: String },
+  foreignId: { type: String },              // unique ID for update this activity later (createdAt + foreignId)
   // other free form fields as needed
 };
 

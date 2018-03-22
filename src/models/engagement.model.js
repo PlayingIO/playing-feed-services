@@ -5,7 +5,7 @@ const options = {
   strict: false
 };
 
-/*
+/**
  * activity log to track user interactions
  */
 const fields = {

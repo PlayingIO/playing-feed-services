@@ -5,7 +5,7 @@ const options = {
   strict: false
 };
 
-/*
+/**
  * track which activities are shown to the user
  */
 const fields = {

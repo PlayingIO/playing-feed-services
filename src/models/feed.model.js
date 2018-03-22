@@ -5,14 +5,14 @@ const options = {
   discriminatorKey: 'type'
 };
 
-/*
- * feed group that user can follow
+/**
+ * Feed group that user can follow
  */
 const fields = {
   id: { type: String, required: true, unique: true }, // group+target
   group: { type: String, required: true },            // feed group name
   target: { type: String, required: true },           // target id
-  realtime: { type: Boolean, default: true }
+  realtime: { type: Boolean, default: true }          // enable realtime notifications
 };
 
 export default function model (app, name) {
