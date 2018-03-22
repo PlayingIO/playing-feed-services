@@ -24,24 +24,17 @@ class FeedService extends Service {
     this.hooks(defaultHooks(this.options));
   }
 
-  _getFeedGroup (id) {
-    return super.find({ query: { id }}).then((result) => {
-      // create one if not exists
-      if (result && result.data.length === 0) {
-        let [group, target] =  id.split(':');
-        if (!target || target === 'undefined') {
-          throw new Error('feed target is undefined');
-        }
-        return super.create({ id, group, target });
-      } else {
-        return result && result.data[0];
-      }
-    });
-  }
-
-  get (id, params) {
+  async get (id, params) {
     assert(id && id.indexOf(':') > 0, 'invalid feed id');
-    return this._getFeedGroup(id);
+    if (params && params.__action) {
+      return super._action('get', params.__action, id, null, params);
+    }
+
+    let [group, target] =  id.split(':');
+    if (!target || target === 'undefined') {
+      throw new Error('feed target is undefined');
+    }
+    return super._upsert(null, { id, group, target });
   }
 }
 
