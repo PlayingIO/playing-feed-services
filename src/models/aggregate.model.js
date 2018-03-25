@@ -6,7 +6,7 @@ import { plugins } from 'mostly-feathers-mongoose';
  *  - Julie and 14 others like your photo
  * 
  * When insert an activity to an aggregated feed, the aggregation format will be applied.
- * By default the rule is applied: `
+ * By default the aggregated feed will aggregate by verb and day. 
  * 
  * Available aggregation format variables:
  *  ${verb} ${time} ${object} ${target} ${id} ${actor}
@@ -16,7 +16,9 @@ import { plugins } from 'mostly-feathers-mongoose';
 
 const fields = {
   aggregation: { type: 'Mixed', required: true }, // aggregation format (templated string) to use
-  activities: [{ type: 'ObjectId' }]              // most recent activities
+  activities: [{ type: 'ObjectId' }],             // most recent activities
+  seenAt: { type: Date },                         // user opened/browsed the content
+  readAt: { type: Date }                          // user engaged with the content
 };
 
 export default function model (app, name) {
