@@ -20,6 +20,7 @@ export default function (options = {}) {
     after: {
       all: [
         cache(options.cache),
+        hooks.assoc('activities', { service: 'activities', field: 'feed' }),
         hooks.presentEntity(FeedEntity, options.entities),
         hooks.responder()
       ]
