@@ -1,6 +1,8 @@
 import { hooks } from 'mostly-feathers-mongoose';
 import { cache } from 'mostly-feathers-cache';
 
+import FeedEntity from '~/entities/feed.entity';
+
 export default function (options = {}) {
   return {
     before: {
@@ -18,6 +20,7 @@ export default function (options = {}) {
     after: {
       all: [
         cache(options.cache),
+        hooks.presentEntity(FeedEntity, options.entities),
         hooks.responder()
       ]
     }
