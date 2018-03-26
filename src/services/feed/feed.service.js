@@ -37,6 +37,34 @@ class FeedService extends Service {
     return super._upsert(null, { id, group, target });
   }
 
+  async _addActivity (id, data, params, feed) {
+    assert('data.target', 'data.target is not provided.');
+    assert(feed, 'feed is not exists.');
+    assert(data.actor && data.verb && data.object, 'activity is not provided.');
+    data.feed = feed.id;
+
+    const svcActivities = this.app.service('activities');
+    await svcActivities.create(data);
+    return feed;
+  }
+
+  async _removeActivity (id, data, params, feed) {
+    assert('data.target', 'data.target is not provided.');
+    assert(feed, 'feed is not exists.');
+    assert(data.actvity || data.foreignId, 'activity or foreignId is not provided.');
+
+    const svcActivities = this.app.service('activities');
+    if (data.foreignId) {
+      await svcActivities.remove(null, {
+        query: { foreignId: data.foreignId },
+        $multi: true
+      });
+    } else {
+      await svcActivities.remove(data);
+    }
+    return feed;
+  }
+
   async _following (id, data, params, feed) {
     assert('data.target', 'data.target is not provided.');
   }
