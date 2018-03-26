@@ -65,6 +65,14 @@ class FeedService extends Service {
     return feed;
   }
 
+  async _activities (id, data, params, feed) {
+    params = fp.assign({ query: {} }, params);
+    assert(feed, 'feed is not exists.');
+    params.query.feed = feed.id;
+
+    return this.app.service('activities').find(params);
+  }
+
   async _following (id, data, params, feed) {
     assert('data.target', 'data.target is not provided.');
   }

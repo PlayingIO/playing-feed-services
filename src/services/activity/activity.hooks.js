@@ -19,7 +19,7 @@ export default function (options = {}) {
     },
     after: {
       all: [
-        hooks.populate('actor', { retained: true }),
+        hooks.populate('actor', { retained: false }),
         hooks.populate('object', { retained: false }),
         hooks.populate('target', { retained: false }),
         cache(options.cache),
