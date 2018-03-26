@@ -36,6 +36,10 @@ class FeedService extends Service {
     }
     return super._upsert(null, { id, group, target });
   }
+
+  async _following (id, data, params, feed) {
+    assert('data.target', 'data.target is not provided.');
+  }
 }
 
 export default function init (app, options, hooks) {

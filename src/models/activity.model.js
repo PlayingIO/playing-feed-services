@@ -1,13 +1,15 @@
 import { plugins } from 'mostly-feathers-mongoose';
 
-/*
- * activity log to track user interactions
- */
 const options = {
   timestamps: true,
   strict: false
 };
 
+/**
+ * Activity tells the story of a person performing an action on or with an object.
+ * 
+ * [Activity Streams Specification 1.0](http://activitystrea.ms/specs/json/1.0/)
+ */
 const fields = {
   feed: { type: String, required: true },   // feed group
   actor: { type: String, required: true },  // actor performing the activity

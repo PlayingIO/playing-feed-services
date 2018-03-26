@@ -23,7 +23,7 @@ export default function (options = {}) {
         hooks.populate('object', { retained: false }),
         hooks.populate('target', { retained: false }),
         cache(options.cache),
-        hooks.presentEntity(ActivityEntity, options),
+        hooks.presentEntity(ActivityEntity, options.entities),
         hooks.responder()
       ]
     }
