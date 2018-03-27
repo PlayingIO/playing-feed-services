@@ -50,6 +50,10 @@ class FeedService extends Service {
 
     const svcActivities = this.app.service('activities');
     await svcActivities.create(data);
+    // trim the feed sometimes
+    if (Math.random() < this.options.trimChance) {
+      await this._trim(id, null, null, feed);
+    }
     return feed;
   }
 
@@ -64,6 +68,10 @@ class FeedService extends Service {
 
     const svcActivities = this.app.service('activities');
     await svcActivities.create(data);
+    // trim the feed sometimes
+    if (Math.random() < this.options.trimChance) {
+      await this._trim(id, null, null, feed);
+    }
     return feed;
   }
 
