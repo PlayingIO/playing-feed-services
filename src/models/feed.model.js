@@ -9,9 +9,10 @@ const options = {
  * Feed group that user can follow
  */
 const fields = {
-  id: { type: String, required: true, unique: true }, // group+target
+  id: { type: String, required: true, unique: true }, // id as group + ':' + target
   group: { type: String, required: true },            // feed group name
   target: { type: String, required: true },           // target id
+  maxLength: { type: Number, default: 1000 },         // the max length of activites before trimming
   realtime: { type: Boolean, default: true }          // enable realtime notifications
 };
 
