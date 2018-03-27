@@ -24,26 +24,38 @@ class ActivityService extends Service {
   }
 
   async create (data, params) {
-    const svcFeeds = this.app.service('feeds');
-    assert(data.feed && data.feed.indexOf(':undefined') === -1, 'data.feed is undefined');
-    assert(data.actor && data.actor.indexOf(':undefined') === -1, 'data.actor is undefined');
-    assert(data.verb, 'data.verb is not provided');
-    assert(data.object && data.object.indexOf(':undefined') === -1, 'data.object is undefined');
-
-    const copyFeed = async (cc) => {
-      const feed = await svcFeeds.get(cc);
-      if (feed) {
-        data = fp.assoc('feed', feed.id,
-               fp.dissoc('cc', data));
-        return this.create(data);
-      }
+    const validator = (item) => {
+      assert(item.feed && item.feed.indexOf(':undefined') === -1, 'feed is undefined');
+      assert(item.actor && item.actor.indexOf(':undefined') === -1, 'actor is undefined');
+      assert(item.verb, 'verb is not provided');
+      assert(item.object && item.object.indexOf(':undefined') === -1, 'object is undefined');
     };
-
-    const activity = await super.create(fp.dissoc('cc', data), params);
-    if (data.cc && data.cc.length > 0) {
-      await Promise.all(fp.map(copyFeed, data.cc));
+    const svcFeeds = this.app.service('feeds');
+    if (fp.is(Array, data)) {
+      assert(data.length, 'cannot create empty array of activities.');
+    } else {
+      data = [data];
     }
-    return activity;
+    fp.forEach(validator, data);
+
+    // get all cc activities
+    const ccActivities = fp.reduce((arr, item) => {
+      const cc = [].concat(item.cc || []);
+      if (cc.length > 0) {
+        return arr.concat(fp.map(feed => {
+          return fp.assoc('feed', feed,
+                 fp.dissoc('cc', item));
+        }, cc));
+      }
+      return arr;
+    }, [], data);
+    data = fp.map(fp.dissoc('cc'), data).concat(ccActivities);
+
+    if (data.length === 1) {
+      return super.create(data[0], params);
+    } else {
+      return super.create(data, params);
+    }
   }
 }
 
