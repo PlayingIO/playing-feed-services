@@ -6,7 +6,7 @@ import fp from 'mostly-func';
 import ActivityModel from '~/models/activity.model';
 import defaultHooks from './activity.hooks';
 
-const debug = makeDebug('playing:interaction-services:activities');
+const debug = makeDebug('playing:feed-services:activities');
 
 const defaultOptions = {
   name: 'activities'

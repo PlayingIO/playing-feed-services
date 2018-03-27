@@ -6,7 +6,7 @@ import fp from 'mostly-func';
 import FollowshipModel from '~/models/followship.model';
 import defaultHooks from './followship.hooks';
 
-const debug = makeDebug('playing:interaction-services:followships');
+const debug = makeDebug('playing:feed-services:followships');
 
 const defaultOptions = {
   name: 'followships'

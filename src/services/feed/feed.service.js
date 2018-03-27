@@ -7,7 +7,7 @@ import FeedModel from '~/models/feed.model';
 import defaultHooks from './feed.hooks';
 import defaultJobs from './feed.jobs';
 
-const debug = makeDebug('playing:interaction-services:feeds');
+const debug = makeDebug('playing:feed-services:feeds');
 
 const defaultOptions = {
   id: 'id',

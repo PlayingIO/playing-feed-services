@@ -6,7 +6,7 @@ import fp from 'mostly-func';
 import AggregatedFeedModel from '~/models/aggregated-feed.model';
 import defaultHooks from './aggregated-feed.hooks';
 
-const debug = makeDebug('playing:interaction-services:aggregated-feeds');
+const debug = makeDebug('playing:feed-services:aggregated-feeds');
 
 const defaultOptions = {
   id: 'id',
