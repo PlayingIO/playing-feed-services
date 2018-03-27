@@ -5,6 +5,7 @@ import fp from 'mostly-func';
 
 import FeedModel from '~/models/feed.model';
 import defaultHooks from './feed.hooks';
+import defaultJobs from './feed.jobs';
 
 const debug = makeDebug('playing:interaction-services:feeds');
 
@@ -22,6 +23,7 @@ class FeedService extends Service {
   setup (app) {
     super.setup(app);
     this.hooks(defaultHooks(this.options));
+    defaultJobs(app, this.options);
   }
 
   async get (id, params) {
