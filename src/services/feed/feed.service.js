@@ -95,6 +95,25 @@ class FeedService extends Service {
   async _following (id, data, params, feed) {
     assert('data.target', 'data.target is not provided.');
   }
+
+  /**
+   * trim the feed
+   */
+  async _trim (id, data, params, feed) {
+    const svcActivities = this.app.service('activities');
+    if (feed && feed.maxLength) {
+      const maxActivity = await svcActivities.find({
+        query: { $select: 'id', $skip: feed.maxLength - 1, $limit: 1 },
+        paginate: false
+      });
+      if (maxActivity && maxActivity.length > 0) {
+        await svcActivities.remove(null, { query: {
+          _id: { $lt: maxActivity[0].id },
+          $multi: true
+        }});
+      }
+    }
+  }
 }
 
 export default function init (app, options, hooks) {
