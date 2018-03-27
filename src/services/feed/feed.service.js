@@ -11,7 +11,8 @@ const debug = makeDebug('playing:interaction-services:feeds');
 
 const defaultOptions = {
   id: 'id',
-  name: 'feeds'
+  name: 'feeds',
+  trimChance: 0.01 // the chance to trim the feed, not to grow to infinite size
 };
 
 class FeedService extends Service {
@@ -39,11 +40,27 @@ class FeedService extends Service {
     return super._upsert(null, { id, group, target });
   }
 
+  /**
+   * Add an activity
+   */
   async _addActivity (id, data, params, feed) {
-    assert('data.target', 'data.target is not provided.');
     assert(feed, 'feed is not exists.');
     assert(data.actor && data.verb && data.object, 'activity is not provided.');
     data.feed = feed.id;
+
+    const svcActivities = this.app.service('activities');
+    await svcActivities.create(data);
+    return feed;
+  }
+
+  /**
+   * Add many activities in bulk
+   */
+  async _addMany (id, data, params, feed) {
+    assert('data.target', 'data.target is not provided.');
+    assert(feed, 'feed is not exists.');
+    assert(fp.is(Array, data) && data.length > 0, 'data is an array or is empty.');
+    data = fp.map(fp.assoc('feed', feed.id), data);
 
     const svcActivities = this.app.service('activities');
     await svcActivities.create(data);
