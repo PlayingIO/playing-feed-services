@@ -166,7 +166,7 @@ class FeedService extends Service {
     let followship = await svcFollowship.action('first').find({ query: {
       follower: feed.id, followee: data.source
     }});
-    //if (!followship) return null; // already unfollowed
+    if (!followship) return null; // already unfollowed
 
     const sourceFeed = await this.get(data.source);
     assert(sourceFeed, 'source feed is not exists.');
