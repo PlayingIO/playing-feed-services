@@ -28,6 +28,9 @@ class FeedService extends Service {
     defaultJobs(app, this.options);
   }
 
+  /**
+   * Get or create a feed by id
+   */
   async get (id, params) {
     assert(id && id.indexOf(':') > 0, 'invalid feed id');
     if (params && params.__action) {
@@ -115,6 +118,9 @@ class FeedService extends Service {
     return feed;
   }
 
+  /**
+   * Get activities of the feed
+   */
   async _activities (id, data, params, feed) {
     params = fp.assign({ query: {} }, params);
     assert(feed, 'feed is not exists.');
