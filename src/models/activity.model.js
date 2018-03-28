@@ -18,6 +18,7 @@ const fields = {
   target: { type: String },                 // optional target of the activity
   cc: [{ type: String} ],                   // list of feeds to be copied
   foreignId: { type: String },              // unique ID for update this activity later (createdAt + foreignId)
+  popularity: { type: Number, default: 1 }, // ranking of the activity
   // other free form fields as needed
 };
 
