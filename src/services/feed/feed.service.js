@@ -176,6 +176,11 @@ class FeedService extends Service {
       $multi: true
     });
 
+    // task to unfollow activities
+    this.app.agenda.now('feed_unfollow_many', {
+      feed: feed.id, sources: [sourceFeed.id]
+    });
+
     return followship;
   }
 

@@ -29,4 +29,28 @@ export default function (app, options) {
       console.error('feed_follow_many job is not provided:', job.attrs.data);
     }
   });
+
+  // unfollow many feeds
+  agenda.define('feed_unfollow_many', async function (job, next) {
+    debug('>>> feed_unfollow_many', job.attrs.data);
+    const { feed, sources } = job.attrs.data;
+    if (feed && sources && sources.length > 0) {
+      const svcFeeds = app.service('feeds');
+      const svcActivities = app.service('activities');
+
+      await svcFeeds.action('trim').patch(feed); // trim first
+ 
+      let activities = await svcActivities.find({
+        query: { feed },
+        paginate: false
+      });
+      activities = fp.filter(activity => fp.contains(activity.source, sources), activities);
+      if (activities.length > 0) {
+        await svcFeeds.action('removeMany').patch(feed, activities);
+      }
+      next();
+    } else {
+      console.error('feed_unfollow_many job is not provided:', job.attrs.data);
+    }
+  });
 }
