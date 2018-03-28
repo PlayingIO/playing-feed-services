@@ -1,6 +1,6 @@
 import assert from 'assert';
 import makeDebug from 'debug';
-import { Service, createService } from 'mostly-feathers-mongoose';
+import { Service, helpers, createService } from 'mostly-feathers-mongoose';
 import fp from 'mostly-func';
 
 import FeedModel from '~/models/feed.model';
@@ -62,7 +62,6 @@ class FeedService extends Service {
    * Add many activities in bulk
    */
   async _addMany (id, data, params, feed) {
-    assert('data.target', 'data.target is not provided.');
     assert(feed, 'feed is not exists.');
     assert(fp.is(Array, data) && data.length > 0, 'data is an array or is empty.');
     data = fp.map(fp.assoc('feed', feed.id), data);
@@ -76,10 +75,12 @@ class FeedService extends Service {
     return feed;
   }
 
+  /**
+   * Remove an activity
+   */
   async _removeActivity (id, data, params, feed) {
-    assert('data.target', 'data.target is not provided.');
     assert(feed, 'feed is not exists.');
-    assert(data.actvity || data.foreignId, 'activity or foreignId is not provided.');
+    assert(data.activity || data.foreignId, 'activity or foreignId is not provided.');
 
     const svcActivities = this.app.service('activities');
     if (data.foreignId) {
@@ -88,8 +89,25 @@ class FeedService extends Service {
         $multi: true
       });
     } else {
-      await svcActivities.remove(data);
+      await svcActivities.remove(data.activity);
     }
+    // trim the feed sometimes
+    if (Math.random() <= this.options.trimChance) {
+      await this._trim(id, null, null, feed);
+    }
+    return feed;
+  }
+
+  /**
+   * Remove many activities in bulk
+   */
+  async _removeMany (id, data, params, feed) {
+    assert(feed, 'feed is not exists.');
+    assert(fp.is(Array, data) && data.length > 0, 'data is an array or is empty.');
+    const more = fp.map(helpers.getId, data);
+
+    const svcActivities = this.app.service('activities');
+    await svcActivities.remove(null, { query: { more } });
     // trim the feed sometimes
     if (Math.random() <= this.options.trimChance) {
       await this._trim(id, null, null, feed);
@@ -105,6 +123,9 @@ class FeedService extends Service {
     return this.app.service('activities').find(params);
   }
 
+  /**
+   * Follow target feed
+   */
   async _follow (id, data, params, feed) {
     assert('data.target', 'data.target is not provided.');
 
