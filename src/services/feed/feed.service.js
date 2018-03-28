@@ -133,7 +133,7 @@ class FeedService extends Service {
    * Follow target feed
    */
   async _follow (id, data, params, feed) {
-    assert('data.target', 'data.target is not provided.');
+    assert(data.target, 'data.target is not provided.');
 
     const svcFollowship = this.app.service('followships');
     let followship = await svcFollowship.action('first').find({ query: {
@@ -160,18 +160,18 @@ class FeedService extends Service {
    * Unfollow source feed
    */
   async _unfollow (id, data, params, feed) {
-    assert('data.source', 'data.source is not provided.');
+    assert(data.source, 'data.source is not provided.');
 
     const svcFollowship = this.app.service('followships');
     let followship = await svcFollowship.action('first').find({ query: {
       follower: feed.id, followee: data.source
     }});
-    if (!followship) return null; // already unfollowed
+    //if (!followship) return null; // already unfollowed
 
     const sourceFeed = await this.get(data.source);
     assert(sourceFeed, 'source feed is not exists.');
 
-    followship = await svcFollowship.remove({
+    followship = await svcFollowship.remove(null, {
       query: { follower: feed.id, followee: sourceFeed.id },
       $multi: true
     });
@@ -195,7 +195,7 @@ class FeedService extends Service {
         paginate: false
       });
       if (maxActivity && maxActivity.length > 0) {
-        await svcActivities.remove(null, { query: {
+        return svcActivities.remove(null, { query: {
           _id: { $lt: maxActivity[0].id },
           $multi: true
         }});
