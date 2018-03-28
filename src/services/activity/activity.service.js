@@ -57,6 +57,26 @@ class ActivityService extends Service {
       return super.create(data, params);
     }
   }
+
+  async remove (id, params) {
+    params = fp.assign({ query: {} }, params);
+    assert(id || params.query.foreignId || params.query.more, 'id or foreignId or more is not provided.');
+
+    if (params.query.foreignId) {
+      // remove all activities in the feed with the provided foreignId
+      return super.remove(null, {
+        query: { foreignId: params.query.foreignId },
+        $multi: true
+      });
+    } else if (params.query.more) {
+      return super.remove(null, {
+        query: { _id: { $in: params.query.more } },
+        $multi: true
+      });
+    } else {
+      return super.remove(id, params);
+    }
+  }
 }
 
 export default function init (app, options, hooks) {
