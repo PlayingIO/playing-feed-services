@@ -1,5 +1,3 @@
-import { plugins } from 'mostly-feathers-mongoose';
-
 const options = {
   timestamps: true,
   strict: false
@@ -7,7 +5,7 @@ const options = {
 
 /**
  * Activity tells the story of a person performing an action on or with an object.
- * 
+ *
  * [Activity Streams Specification 1.0](http://activitystrea.ms/specs/json/1.0/)
  */
 const fields = {

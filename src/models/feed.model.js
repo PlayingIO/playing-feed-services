@@ -1,5 +1,3 @@
-import { plugins } from 'mostly-feathers-mongoose';
-
 const options = {
   timestamps: true,
   discriminatorKey: 'type'

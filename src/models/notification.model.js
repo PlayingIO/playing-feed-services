@@ -1,5 +1,3 @@
-import { plugins } from 'mostly-feathers-mongoose';
-
 /**
  * Notification feeds are similar to aggregated feeds can be marked as seen or read.
  */

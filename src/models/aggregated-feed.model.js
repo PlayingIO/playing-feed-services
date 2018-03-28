@@ -1,16 +1,14 @@
-import { plugins } from 'mostly-feathers-mongoose';
-
 /**
  * Aggregated feeds are helpful to group activities, for example:
  *  - Eric followed 10 people
  *  - Julie and 14 others like your photo
- * 
+ *
  * When insert an activity to an aggregated feed, the aggregation format will be applied.
- * By default the aggregated feed will aggregate by verb and day. 
- * 
+ * By default the aggregated feed will aggregate by verb and day.
+ *
  * Available aggregation format variables:
  *  ${verb} ${time} ${object} ${target} ${id} ${actor}
- * 
+ *
  * More Examples
  */
 
