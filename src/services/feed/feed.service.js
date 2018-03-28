@@ -157,6 +157,29 @@ class FeedService extends Service {
   }
 
   /**
+   * Unfollow source feed
+   */
+  async _unfollow (id, data, params, feed) {
+    assert('data.source', 'data.source is not provided.');
+
+    const svcFollowship = this.app.service('followships');
+    let followship = await svcFollowship.action('first').find({ query: {
+      follower: feed.id, followee: data.source
+    }});
+    if (!followship) return null; // already unfollowed
+
+    const sourceFeed = await this.get(data.source);
+    assert(sourceFeed, 'source feed is not exists.');
+
+    followship = await svcFollowship.remove({
+      query: { follower: feed.id, followee: sourceFeed.id },
+      $multi: true
+    });
+
+    return followship;
+  }
+
+  /**
    * trim the feed
    */
   async _trim (id, data, params, feed) {
