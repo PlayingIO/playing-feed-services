@@ -10,18 +10,18 @@ export default function (app, options) {
 
   // follow many feeds
   agenda.define('feed_follow_many', async function (job, next) {
-    debug('===== RUN feed_follow_many =====', job.attrs.data);
+    debug('>>> feed_follow_many', job.attrs.data);
     const { feed, targets, limit } = job.attrs.data;
     if (feed && targets && limit && targets.length > 0) {
       const svcFeeds = app.service('feeds');
       const svcActivities = app.service('activities');
-      const getActivities = fp.map((target) => svcActivities.find({
+
+      let activities = await Promise.all(fp.map((target) => svcActivities.find({
         query: { feed: target, $limit: limit },
         paginate: false
-      }));
-      const results = await Promise.all(getActivities(targets));
-      if (results.length > 0) {
-        const activities = fp.flatten(results);
+      }), targets));
+      activities = fp.map(fp.renameKeys({ feed: 'source' }), fp.flatten(activities));
+      if (activities.length > 0) {
         await svcFeeds.action('addMany').patch(feed, activities);
       }
       next();
