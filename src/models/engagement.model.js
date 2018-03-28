@@ -6,7 +6,7 @@ const options = {
 };
 
 /**
- * activity log to track user interactions
+ * track which activities user engaged with
  */
 const fields = {
   event: { type: String, required: true },    // type of event, ie click, share, search

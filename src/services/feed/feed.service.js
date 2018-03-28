@@ -104,8 +104,18 @@ class FeedService extends Service {
     return this.app.service('activities').find(params);
   }
 
-  async _following (id, data, params, feed) {
+  async _follow (id, data, params, feed) {
     assert('data.target', 'data.target is not provided.');
+
+    const svcFollowship = this.app.service('followships');
+
+    const targetFeed = await this.get(data.target);
+    assert(targetFeed, 'target feed is not exists.');
+
+    const followship = await svcFollowship.create({
+      follower: feed.id, followee: targetFeed.id
+    });
+    return followship;
   }
 
   /**
