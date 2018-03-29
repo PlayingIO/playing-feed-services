@@ -1,6 +1,6 @@
 import assert from 'assert';
 import makeDebug from 'debug';
-import { Service, helpers, createService } from 'mostly-feathers-mongoose';
+import { Service as BaseService } from 'mostly-feathers';
 import fp from 'mostly-func';
 
 import defaultHooks from './feed.hooks';
@@ -13,34 +13,87 @@ const defaultOptions = {
   followLimit: 500, // the number of activities which enter your feed when you follow someone
 };
 
-const feedServices = {
-  'feed': 'flat-feeds',
-  'aggregated': 'aggregated-feeds',
-  'notification': 'notification-feeds',
-};
-
 /**
  * The Feed Manager class handles the fanout from a user's activity
  *  to all their follower's feeds
  */
-class FeedService {
+class FeedService extends BaseService {
   constructor (options) {
-    this.options = Object.assign({}, defaultOptions, options);
-    this.name = this.options.name;
+    options = Object.assign({}, defaultOptions, options);
+    super(options);
   }
 
   setup (app) {
-    this.app = app;
+    super.setup(app);
     this.hooks(defaultHooks(this.options));
     defaultJobs(app, this.options);
+  }
+
+  service (type) {
+    switch (type) {
+      case 'aggregated': return this.app.service('aggregated-feeds');
+      case 'notification': return this.app.service('notification-feeds');
+      default: return this.app.service('flat-feeds');
+    }
+  }
+
+  /**
+   * find feeds
+   */
+  async find (params) {
+    params = fp.assign({ query: {} }, params);
+    if (params && params.__action) {
+      return super._action('find', params.__action, null, null, params);
+    } else {
+      return this.service(params.query.type).find(params);
+    }
   }
 
   /**
    * Get or create a feed by id
    */
   async get (id, params) {
-    const svcFeeds = this.app.service('flat-feeds');
-    return svcFeeds.get(id, params);
+    params = fp.assign({ query: {} }, params);
+    if (params && params.__action) {
+      return super._action('get', params.__action, id, null, params);
+    } else {
+      return this.service(params.query.type).get(id, params);
+    }
+  }
+
+  /**
+   * Update a feed
+   */
+  async update (id, data, params) {
+    params = fp.assign({ query: {} }, params);
+    if (params && params.__action) {
+      return super._action('update', params.__action, id, data, params);
+    } else {
+      return this.service(data.type || params.query.type).update(id, data, params);
+    }
+  }
+
+  /**
+   * Patch a feed
+   */
+  async patch (id, data, params) {
+    params = fp.assign({ query: {} }, params);
+    if (params && params.__action) {
+      return super._action('patch', params.__action, id, data, params);
+    } else {
+      return this.service(data.type || params.query.type).patch(id, data, params);
+    }
+  }
+
+  /**
+   * Remove a feed
+   */
+  async remove (id, params) {
+    if (params && params.__action) {
+      return super._action('remove', params.__action, id, null, params);
+    } else {
+      return this.service(params.query.type).remove(id, params);
+    }
   }
 
   /**
@@ -48,7 +101,7 @@ class FeedService {
    */
   async _addActivity (id, data, params, feed) {
     assert(feed, 'feed is not exists.');
-    const svcFeeds = this.app.service(feedServices[feed.type]);
+    const svcFeeds = this.service(feed.type);
     await svcFeeds.action('addActivity').patch(id, data, params);
     return feed;
   }
@@ -58,7 +111,7 @@ class FeedService {
    */
   async _removeActivity (id, data, params, feed) {
     assert(feed, 'feed is not exists.');
-    const svcFeeds = this.app.service(feedServices[feed.type]);
+    const svcFeeds = this.service(feed.type);
     await svcFeeds.action('removeActivity').patch(id, data, params);
     return feed;
   }
