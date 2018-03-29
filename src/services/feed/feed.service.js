@@ -29,8 +29,8 @@ class FeedService extends BaseService {
     defaultJobs(app, this.options);
   }
 
-  service (type) {
-    switch (type) {
+  service (group) {
+    switch (group) {
       case 'aggregated': return this.app.service('aggregated-feeds');
       case 'notification': return this.app.service('notification-feeds');
       default: return this.app.service('flat-feeds');
@@ -41,23 +41,19 @@ class FeedService extends BaseService {
    * find feeds
    */
   async find (params) {
-    params = fp.assign({ query: {} }, params);
-    if (params && params.__action) {
-      return super._action('find', params.__action, null, null, params);
-    } else {
-      return this.service(params.query.type).find(params);
-    }
+    return this.app.service('flat-feeds').find(params);
   }
 
   /**
    * Get or create a feed by id
    */
   async get (id, params) {
-    params = fp.assign({ query: {} }, params);
+    assert(id && id.indexOf(':') > 0, 'invalid feed id');
     if (params && params.__action) {
       return super._action('get', params.__action, id, null, params);
     } else {
-      return this.service(params.query.type).get(id, params);
+      const [group, target] =  id.split(':');
+      return this.service(group).get(id, params);
     }
   }
 
@@ -65,11 +61,12 @@ class FeedService extends BaseService {
    * Update a feed
    */
   async update (id, data, params) {
-    params = fp.assign({ query: {} }, params);
+    assert(id && id.indexOf(':') > 0, 'invalid feed id');
     if (params && params.__action) {
       return super._action('update', params.__action, id, data, params);
     } else {
-      return this.service(data.type || params.query.type).update(id, data, params);
+      const [group, target] =  id.split(':');
+      return this.service(group).update(id, data, params);
     }
   }
 
@@ -77,10 +74,11 @@ class FeedService extends BaseService {
    * Patch a feed
    */
   async patch (id, data, params) {
-    params = fp.assign({ query: {} }, params);
+    assert(id && id.indexOf(':') > 0, 'invalid feed id');
     if (params && params.__action) {
       return super._action('patch', params.__action, id, data, params);
     } else {
+      const [group, target] =  id.split(':');
       return this.service(data.type || params.query.type).patch(id, data, params);
     }
   }
@@ -89,9 +87,11 @@ class FeedService extends BaseService {
    * Remove a feed
    */
   async remove (id, params) {
+    assert(id && id.indexOf(':') > 0, 'invalid feed id');
     if (params && params.__action) {
       return super._action('remove', params.__action, id, null, params);
     } else {
+      const [group, target] =  id.split(':');
       return this.service(params.query.type).remove(id, params);
     }
   }

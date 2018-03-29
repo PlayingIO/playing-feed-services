@@ -1,15 +1,20 @@
 const options = {
   timestamps: true,
-  discriminatorKey: 'type'
+  discriminatorKey: 'group'
 };
 
 /**
- * Flat is the default feed type - and the only feed type that you can follow. 
+ * Flat feed is the default feed type - and the only feed type that you can follow.
+ * 
+ * Feed group name is used as discriminator key, so special group name like 'notification'
+ * and 'aggregated' will be treated with as corresponding model. Other free-form group names
+ * like 'user', 'timeline' are all flat feeds.
+ * 
  * It's not possible to follow either aggregated or notification feeds.
  */
 const fields = {
   id: { type: String, required: true, unique: true }, // id as group + ':' + target
-  group: { type: String, required: true },            // feed group name
+  group: { type: String, required: true },            // feed group name, like user, timeline with meanings
   target: { type: String, required: true },           // target id
   maxLength: { type: Number, default: 1000 },         // the max length of activites before trimming
   realtime: { type: Boolean, default: true }          // enable realtime notifications
