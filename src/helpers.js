@@ -18,6 +18,9 @@ const groupByPriority = fp.groupBy(followship => {
          priority < 80? 'high' : 'highest';
 });
 
+/**
+ * Get follower feeds by chunks
+ */
 export const getFollowers = async (app, target, limit, skip) => {
   const svcFollowship = app.service('followships');
   const followships = await svcFollowship.find({
@@ -30,6 +33,9 @@ export const getFollowers = async (app, target, limit, skip) => {
   }, groupedFollowships);
 };
 
+/**
+ * Get followee feeds by chunks
+ */
 export const getFollowees = async (app, source, limit, skip) => {
   const svcFollowship = app.service('followships');
   const followships = await svcFollowship.find({
@@ -40,6 +46,21 @@ export const getFollowees = async (app, source, limit, skip) => {
   return fp.mapObjIndexed((followees, priority) => {
     return fp.map(fp.prop('followee'), followees);
   }, groupedFollowships);
+};
+
+/**
+ * Fanout activities to follower feeds by chunks
+ */
+export const fanoutOperations = async (app, feed, operation, activities, limit, skip = 0) => {
+  const priorityFollowers = await getFollowers(this.app, feed, limit, skip);
+  if (!fp.isEmpty(priorityFollowers)) {
+    for (const [followers, priority] of priorityFollowers.entries) {
+      app.agenda.now('fanout_operation', {
+        operation, targets: followers, activities
+      }).priority(priority);
+    }
+    await fanoutOperations(app, feed, operation, activities, limit, skip + limit);
+  }
 };
 
 export const addActivities = async (app, feed, activities) => {
