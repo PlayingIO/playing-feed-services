@@ -79,7 +79,7 @@ class FeedService extends BaseService {
       return super._action('patch', params.__action, id, data, params);
     } else {
       const [group, target] =  id.split(':');
-      return this.service(data.type || params.query.type).patch(id, data, params);
+      return this.service(group).patch(id, data, params);
     }
   }
 
@@ -92,7 +92,7 @@ class FeedService extends BaseService {
       return super._action('remove', params.__action, id, null, params);
     } else {
       const [group, target] =  id.split(':');
-      return this.service(params.query.type).remove(id, params);
+      return this.service(group).remove(id, params);
     }
   }
 
@@ -101,7 +101,7 @@ class FeedService extends BaseService {
    */
   async _addActivity (id, data, params, feed) {
     assert(feed, 'feed is not exists.');
-    const svcFeeds = this.service(feed.type);
+    const svcFeeds = this.service(feed.group);
     await svcFeeds.action('addActivity').patch(id, data, params);
     return feed;
   }
@@ -111,7 +111,7 @@ class FeedService extends BaseService {
    */
   async _removeActivity (id, data, params, feed) {
     assert(feed, 'feed is not exists.');
-    const svcFeeds = this.service(feed.type);
+    const svcFeeds = this.service(feed.group);
     await svcFeeds.action('removeActivity').patch(id, data, params);
     return feed;
   }
