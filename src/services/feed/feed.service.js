@@ -5,6 +5,7 @@ import fp from 'mostly-func';
 
 import defaultHooks from './feed.hooks';
 import defaultJobs from './feed.jobs';
+import { getFeedService } from '../../helpers';
 
 const debug = makeDebug('playing:feed-services:feeds');
 
@@ -29,14 +30,6 @@ class FeedService extends BaseService {
     defaultJobs(app, this.options);
   }
 
-  service (group) {
-    switch (group) {
-      case 'aggregated': return this.app.service('aggregated-feeds');
-      case 'notification': return this.app.service('notification-feeds');
-      default: return this.app.service('flat-feeds');
-    }
-  }
-
   /**
    * find feeds
    */
@@ -53,7 +46,7 @@ class FeedService extends BaseService {
       return super._action('get', params.__action, id, null, params);
     } else {
       const [group, target] =  id.split(':');
-      return this.service(group).get(id, params);
+      return this.app.service(getFeedService(group)).get(id, params);
     }
   }
 
@@ -66,7 +59,7 @@ class FeedService extends BaseService {
       return super._action('update', params.__action, id, data, params);
     } else {
       const [group, target] =  id.split(':');
-      return this.service(group).update(id, data, params);
+      return this.app.service(getFeedService(group)).update(id, data, params);
     }
   }
 
@@ -79,7 +72,7 @@ class FeedService extends BaseService {
       return super._action('patch', params.__action, id, data, params);
     } else {
       const [group, target] =  id.split(':');
-      return this.service(group).patch(id, data, params);
+      return this.app.service(getFeedService(group)).patch(id, data, params);
     }
   }
 
@@ -92,7 +85,7 @@ class FeedService extends BaseService {
       return super._action('remove', params.__action, id, null, params);
     } else {
       const [group, target] =  id.split(':');
-      return this.service(group).remove(id, params);
+      return this.app.service(getFeedService(group)).remove(id, params);
     }
   }
 
@@ -101,7 +94,7 @@ class FeedService extends BaseService {
    */
   async _addActivity (id, data, params, feed) {
     assert(feed, 'feed is not exists.');
-    const svcFeeds = this.service(feed.group);
+    const svcFeeds = this.app.service(getFeedService(feed.group));
     await svcFeeds.action('addActivity').patch(id, data, params);
     return feed;
   }
@@ -111,7 +104,7 @@ class FeedService extends BaseService {
    */
   async _removeActivity (id, data, params, feed) {
     assert(feed, 'feed is not exists.');
-    const svcFeeds = this.service(feed.group);
+    const svcFeeds = this.app.service(getFeedService(feed.group));
     await svcFeeds.action('removeActivity').patch(id, data, params);
     return feed;
   }
@@ -141,6 +134,8 @@ class FeedService extends BaseService {
 
     const targetFeed = await this.get(data.target);
     assert(targetFeed, 'target feed is not exists.');
+    assert(!fp.contains(targetFeed.group,
+      ['aggregated', 'notification']), 'target feed must be a flat feed.');
 
     followship = await svcFollowship.create({
       follower: feed.id, followee: targetFeed.id
@@ -168,6 +163,8 @@ class FeedService extends BaseService {
 
     const sourceFeed = await this.get(data.source);
     assert(sourceFeed, 'source feed is not exists.');
+    assert(!fp.contains(sourceFeed.group,
+      ['aggregated', 'notification']), 'target feed must be a flat feed.');
 
     followship = await svcFollowship.remove(null, {
       query: { follower: feed.id, followee: sourceFeed.id },

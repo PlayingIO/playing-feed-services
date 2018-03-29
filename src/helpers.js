@@ -4,6 +4,12 @@ import fp from 'mostly-func';
 
 const debug = makeDebug('playing:feed-services:helpers');
 
+export const getFeedService = (id) => {
+  if (id.startsWith('aggregated')) return 'aggregated-feeds';
+  if (id.startsWith('notification')) return 'notification-feeds';
+  return 'flat-feeds';
+};
+
 export const followMany = async (app, feed, targets, limit) => {
   const svcFeeds = app.service('feeds');
   const svcActivities = app.service('activities');
