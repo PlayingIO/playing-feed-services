@@ -30,7 +30,7 @@ class FeedService {
   }
 
   setup (app) {
-    super.setup(app);
+    this.app = app;
     this.hooks(defaultHooks(this.options));
     defaultJobs(app, this.options);
   }
