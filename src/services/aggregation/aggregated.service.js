@@ -3,16 +3,16 @@ import makeDebug from 'debug';
 import { Service, createService } from 'mostly-feathers-mongoose';
 import fp from 'mostly-func';
 
-import AggregatedActivityModel from '~/models/aggregated-activity.model';
-import defaultHooks from './aggregated-activity.hooks';
+import AggregationModel from '~/models/aggregation.model';
+import defaultHooks from './aggregation.hooks';
 
-const debug = makeDebug('playing:feed-services:activities');
+const debug = makeDebug('playing:feed-services:aggregations');
 
 const defaultOptions = {
-  name: 'activities'
+  name: 'aggregations'
 };
 
-class AggregatedActivityService extends Service {
+class AggregationService extends Service {
   constructor (options) {
     options = Object.assign({}, defaultOptions, options);
     super(options);
@@ -34,8 +34,8 @@ class AggregatedActivityService extends Service {
 }
 
 export default function init (app, options, hooks) {
-  options = Object.assign({ ModelName: 'aggregated' }, options);
-  return createService(app, AggregatedActivityService, AggregatedActivityModel, options);
+  options = Object.assign({ ModelName: 'aggregation' }, options);
+  return createService(app, AggregationService, AggregationModel, options);
 }
 
-init.Service = AggregatedActivityService;
+init.Service = AggregationService;

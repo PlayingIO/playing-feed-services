@@ -1,7 +1,7 @@
 import { hooks } from 'mostly-feathers-mongoose';
 import { cache } from 'mostly-feathers-cache';
 
-import AggregatedActivityEntity from '~/entities/aggregated-activity.entity';
+import AggregationEntity from '~/entities/aggregation.entity';
 
 export default function (options = {}) {
   return {
@@ -19,11 +19,10 @@ export default function (options = {}) {
     },
     after: {
       all: [
-        hooks.populate('actor', { retained: true }),
-        hooks.populate('object', { retained: false }),
-        hooks.populate('target', { retained: false }),
+        hooks.populate('actors', { retained: false }),
+        hooks.populate('objects', { retained: false }),
         cache(options.cache),
-        hooks.presentEntity(AggregatedActivityEntity, options.entities),
+        hooks.presentEntity(AggregationEntity, options.entities),
         hooks.responder()
       ]
     }

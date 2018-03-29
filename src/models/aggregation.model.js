@@ -6,7 +6,7 @@ const options = {
  * Structure to store aggregated activities
  */
 const fields = {
-  feed: { type: String, required: true },     // aggregate feed group
+  feed: { type: String, required: true },     // aggregated feed group
   group: { type: String, required: true },    // aggregate group
   actors: [{ type: String, required: true }], // distinct actors (cache)
   verbs: { type: String, required: true },    // distinct verbs (cache)
