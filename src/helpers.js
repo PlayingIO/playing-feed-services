@@ -42,6 +42,20 @@ export const getFollowees = async (app, source) => {
   }, groupedFollowships);
 };
 
+export const addOperation = async (app, feed, activities) => {
+  const svcFeeds = app.service(getFeedService(feed));
+  if (activities.length > 0) {
+    return svcFeeds.action('addMany').patch(feed, activities);
+  }
+};
+
+export const removeOperation = async (app, feed, activities) => {
+  const svcFeeds = app.service(getFeedService(feed));
+  if (activities.length > 0) {
+    return svcFeeds.action('removeMany').patch(feed, activities);
+  }
+};
+
 export const followMany = async (app, feed, targets, limit) => {
   const svcFeeds = app.service(getFeedService(feed));
   const svcActivities = app.service('activities');
