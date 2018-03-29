@@ -10,13 +10,24 @@ export const getFeedService = (id) => {
   return 'flat-feeds';
 };
 
+const groupByPriority = fp.groupBy(followship => {
+  const priority = followship.priority || 10;
+  return priority <= 0? 'lowest' :
+         priority < 20? 'low' :
+         priority < 50? 'normal' :
+         priority < 80? 'high' : 'highest';
+});
+
 export const getFollowers = async (app, target) => {
   const svcFollowship = app.service('followships');
   const followships = await svcFollowship.find({
     query: { followee: target },
     paginate: false
   });
-  return fp.map(fp.prop('follower'), followships);
+  const groupedFollowships = groupByPriority(followships);
+  return fp.mapObjIndexed((followers, priority) => {
+    return fp.map(fp.prop('follower'), followers);
+  }, groupedFollowships);
 };
 
 export const getFollowees = async (app, source) => {
@@ -25,7 +36,10 @@ export const getFollowees = async (app, source) => {
     query: { follower: source },
     paginate: false
   });
-  return fp.map(fp.prop('followee'), followships);
+  const groupedFollowships = groupByPriority(followships);
+  return fp.mapObjIndexed((followees, priority) => {
+    return fp.map(fp.prop('followee'), followees);
+  }, groupedFollowships);
 };
 
 export const followMany = async (app, feed, targets, limit) => {
