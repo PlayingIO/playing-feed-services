@@ -39,7 +39,7 @@ class AggregatedFeedService extends Service {
 }
 
 export default function init (app, options, hooks) {
-  options = Object.assign({ ModelName: 'aggregated-feed' }, options);
+  options = Object.assign({ ModelName: 'aggregated' }, options);
   return createService(app, AggregatedFeedService, AggregatedFeedModel, options);
 }
 

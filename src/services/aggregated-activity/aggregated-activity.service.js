@@ -34,7 +34,7 @@ class AggregatedActivityService extends Service {
 }
 
 export default function init (app, options, hooks) {
-  options = Object.assign({ ModelName: 'aggregated-activity' }, options);
+  options = Object.assign({ ModelName: 'aggregated' }, options);
   return createService(app, AggregatedActivityService, AggregatedActivityModel, options);
 }
 
