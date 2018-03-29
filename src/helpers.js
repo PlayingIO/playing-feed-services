@@ -11,7 +11,7 @@ export const getFeedService = (id) => {
 };
 
 export const followMany = async (app, feed, targets, limit) => {
-  const svcFeeds = app.service('feeds');
+  const svcFeeds = app.service(getFeedService(feed));
   const svcActivities = app.service('activities');
 
   let activities = await Promise.all(fp.map((target) => svcActivities.find({
@@ -26,7 +26,7 @@ export const followMany = async (app, feed, targets, limit) => {
 };
 
 export const unfollowMany = async (app, feed, sources) => {
-  const svcFeeds = app.service('feeds');
+  const svcFeeds = app.service(getFeedService(feed));
   const svcActivities = app.service('activities');
 
   // TODO agenda do not support async, callback will break after await
