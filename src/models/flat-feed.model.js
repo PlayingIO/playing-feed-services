@@ -4,7 +4,8 @@ const options = {
 };
 
 /**
- * Feed group that user can follow
+ * Flat is the default feed type - and the only feed type that you can follow. 
+ * It's not possible to follow either aggregated or notification feeds.
  */
 const fields = {
   id: { type: String, required: true, unique: true }, // id as group + ':' + target
