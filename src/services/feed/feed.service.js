@@ -5,13 +5,14 @@ import fp from 'mostly-func';
 
 import defaultHooks from './feed.hooks';
 import defaultJobs from './feed.jobs';
-import { getFeedService, getFollowers } from '../../helpers';
+import { getFeedService, fanoutOperations } from '../../helpers';
 
 const debug = makeDebug('playing:feed-services:feeds');
 
 const defaultOptions = {
   name: 'feeds',
   followLimit: 500, // the number of activities which enter your feed when you follow someone
+  fanoutLimit: 100, // number of following feeds are handled in one task when doing the fanout
 };
 
 /**
@@ -98,7 +99,9 @@ class FeedService extends BaseService {
     await svcFeeds.action('addActivity').patch(id, data, params);
 
     // fanout for all following feeds
-    const followers = await getFollowers(this.app, feed.id);
+    const activities = [fp.assoc('source', feed.id, data)];
+    fanoutOperations(this.app, feed.id, 'addActivities', activities, this.options.fanoutLimit);
+
     return feed;
   }
 
