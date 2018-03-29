@@ -1,7 +1,7 @@
 import assert from 'assert';
 import makeDebug from 'debug';
 import fp from 'mostly-func';
-import { addOperation, removeOperation, followMany, unfollowMany } from '../../helpers';
+import { addActivities, removeActivities, followMany, unfollowMany } from '../../helpers';
 
 const debug = makeDebug('playing:feed-services:feed:jobs');
 
@@ -18,6 +18,7 @@ export default function (app, options) {
       followMany(app, feed, targets, limit).then(next);
     } else {
       console.error('feed_follow_many job is not provided:', job.attrs.data);
+      next();
     }
   });
 
@@ -29,18 +30,26 @@ export default function (app, options) {
       unfollowMany(app, feed, sources).then(next);
     } else {
       console.error('feed_unfollow_many job is not provided:', job.attrs.data);
+      next();
     }
   });
 
-  // fanout the operations
+  // fanout the operations to target feeds
   agenda.define('fanout_operation', { lockLifetime }, function (job, next) {
     debug('>>> fanout_operation', job.attrs.data);
-    const { feed, targets } = job.attrs.data;
-    if (feed && targets && targets.length > 0) {
-      const svcFeedManager = app.service('feeds');
-      svcFeedManager.action('fanout').patch(feed, { targets }).then(next);
+    const { operation, targets, activities } = job.attrs.data;
+    if (operation && targets && activities && targets.length > 0 && activities.length > 0) {
+      const operations = fp.map(feed => {
+        switch (operation) {
+          case 'addActivities': return addActivities(app, feed, activities);
+          case 'removeActivities': return removeActivities(app, feed, activities);
+          default: Promise.resolve();
+        }
+      }, targets);
+      Promise.all(operations).then(next);
     } else {
       console.error('fanout_operation job is not provided:', job.attrs.data);
+      next();
     }
   });
 }
