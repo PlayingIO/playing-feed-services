@@ -1,16 +1,17 @@
 import assert from 'assert';
 import makeDebug from 'debug';
 import fp from 'mostly-func';
-import { followMany, unfollowMany } from '../../helpers';
+import { addOperation, removeOperation, followMany, unfollowMany } from '../../helpers';
 
 const debug = makeDebug('playing:feed-services:feed:jobs');
 
 export default function (app, options) {
   const agenda = app.agenda;
+  const lockLifetime = options.agenda && options.agenda.lockLifetime ||  60 * 1000;
   assert(agenda, 'agenda not configured properly, check your app');
   
   // follow many feeds
-  agenda.define('feed_follow_many', function (job, next) {
+  agenda.define('feed_follow_many', { lockLifetime }, function (job, next) {
     debug('>>> feed_follow_many', job.attrs.data);
     const { feed, targets, limit } = job.attrs.data;
     if (feed && targets && limit && targets.length > 0) {
@@ -21,7 +22,7 @@ export default function (app, options) {
   });
 
   // unfollow many feeds
-  agenda.define('feed_unfollow_many', function (job, next) {
+  agenda.define('feed_unfollow_many', { lockLifetime }, function (job, next) {
     debug('>>> feed_unfollow_many', job.attrs.data);
     const { feed, sources } = job.attrs.data;
     if (feed && sources && sources.length > 0) {
@@ -31,8 +32,8 @@ export default function (app, options) {
     }
   });
 
-  // fanout tasks
-  agenda.define('fanout_operation', function (job, next) {
+  // fanout the operations
+  agenda.define('fanout_operation', { lockLifetime }, function (job, next) {
     debug('>>> fanout_operation', job.attrs.data);
     const { feed, targets } = job.attrs.data;
     if (feed && targets && targets.length > 0) {
