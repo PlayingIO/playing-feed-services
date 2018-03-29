@@ -30,4 +30,16 @@ export default function (app, options) {
       console.error('feed_unfollow_many job is not provided:', job.attrs.data);
     }
   });
+
+  // fanout tasks
+  agenda.define('fanout_operation', function (job, next) {
+    debug('>>> fanout_operation', job.attrs.data);
+    const { feed, targets } = job.attrs.data;
+    if (feed && targets && targets.length > 0) {
+      const svcFeedManager = app.service('feeds');
+      svcFeedManager.action('fanout').patch(feed, { targets }).then(next);
+    } else {
+      console.error('fanout_operation job is not provided:', job.attrs.data);
+    }
+  });
 }

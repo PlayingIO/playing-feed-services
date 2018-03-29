@@ -97,6 +97,7 @@ class FeedService extends BaseService {
     const svcFeeds = this.app.service(getFeedService(feed.group));
     await svcFeeds.action('addActivity').patch(id, data, params);
 
+    // fanout for all following feeds
     const followers = await getFollowers(this.app, feed.id);
     return feed;
   }
