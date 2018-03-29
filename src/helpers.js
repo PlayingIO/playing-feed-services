@@ -18,10 +18,10 @@ const groupByPriority = fp.groupBy(followship => {
          priority < 80? 'high' : 'highest';
 });
 
-export const getFollowers = async (app, target) => {
+export const getFollowers = async (app, target, limit, skip) => {
   const svcFollowship = app.service('followships');
   const followships = await svcFollowship.find({
-    query: { followee: target },
+    query: { followee: target, $sort: { priority: -1 }, $limit: limit, $skip: skip },
     paginate: false
   });
   const groupedFollowships = groupByPriority(followships);
@@ -30,10 +30,10 @@ export const getFollowers = async (app, target) => {
   }, groupedFollowships);
 };
 
-export const getFollowees = async (app, source) => {
+export const getFollowees = async (app, source, limit, skip) => {
   const svcFollowship = app.service('followships');
   const followships = await svcFollowship.find({
-    query: { follower: source },
+    query: { follower: source, $sort: { priority: -1 }, $limit: limit, $skip: skip },
     paginate: false
   });
   const groupedFollowships = groupByPriority(followships);
@@ -42,14 +42,14 @@ export const getFollowees = async (app, source) => {
   }, groupedFollowships);
 };
 
-export const addOperation = async (app, feed, activities) => {
+export const addActivities = async (app, feed, activities) => {
   const svcFeeds = app.service(getFeedService(feed));
   if (activities.length > 0) {
     return svcFeeds.action('addMany').patch(feed, activities);
   }
 };
 
-export const removeOperation = async (app, feed, activities) => {
+export const removeActivities = async (app, feed, activities) => {
   const svcFeeds = app.service(getFeedService(feed));
   if (activities.length > 0) {
     return svcFeeds.action('removeMany').patch(feed, activities);
