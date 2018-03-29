@@ -10,6 +10,24 @@ export const getFeedService = (id) => {
   return 'flat-feeds';
 };
 
+export const getFollowers = async (app, target) => {
+  const svcFollowship = app.service('followships');
+  const followships = await svcFollowship.find({
+    query: { followee: target },
+    paginate: false
+  });
+  return fp.map(fp.prop('follower'), followships);
+};
+
+export const getFollowees = async (app, source) => {
+  const svcFollowship = app.service('followships');
+  const followships = await svcFollowship.find({
+    query: { follower: source },
+    paginate: false
+  });
+  return fp.map(fp.prop('followee'), followships);
+};
+
 export const followMany = async (app, feed, targets, limit) => {
   const svcFeeds = app.service(getFeedService(feed));
   const svcActivities = app.service('activities');

@@ -5,7 +5,7 @@ import fp from 'mostly-func';
 
 import defaultHooks from './feed.hooks';
 import defaultJobs from './feed.jobs';
-import { getFeedService } from '../../helpers';
+import { getFeedService, getFollowers } from '../../helpers';
 
 const debug = makeDebug('playing:feed-services:feeds');
 
@@ -96,6 +96,8 @@ class FeedService extends BaseService {
     assert(feed, 'feed is not exists.');
     const svcFeeds = this.app.service(getFeedService(feed.group));
     await svcFeeds.action('addActivity').patch(id, data, params);
+
+    const followers = await getFollowers(this.app, feed.id);
     return feed;
   }
 
