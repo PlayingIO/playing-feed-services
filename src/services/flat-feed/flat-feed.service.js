@@ -3,9 +3,8 @@ import makeDebug from 'debug';
 import { Service, helpers, createService } from 'mostly-feathers-mongoose';
 import fp from 'mostly-func';
 
-import FlatFeedModel from '~/models/flat-feed.model';
+import FlatFeedModel from '../../models/flat-feed.model';
 import defaultHooks from './flat-feed.hooks';
-import defaultJobs from './flat-feed.jobs';
 
 const debug = makeDebug('playing:feed-services:flat-feeds');
 
@@ -18,7 +17,7 @@ const defaultOptions = {
 /**
  * The feed service allows you to add and remove activities from a feed.
  */
-class FlatFeedService extends Service {
+export class FlatFeedService extends Service {
   constructor (options) {
     options = Object.assign({}, defaultOptions, options);
     super(options);
@@ -27,7 +26,6 @@ class FlatFeedService extends Service {
   setup (app) {
     super.setup(app);
     this.hooks(defaultHooks(this.options));
-    defaultJobs(app, this.options);
   }
 
   /**

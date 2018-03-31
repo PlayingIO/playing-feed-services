@@ -1,7 +1,7 @@
 import { hooks } from 'mostly-feathers-mongoose';
 import { cache } from 'mostly-feathers-cache';
 
-import AggregatedFeedEntity from '~/entities/aggregated-feed.entity';
+import AggregatedFeedEntity from '../../entities/aggregated-feed.entity';
 
 export default function (options = {}) {
   return {

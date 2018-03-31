@@ -1,7 +1,7 @@
 import { hooks } from 'mostly-feathers-mongoose';
 import { cache } from 'mostly-feathers-cache';
 
-import FlatFeedEntity from '~/entities/flat-feed.entity';
+import FlatFeedEntity from '../../entities/flat-feed.entity';
 
 export default function (options = {}) {
   return {

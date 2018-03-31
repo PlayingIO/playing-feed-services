@@ -3,7 +3,7 @@ import makeDebug from 'debug';
 import { Service, createService } from 'mostly-feathers-mongoose';
 import fp from 'mostly-func';
 
-import ActivityModel from '~/models/activity.model';
+import ActivityModel from '../../models/activity.model';
 import defaultHooks from './activity.hooks';
 
 const debug = makeDebug('playing:feed-services:activities');
@@ -12,7 +12,7 @@ const defaultOptions = {
   name: 'activities'
 };
 
-class ActivityService extends Service {
+export class ActivityService extends Service {
   constructor (options) {
     options = Object.assign({}, defaultOptions, options);
     super(options);

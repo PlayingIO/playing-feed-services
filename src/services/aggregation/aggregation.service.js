@@ -3,7 +3,7 @@ import makeDebug from 'debug';
 import { Service, createService } from 'mostly-feathers-mongoose';
 import fp from 'mostly-func';
 
-import AggregationModel from '~/models/aggregation.model';
+import AggregationModel from '../../models/aggregation.model';
 import defaultHooks from './aggregation.hooks';
 
 const debug = makeDebug('playing:feed-services:aggregations');
@@ -12,7 +12,7 @@ const defaultOptions = {
   name: 'aggregations'
 };
 
-class AggregationService extends Service {
+export class AggregationService extends Service {
   constructor (options) {
     options = Object.assign({}, defaultOptions, options);
     super(options);

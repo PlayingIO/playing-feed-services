@@ -19,7 +19,7 @@ const defaultOptions = {
  * The Feed Manager class handles the fanout from a user's activity
  *  to all their follower's feeds
  */
-class FeedService extends BaseService {
+export class FeedService extends BaseService {
   constructor (options) {
     options = Object.assign({}, defaultOptions, options);
     super(options);
