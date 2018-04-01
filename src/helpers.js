@@ -52,13 +52,13 @@ export const getFollowees = async (app, source, limit, skip) => {
  * Fanout activities to follower feeds by chunks
  */
 export const fanoutOperations = async (app, feed, operation, activities, limit, skip = 0) => {
-  const priorityFollowers = await getFollowers(this.app, feed, limit, skip);
+  const priorityFollowers = await getFollowers(app, feed, limit, skip);
   if (!fp.isEmpty(priorityFollowers)) {
-    for (const [followers, priority] of priorityFollowers.entries) {
+    fp.forEachObjIndexed((followers, priority) => {
       app.agenda.now('fanout_operation', {
         operation, targets: followers, activities
       }).priority(priority);
-    }
+    }, priorityFollowers);
     await fanoutOperations(app, feed, operation, activities, limit, skip + limit);
   }
 };
