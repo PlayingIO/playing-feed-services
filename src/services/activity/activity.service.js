@@ -30,26 +30,12 @@ export class ActivityService extends Service {
       assert(item.verb, 'verb is not provided');
       assert(item.object && item.object.indexOf(':undefined') === -1, 'object is undefined');
     };
-    const svcFeeds = this.app.service('feeds');
     if (fp.is(Array, data)) {
       assert(data.length, 'cannot create empty array of activities.');
     } else {
       data = [data];
     }
     fp.forEach(validator, data);
-
-    // get all cc activities
-    const ccActivities = fp.reduce((arr, item) => {
-      const cc = [].concat(item.cc || []);
-      if (cc.length > 0) {
-        return arr.concat(fp.map(feed => {
-          return fp.assoc('feed', feed,
-                 fp.dissoc('cc', item));
-        }, cc));
-      }
-      return arr;
-    }, [], data);
-    data = fp.map(fp.dissoc('cc'), data).concat(ccActivities);
 
     if (data.length === 1) {
       return super.create(data[0], params);

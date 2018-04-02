@@ -2,6 +2,7 @@ import assert from 'assert';
 import makeDebug from 'debug';
 import { Service, helpers, createService } from 'mostly-feathers-mongoose';
 import fp from 'mostly-func';
+import { addActivities } from '../../helpers';
 
 import FlatFeedModel from '../../models/flat-feed.model';
 import defaultHooks from './flat-feed.hooks';
@@ -55,6 +56,20 @@ export class FlatFeedService extends Service {
     const svcActivities = this.app.service('activities');
     await svcActivities.create(data);
 
+    // get all cc activities
+    if (data.cc) {
+      const cc = fp.splitOrArray(data.cc);
+      let ccActivities = {};
+      for (const feed of cc) {
+        ccActivities[feed] = ccActivities[feed] || [];
+        ccActivities[feed].push(fp.dissoc('cc', data));
+      }
+      const addAll = fp.map(feed => {
+        return addActivities(this.app, feed, ccActivities[feed]);
+      }, fp.keys(ccActivities));
+      await Promise.all(addAll);
+    }
+
     // trim the feed sometimes
     if (Math.random() <= this.options.trimChance) {
       await this._trim(id, null, null, feed);
@@ -72,6 +87,23 @@ export class FlatFeedService extends Service {
 
     const svcActivities = this.app.service('activities');
     await svcActivities.create(data);
+
+    // get all cc activities
+    const ccActivities = fp.reduce((acc, item) => {
+      const cc = [].concat(item.cc || []);
+      for (const feed of cc) {
+        acc[feed] = acc[feed] || [];
+        acc[feed].push(fp.dissoc('cc', item));
+      }
+      return acc;
+    }, {}, data);
+    if (!fp.isEmpty(ccActivities)) {
+      const addAll = fp.map(feed => {
+        return addActivities(this.app, feed, ccActivities[feed]);
+      }, fp.keys(ccActivities));
+      await Promise.all(addAll);
+    }
+
     // trim the feed sometimes
     if (Math.random() <= this.options.trimChance) {
       await this._trim(id, null, null, feed);
