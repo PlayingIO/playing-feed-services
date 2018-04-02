@@ -8,8 +8,6 @@
  *
  * Available aggregation format variables:
  *  ${verb} ${time} ${object} ${target} ${id} ${actor}
- *
- * More Examples
  */
 
 const fields = {

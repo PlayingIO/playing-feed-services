@@ -5,11 +5,11 @@ const options = {
 
 /**
  * Flat feed is the default feed type - and the only feed type that you can follow.
- * 
+ *
  * Feed group name is used as discriminator key, so special group name like 'notification'
  * and 'aggregated' will be treated with as corresponding model. Other free-form group names
  * like 'user', 'timeline' are all flat feeds.
- * 
+ *
  * It's not possible to follow either aggregated or notification feeds.
  */
 const fields = {
