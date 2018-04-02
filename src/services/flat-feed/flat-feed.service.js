@@ -2,8 +2,8 @@ import assert from 'assert';
 import makeDebug from 'debug';
 import { Service, helpers, createService } from 'mostly-feathers-mongoose';
 import fp from 'mostly-func';
-import { addActivities } from '../../helpers';
 
+import { addActivities } from '../../helpers';
 import FlatFeedModel from '../../models/flat-feed.model';
 import defaultHooks from './flat-feed.hooks';
 

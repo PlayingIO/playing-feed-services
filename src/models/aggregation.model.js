@@ -1,3 +1,5 @@
+import activity from './activity.model';
+
 const options = {
   strict: false
 };
@@ -8,7 +10,7 @@ const options = {
 const fields = {
   actors: [{ type: String, required: true }],  // distinct actors (cache)
   objects: [{ type: String, required: true }], // distinct objects (cache)
-  activities: [{ type: 'ObjectId' }],          // aggregated activities
+  activities: [activity.schema],               // aggregated activities
   seenAt: { type: Date },                      // user opened/browsed the activity
   readAt: { type: Date }                       // user engaged with the activity
 };
