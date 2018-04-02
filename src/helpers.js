@@ -1,6 +1,8 @@
+import dateFn from 'date-fns';
 import makeDebug from 'debug';
 import { helpers } from 'mostly-feathers-mongoose';
 import fp from 'mostly-func';
+import { formatter } from 'mostly-utils-common';
 
 const debug = makeDebug('playing:feed-services:helpers');
 
@@ -8,6 +10,17 @@ export const getFeedService = (id) => {
   if (id.startsWith('aggregated')) return 'aggregated-feeds';
   if (id.startsWith('notification')) return 'notification-feeds';
   return 'flat-feeds';
+};
+
+/**
+ * Apply the aggregation format, available variables:
+ *  ${verb}, ${time}, ${object}, ${target}, ${id}, ${actor}, ${feed}
+ */
+export const formatAggregation = (format, activity) => {
+  const variables = fp.assign(activity, {
+    time: dateFn.format(activity.createdAt || new Date(), 'YYYY-MM-DD'),
+  });
+  return formatter(format, variables);
 };
 
 const groupByPriority = fp.groupBy(followship => {

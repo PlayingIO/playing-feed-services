@@ -12,9 +12,9 @@ const options = {
 const fields = {
   feed: { type: String, required: true },   // feed group id
   actor: { type: String, required: true },  // actor performing the activity
-  verb: { type: String, required: true },   // verb of the activity
-  object: { type: String, required: true }, // object of the activity
-  target: { type: String },                 // optional target of the activity
+  verb: { type: String, required: true },   // verb of the activity, i.e. loved, liked, followed
+  object: { type: String, required: true }, // object of the activity is related to
+  target: { type: String },                 // optional target where the activity is belongs to, i.e. Surf board
   cc: [{ type: String} ],                   // list of feeds to be copied
   foreignId: { type: String },              // unique ID for update this activity later (createdAt + foreignId)
   source: { type: String },                 // source feed of followship
