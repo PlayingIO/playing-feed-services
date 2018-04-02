@@ -60,19 +60,25 @@ export class ActivityService extends Service {
 
   async remove (id, params) {
     params = fp.assign({ query: {} }, params);
-    assert(id || params.query.foreignId || params.query.more, 'id or foreignId or more is not provided.');
+    assert(id || params.query.more, 'id or more is not provided.');
 
-    if (params.query.foreignId) {
-      // remove all activities in the feed with the provided foreignId
-      return super.remove(null, {
-        query: { foreignId: params.query.foreignId },
-        $multi: true
-      });
-    } else if (params.query.more) {
-      return super.remove(null, {
-        query: { _id: { $in: params.query.more } },
-        $multi: true
-      });
+    if (params.query.more) {
+      let more = fp.splitOrArray(params.query.more);
+      if (more.length > 0) {
+        if (more[0].foreignId) {
+          // remove all activities in the feed with the provided foreignId
+          return super.remove(null, {
+            query: { foreignId: { $in: fp.map(fp.prop('foreignId'), more) } },
+            $multi: true
+          });
+        } else {
+          more = fp.concat(more, id || []);
+          return super.remove(null, {
+            query: { _id: { $in: more } },
+            $multi: true
+          });
+        }
+      }
     } else {
       return super.remove(id, params);
     }
