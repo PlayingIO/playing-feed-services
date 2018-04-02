@@ -9,7 +9,8 @@ import defaultHooks from './aggregation.hooks';
 const debug = makeDebug('playing:feed-services:aggregations');
 
 const defaultOptions = {
-  name: 'aggregations'
+  name: 'aggregations',
+  maxAggregatedLength: 15 // max number of aggregated activities in a Aggragation
 };
 
 export class AggregationService extends Service {
@@ -24,12 +25,23 @@ export class AggregationService extends Service {
   }
 
   async create (data, params) {
-    const svcFeeds = this.app.service('feeds');
-    assert(data.feed && data.feed.indexOf(':undefined') === -1, 'data.feed is undefined');
-    assert(data.activities, 'data.activities is not provided');
-
-    const activity = await super.create(fp.dissoc('cc', data), params);
-    return activity;
+    const validator = (item) => {
+      assert(item.feed && item.feed.indexOf(':undefined') === -1, 'feed is undefined');
+      assert(item.actor && item.actor.indexOf(':undefined') === -1, 'actor is undefined');
+      assert(item.verb, 'verb is not provided');
+      assert(item.group, 'group is not provided');
+      assert(item.object && item.object.indexOf(':undefined') === -1, 'object is undefined');
+    };
+    if (fp.is(Array, data)) {
+      assert(data.length, 'cannot create empty array of activities.');
+    } else {
+      data = [data];
+    }
+    fp.forEach(validator, data);
+    return this.Model.addMany(data).then((counters) => {
+      debug('aggregation addMany', counters);
+      return counters;
+    });
   }
 }
 
