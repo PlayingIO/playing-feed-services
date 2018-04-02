@@ -19,8 +19,8 @@ export default function (options = {}) {
     },
     after: {
       all: [
-        cache(options.cache),
         hooks.assoc('activities', { service: 'activities', field: 'feed', limit: options.followLimit }),
+        cache(options.cache),
         hooks.presentEntity(FlatFeedEntity, options.entities),
         hooks.responder()
       ]

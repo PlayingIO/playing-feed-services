@@ -63,14 +63,14 @@ export const fanoutOperations = async (app, feed, operation, activities, limit, 
   }
 };
 
-export const addActivities = async (app, feed, activities) => {
+export const addActivities = (app, feed, activities) => {
   const svcFeeds = app.service(getFeedService(feed));
   if (activities.length > 0) {
     return svcFeeds.action('addMany').patch(feed, activities);
   }
 };
 
-export const removeActivities = async (app, feed, activities) => {
+export const removeActivities = (app, feed, activities) => {
   const svcFeeds = app.service(getFeedService(feed));
   if (activities.length > 0) {
     return svcFeeds.action('removeMany').patch(feed, activities);
