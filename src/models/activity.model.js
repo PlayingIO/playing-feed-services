@@ -1,5 +1,6 @@
 const options = {
   timestamps: true,
+  discriminatorKey: 'type',
   strict: false
 };
 
@@ -9,7 +10,7 @@ const options = {
  * [Activity Streams Specification 1.0](http://activitystrea.ms/specs/json/1.0/)
  */
 const fields = {
-  feed: { type: String, required: true },   // feed group
+  feed: { type: String, required: true },   // feed group id
   actor: { type: String, required: true },  // actor performing the activity
   verb: { type: String, required: true },   // verb of the activity
   object: { type: String, required: true }, // object of the activity
