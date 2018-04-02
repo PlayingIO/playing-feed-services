@@ -43,6 +43,26 @@ export class AggregationService extends Service {
       return counters;
     });
   }
+
+  async remove (id, params) {
+    params = fp.assign({ query: {} }, params);
+    assert(id || params.query.more, 'id or more is not provided.');
+
+    if (params.query.more) {
+      let more = fp.splitOrArray(params.query.more);
+      if (more.length > 0) {
+        if (more[0].foreignId) {
+          // remove all activities in the feed with the provided foreignId
+          return this.Model.removeMany(fp.map(fp.prop('foreignId'), more));
+        } else {
+          more = fp.concat(more, id || []);
+          return this.Model.removeMany(fp.map(_id => ({ _id }), more));
+        }
+      }
+    } else {
+      return this.Model.removeMany([{ _id: id }]);
+    }
+  }
 }
 
 export default function init (app, options, hooks) {
