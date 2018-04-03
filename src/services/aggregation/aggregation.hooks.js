@@ -19,8 +19,9 @@ export default function (options = {}) {
     },
     after: {
       all: [
-        hooks.populate('actors', { retained: false }),
-        hooks.populate('objects', { retained: false }),
+        hooks.populate('activities.actor', { retained: false }),
+        hooks.populate('activities.object', { retained: false }),
+        hooks.populate('activities.target', { retained: false }),
         cache(options.cache),
         hooks.presentEntity(AggregationEntity, options.entities),
         hooks.responder()
