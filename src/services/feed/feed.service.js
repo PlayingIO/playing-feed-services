@@ -11,8 +11,9 @@ const debug = makeDebug('playing:feed-services:feeds');
 
 const defaultOptions = {
   name: 'feeds',
-  followLimit: 500, // the number of activities which enter your feed when you follow someone
-  fanoutLimit: 100, // number of following feeds are handled in one task when doing the fanout
+  followLimit: 500,  // the number of activities which enter your feed when you follow someone
+  fanoutLimit: 100,  // number of following feeds are handled in one task when doing the fanout
+  keepHistory: false // whether the activities from the unfollowed feed should be removed
 };
 
 /**
@@ -196,10 +197,12 @@ export class FeedService extends BaseService {
       $multi: true
     });
 
-    // task to unfollow activities
-    this.app.agenda.now('feed_unfollow_many', {
-      feed: feed.id, sources: [sourceFeed.id]
-    });
+    // task to unfollow activities if not keep history
+    if (!(params.query.keepHistory || this.options.keepHistory)) {
+      this.app.agenda.now('feed_unfollow_many', {
+        feed: feed.id, sources: [sourceFeed.id]
+      });
+    }
 
     return followship;
   }
