@@ -94,15 +94,7 @@ export class FeedService extends BaseService {
    * Add an activity
    */
   async _addActivity (id, data, params, feed) {
-    assert(feed, 'feed is not exists.');
-    const svcFeeds = this.app.service(getFeedService(feed.group));
-    await svcFeeds.action('addActivity').patch(id, data, params);
-
-    // fanout for all following feeds
-    const activities = [fp.assoc('source', feed.id, data)];
-    fanoutOperations(this.app, feed.id, 'addActivities', activities, this.options.fanoutLimit);
-
-    return feed;
+    return this._addMany(id, [data], params, feed);
   }
 
   /**
