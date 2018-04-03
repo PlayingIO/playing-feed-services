@@ -43,13 +43,16 @@ export class AggregatedFeedService extends Service {
   }
 
   /**
-   * Add an activity
+   * Add many activities in bulk
    */
-  async _addActivity (id, data, params, feed) {
+  async _addMany (id, data, params, feed) {
     assert(feed, 'feed is not exists.');
-    assert(data.actor && data.verb && data.object, 'activity is not provided.');
-    data.feed = feed.id;
-    data.group = formatAggregation(feed.aggregation, data);
+    assert(fp.is(Array, data) && data.length > 0, 'data is an array or is empty.');
+    data = fp.map(item => {
+      item.feed = feed.id,
+      item.group = formatAggregation(feed.aggregation, item);
+      return item;
+    }, data);
 
     const svcAggregations = this.app.service('aggregations');
     await svcAggregations.create(data);
@@ -62,9 +65,9 @@ export class AggregatedFeedService extends Service {
   }
 
   /**
-   * Remove an activity
+   * Remove an activity in bulk
    */
-  async _removeActivity (id, data, params, feed) {
+  async _removeMany (id, data, params, feed) {
     assert(feed, 'feed is not exists.');
     assert(data.activity || data.foreignId, 'activity or foreignId is not provided.');
 
