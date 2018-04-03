@@ -1,6 +1,6 @@
 const options = {
   timestamps: true,
-  discriminatorKey: 'group'
+  discriminatorKey: 'type'
 };
 
 /**
@@ -16,6 +16,7 @@ const fields = {
   id: { type: String, required: true, unique: true }, // id as group + ':' + target
   group: { type: String, required: true },            // feed group name, like user, timeline with meanings
   target: { type: String, required: true },           // target id
+  type: { type: String, default: 'flat' },            // discriminator key
   maxLength: { type: Number, default: 1000 },         // the max length of activities before trimming
   realtime: { type: Boolean, default: true }          // enable realtime notifications
 };
