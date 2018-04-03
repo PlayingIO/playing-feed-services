@@ -14,7 +14,6 @@ const fields = {
   aggregation: { type: String,           // aggregation format
     default: '${verb}-${time}'           // default based on the day and verb
   },
-  activities: [{ type: 'ObjectId' }],    // most recent activities
   seenAt: { type: Date },                // user opened/browsed the content
   readAt: { type: Date }                 // user engaged with the content
 };
