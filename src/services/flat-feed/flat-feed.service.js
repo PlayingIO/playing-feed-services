@@ -88,8 +88,8 @@ export class FlatFeedService extends Service {
     assert(feed, 'feed is not exists.');
     assert(fp.is(Array, data) && data.length > 0, 'data is an array or is empty.');
     const more = fp.map(m => {
-      if (m.foreignId) return { feed: feed.id, foreignId: m.foreignId };
-      return { feed: feed.id, id: helpers.getId(m) };
+      if (m.foreignId) return { foreignId: m.foreignId };
+      return helpers.getId(m);
     }, data);
 
     const svcActivities = this.app.service('activities');
