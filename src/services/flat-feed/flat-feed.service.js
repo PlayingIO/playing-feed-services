@@ -120,13 +120,12 @@ export class FlatFeedService extends Service {
 
     const svcActivities = this.app.service('activities');
     if (data.foreignId) {
-      await svcActivities.remove(null, {
-        query: { foreignId: data.foreignId },
-        $multi: true
-      });
+      const more = { foreignId: data.foreignId };
+      await svcActivities.remove(null, { query: { more } });
     } else {
       await svcActivities.remove(data.activity);
     }
+
     // trim the feed sometimes
     if (Math.random() <= this.options.trimChance) {
       await this._trim(id, null, null, feed);
@@ -147,6 +146,7 @@ export class FlatFeedService extends Service {
 
     const svcActivities = this.app.service('activities');
     await svcActivities.remove(null, { query: { more } });
+
     // trim the feed sometimes
     if (Math.random() <= this.options.trimChance) {
       await this._trim(id, null, null, feed);
