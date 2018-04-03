@@ -46,38 +46,6 @@ export class FlatFeedService extends Service {
   }
 
   /**
-   * Add an activity
-   */
-  async _addActivity (id, data, params, feed) {
-    assert(feed, 'feed is not exists.');
-    assert(data.actor && data.verb && data.object, 'activity is not provided.');
-    data.feed = feed.id;
-
-    const svcActivities = this.app.service('activities');
-    await svcActivities.create(data);
-
-    // get all cc activities
-    if (data.cc) {
-      const cc = fp.splitOrArray(data.cc);
-      let ccActivities = {};
-      for (const feed of cc) {
-        ccActivities[feed] = ccActivities[feed] || [];
-        ccActivities[feed].push(fp.dissoc('cc', data));
-      }
-      const addAll = fp.map(feed => {
-        return addActivities(this.app, feed, ccActivities[feed]);
-      }, fp.keys(ccActivities));
-      await Promise.all(addAll);
-    }
-
-    // trim the feed sometimes
-    if (Math.random() <= this.options.trimChance) {
-      await this._trim(id, null, null, feed);
-    }
-    return feed;
-  }
-
-  /**
    * Add many activities in bulk
    */
   async _addMany (id, data, params, feed) {
@@ -85,6 +53,7 @@ export class FlatFeedService extends Service {
     assert(fp.is(Array, data) && data.length > 0, 'data is an array or is empty.');
     data = fp.map(fp.assoc('feed', feed.id), data);
 
+    // add provided activities
     const svcActivities = this.app.service('activities');
     await svcActivities.create(data);
 
@@ -98,32 +67,11 @@ export class FlatFeedService extends Service {
       return acc;
     }, {}, data);
     if (!fp.isEmpty(ccActivities)) {
+      // add all cc activities
       const addAll = fp.map(feed => {
         return addActivities(this.app, feed, ccActivities[feed]);
       }, fp.keys(ccActivities));
       await Promise.all(addAll);
-    }
-
-    // trim the feed sometimes
-    if (Math.random() <= this.options.trimChance) {
-      await this._trim(id, null, null, feed);
-    }
-    return feed;
-  }
-
-  /**
-   * Remove an activity
-   */
-  async _removeActivity (id, data, params, feed) {
-    assert(feed, 'feed is not exists.');
-    assert(data.activity || data.foreignId, 'activity or foreignId is not provided.');
-
-    const svcActivities = this.app.service('activities');
-    if (data.foreignId) {
-      const more = { foreignId: data.foreignId };
-      await svcActivities.remove(null, { query: { more } });
-    } else {
-      await svcActivities.remove(data.activity);
     }
 
     // trim the feed sometimes
@@ -140,8 +88,8 @@ export class FlatFeedService extends Service {
     assert(feed, 'feed is not exists.');
     assert(fp.is(Array, data) && data.length > 0, 'data is an array or is empty.');
     const more = fp.map(m => {
-      if (m.foreignId) return { foreignId: m.foreignId };
-      return helpers.getId(m);
+      if (m.foreignId) return { feed: feed.id, foreignId: m.foreignId };
+      return { feed: feed.id, id: helpers.getId(m) };
     }, data);
 
     const svcActivities = this.app.service('activities');
