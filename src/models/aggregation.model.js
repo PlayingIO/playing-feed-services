@@ -4,6 +4,7 @@ import activity from './activity.model';
 const options = {
   strict: false
 };
+const MaxAggregatedLength = 15; // max number of aggregated activities in an Aggragation
 
 /**
  * Aggregated activity
@@ -21,23 +22,35 @@ const fields = {
 const addMany = (mongoose, model) => (activities) => {
   if (!Array.isArray(activities)) activities = [activities];
   const Aggregation = mongoose.model(model);
+
+  const groupedActivities = fp.groupWith(a => a.feed + a.group + a.verb, activities);
   return new Promise((resolve, reject) => {
     // bulk with unordered to increase performance
     const bulk = Aggregation.collection.initializeUnorderedBulkOp();
-    activities.forEach(activity => {
+    groupedActivities.forEach(acts => {
+      // add timestamp fields
+      const { feed, group, verb } = acts[0];
+      acts = fp.map(fp.pipe(
+        fp.assoc('createdAt', new Date()),
+        fp.assoc('updatedAt', new Date()),
+        fp.dissoc('group')
+      ), acts);
+      // bulk upsert
       bulk.find({
-        feed: activity.feed,
-        group: activity.group,
-        verb: activity.verb
+        feed, group, verb,
+        [`activities.${MaxAggregatedLength}`]: { $exists: false } // max size to upsert
       }).upsert().updateOne({
         $push: {
-          activities: fp.dissoc('group', activity)
+          activities: {
+            $each: acts,
+            $sort: { updatedAt: -1 }
+          }
         }
       });
     });
     bulk.execute((err, result) => {
       if (err) return reject(err);
-      return resolve(result);
+      return resolve(result.toJSON());
     });
   });
 };
