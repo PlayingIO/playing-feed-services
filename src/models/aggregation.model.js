@@ -39,7 +39,7 @@ const addMany = (mongoose, model) => (activities) => {
       bulk.find({
         feed, group, verb,
         type: 'aggregation',
-        [`activities.${MaxAggregatedLength}`]: { $exists: false } // max size to upsert
+        [`activities.${MaxAggregatedLength-1}`]: { $exists: false } // max size to upsert
       }).upsert().updateOne({
         $setOnInsert: { createdAt: new Date() },
         $currentDate: { updatedAt: true },
