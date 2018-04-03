@@ -51,8 +51,30 @@ export class AggregatedFeedService extends Service {
     data.feed = feed.id;
     data.group = formatAggregation(feed.aggregation, data);
 
-    const svcActivities = this.app.service('aggregations');
-    await svcActivities.create(data);
+    const svcAggregations = this.app.service('aggregations');
+    await svcAggregations.create(data);
+
+    // trim the feed sometimes
+    if (Math.random() <= this.options.trimChance) {
+      await this._trim(id, null, null, feed);
+    }
+    return feed;
+  }
+
+  /**
+   * Remove an activity
+   */
+  async _removeActivity (id, data, params, feed) {
+    assert(feed, 'feed is not exists.');
+    assert(data.activity || data.foreignId, 'activity or foreignId is not provided.');
+
+    const svcAggregations = this.app.service('aggregations');
+    if (data.foreignId) {
+      const more = { foreignId: data.foreignId };
+      await svcAggregations.remove(null, { query: { more } });
+    } else {
+      await svcAggregations.remove(data.activity);
+    }
 
     // trim the feed sometimes
     if (Math.random() <= this.options.trimChance) {
