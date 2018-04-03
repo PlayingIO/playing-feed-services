@@ -16,7 +16,7 @@ const fields = {
   object: { type: String },                    // object of the activity is related to
   target: { type: String },                    // optional target where the activity is belongs to, i.e. Surf board
   type: { type: String, default: 'activity' }, // discriminator key
-  cc: [{ type: String} ],                      // list of feeds to be copied
+  cc: { type: Array, default: undefined },     // list of feeds to be copied
   foreignId: { type: String },                 // unique ID for update this activity later (createdAt + foreignId)
   source: { type: String },                    // source feed of followship
   popularity: { type: Number, default: 1 },    // ranking of the activity
