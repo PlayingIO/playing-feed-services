@@ -58,6 +58,43 @@ const addMany = (mongoose, model) => (activities) => {
   });
 };
 
+// remove many
+const removeMany = (mongoose, model) => (activities) => {
+  if (!Array.isArray(activities)) activities = [activities];
+  const Aggregation = mongoose.model(model);
+
+  return new Promise((resolve, reject) => {
+    // bulk with unordered to increase performance
+    const bulk = Aggregation.collection.initializeUnorderedBulkOp();
+    activities.forEach(activity => {
+      // add timestamp fields
+      const { _id, foreignId } = activity;
+      if (_id) {
+        bulk.find({
+          'activities._id': _id
+        }).updateOne({
+          $pull: {
+            activities: { _id }
+          }
+        });
+      } else {
+        bulk.find({
+          'activities.foreignId': foreignId
+        }).updateOne({
+          $pull: {
+            activities: { foreignId }
+          }
+        });
+      }
+    });
+    bulk.execute((err, result) => {
+      if (err) return reject(err);
+      return resolve(result.toJSON());
+    });
+  });
+};
+
+
 export default function model (app, name) {
   const mongoose = app.get('mongoose');
   const ActivityModel = mongoose.model('activity');
@@ -65,6 +102,7 @@ export default function model (app, name) {
   schema.index({ feed: 1, group: 1, verb: 1 });
 
   schema.statics.addMany = addMany(mongoose, name);
+  schema.statics.removeMany = removeMany(mongoose, name);
 
   return ActivityModel.discriminator(name, schema);
 }
