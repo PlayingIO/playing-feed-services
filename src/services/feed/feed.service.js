@@ -124,15 +124,7 @@ export class FeedService extends BaseService {
    * Remove an activity
    */
   async _removeActivity (id, data, params, feed) {
-    assert(feed, 'feed is not exists.');
-    const svcFeeds = this.app.service(getFeedService(feed.group));
-    await svcFeeds.action('removeActivity').patch(id, data, params);
-
-    // fanout for all following feeds
-    const activities = [fp.assoc('source', feed.id, data)];
-    fanoutOperations(this.app, feed.id, 'removeActivities', activities, this.options.fanoutLimit);
-
-    return feed;
+    return this._removeMany(id, [data], params, feed);
   }
 
   /**
