@@ -49,7 +49,7 @@ export class AggregatedFeedService extends Service {
     assert(feed, 'feed is not exists.');
     assert(data.actor && data.verb && data.object, 'activity is not provided.');
     data.feed = feed.id;
-    data.group = formatAggregation(feed.foramt, data);
+    data.group = formatAggregation(feed.aggregation, data);
 
     const svcActivities = this.app.service('aggregations');
     await svcActivities.create(data);

@@ -9,8 +9,7 @@ import defaultHooks from './aggregation.hooks';
 const debug = makeDebug('playing:feed-services:aggregations');
 
 const defaultOptions = {
-  name: 'aggregations',
-  maxAggregatedLength: 15 // max number of aggregated activities in a Aggragation
+  name: 'aggregations'
 };
 
 export class AggregationService extends Service {
@@ -38,10 +37,10 @@ export class AggregationService extends Service {
       data = [data];
     }
     fp.forEach(validator, data);
-    return this.Model.addMany(data).then((counters) => {
-      debug('aggregation addMany', counters);
-      return counters;
-    });
+
+    const counters = await this.Model.addMany(data);
+    debug('aggregation addMany', counters);
+    return counters;
   }
 
   async remove (id, params) {
