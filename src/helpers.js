@@ -98,8 +98,11 @@ export const followMany = async (app, feed, targets, limit) => {
     query: { feed: target, $limit: limit },
     paginate: false
   }), targets));
-  activities = fp.map(fp.renameKeys({ feed: 'source' }),
-    fp.reject(fp.isNil, fp.flatten(activities)));
+  activities = fp.reject(fp.isNil, fp.flatten(activities));
+  activities = fp.map(fp.pipe(
+    fp.renameKeys({ feed: 'source' }),
+    fp.dissoc('id')
+  ), activities);
   if (activities.length > 0) {
     return svcFeeds.action('addMany').patch(feed, activities);
   }
