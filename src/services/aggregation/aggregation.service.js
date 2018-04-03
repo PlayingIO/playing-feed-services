@@ -52,7 +52,7 @@ export class AggregationService extends Service {
       if (more.length > 0) {
         if (more[0].foreignId) {
           // remove all activities in the feed with the provided foreignId
-          return this.Model.removeMany(fp.map(fp.prop('foreignId'), more));
+          return this.Model.removeMany(more);
         } else {
           more = fp.concat(more, id || []);
           return this.Model.removeMany(fp.map(_id => ({ _id }), more));
