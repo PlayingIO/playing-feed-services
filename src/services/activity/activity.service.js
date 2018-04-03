@@ -51,19 +51,23 @@ export class ActivityService extends Service {
     if (params.query.more) {
       let more = fp.splitOrArray(params.query.more);
       if (more.length > 0) {
-        if (more[0].foreignId) {
-          // remove all activities in the feed with the provided foreignId
-          return super.remove(null, {
-            query: { foreignId: { $in: fp.map(fp.prop('foreignId'), more) } },
-            $multi: true
-          });
-        } else {
-          more = fp.concat(more, id || []);
-          return super.remove(null, {
-            query: { _id: { $in: more } },
-            $multi: true
-          });
+        let query = null;
+        // by object id
+        if (more[0].id) {
+          more = fp.map(fp.prop('id'), more).concat(id || []);
+          query = { _id: { $in: more } };
         }
+        // by object foreignId
+        else if (more[0].foreignId) {
+          // remove all activities in the feed with the provided foreignId
+          query = { foreignId: { $in: fp.map(fp.prop('foreignId'), more) } };
+        }
+        // by string id
+        else {
+          more = fp.concat(more, id || []);
+          query = { _id: { $in: more } };
+        }
+        return super.remove(null, { query, $multi: true });
       }
     } else {
       return super.remove(id, params);

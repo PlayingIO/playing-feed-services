@@ -87,13 +87,9 @@ export class FlatFeedService extends Service {
   async _removeMany (id, data, params, feed) {
     assert(feed, 'feed is not exists.');
     assert(fp.is(Array, data) && data.length > 0, 'data is an array or is empty.');
-    const more = fp.map(m => {
-      if (m.foreignId) return { foreignId: m.foreignId };
-      return helpers.getId(m);
-    }, data);
 
     const svcActivities = this.app.service('activities');
-    await svcActivities.remove(null, { query: { more } });
+    await svcActivities.remove(null, { query: { more: data } });
 
     // trim the feed sometimes
     if (Math.random() <= this.options.trimChance) {
