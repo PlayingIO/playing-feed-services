@@ -11,10 +11,12 @@
  */
 
 const fields = {
-  aggregation: { type: 'Mixed', required: true }, // aggregation format (templated string) to use
-  activities: [{ type: 'ObjectId' }],             // most recent activities
-  seenAt: { type: Date },                         // user opened/browsed the content
-  readAt: { type: Date }                          // user engaged with the content
+  aggregation: { type: String,           // aggregation format
+    default: '${verb}-${time}'           // default based on the day and verb
+  },
+  activities: [{ type: 'ObjectId' }],    // most recent activities
+  seenAt: { type: Date },                // user opened/browsed the content
+  readAt: { type: Date }                 // user engaged with the content
 };
 
 export default function model (app, name) {
