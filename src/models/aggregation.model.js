@@ -27,22 +27,24 @@ const addMany = (mongoose, model) => (activities) => {
   return new Promise((resolve, reject) => {
     // bulk with unordered to increase performance
     const bulk = Aggregation.collection.initializeUnorderedBulkOp();
-    groupedActivities.forEach(acts => {
+    groupedActivities.forEach(items => {
       // add timestamp fields
-      const { feed, group, verb } = acts[0];
-      acts = fp.map(fp.pipe(
+      const { feed, group, verb } = items[0];
+      items = fp.map(fp.pipe(
         fp.assoc('createdAt', new Date()),
         fp.assoc('updatedAt', new Date()),
         fp.dissoc('group')
-      ), acts);
+      ), items);
       // bulk upsert
       bulk.find({
         feed, group, verb,
         [`activities.${MaxAggregatedLength}`]: { $exists: false } // max size to upsert
       }).upsert().updateOne({
+        $setOnInsert: { createdAt: new Date() },
+        $currentDate: { updatedAt: true },
         $push: {
           activities: {
-            $each: acts,
+            $each: items,
             $sort: { updatedAt: -1 }
           }
         }
