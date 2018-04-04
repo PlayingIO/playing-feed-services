@@ -55,13 +55,17 @@ export class AggregatedFeedService extends Service {
     }, data);
 
     const svcAggregations = this.app.service('aggregations');
-    await svcAggregations.create(data);
+    const results = await svcAggregations.create(data);
+
+    // aggregated feed do not support cc at present,
+    // often an activity is add to a flat feed and cc to an aggregated feed
+    // so there maybe duplication when the aggregated feed is following the flat feed
 
     // trim the feed sometimes
     if (Math.random() <= this.options.trimChance) {
       await trimFeedActivities(this.app, feed);
     }
-    return feed;
+    return results;
   }
 
   /**
