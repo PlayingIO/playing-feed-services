@@ -104,13 +104,13 @@ export class FeedService extends BaseService {
   async _addMany (id, data, params, feed) {
     assert(feed, 'feed is not exists.');
     const svcFeeds = this.app.service(getFeedService(feed.group));
-    await svcFeeds.action('addMany').patch(id, data, params);
+    const results = await svcFeeds.action('addMany').patch(id, data, params);
 
     // fanout for all following feeds
     const activities = fp.map(fp.assoc('source', feed.id), data);
     fanoutOperations(this.app, feed.id, 'addActivities', activities, this.options.fanoutLimit);
 
-    return feed;
+    return results;
   }
 
   /**
@@ -126,13 +126,13 @@ export class FeedService extends BaseService {
   async _removeMany (id, data, params, feed) {
     assert(feed, 'feed is not exists.');
     const svcFeeds = this.app.service(getFeedService(feed.group));
-    await svcFeeds.action('removeMany').patch(id, data, params);
+    const results = await svcFeeds.action('removeMany').patch(id, data, params);
 
     // fanout for all following feeds
     const activities = fp.map(fp.assoc('source', feed.id), data);
     fanoutOperations(this.app, feed.id, 'removeActivities', activities, this.options.fanoutLimit);
 
-    return feed;
+    return results;
   }
 
   /**

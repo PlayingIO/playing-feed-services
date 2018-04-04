@@ -17,7 +17,7 @@ const fields = {
   target: { type: String },                    // optional target where the activity is belongs to, i.e. Surf board
   type: { type: String, default: 'activity' }, // discriminator key
   cc: { type: Array, default: undefined },     // list of feeds to be copied
-  foreignId: { type: String },                 // unique ID for update this activity later (createdAt + foreignId)
+  foreignId: { type: String },                 // unique ID for update this activity later in your app
   source: { type: String },                    // source feed of followship
   popularity: { type: Number, default: 1 },    // ranking of the activity
   // other free form fields as needed

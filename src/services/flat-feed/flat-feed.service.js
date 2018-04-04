@@ -55,7 +55,7 @@ export class FlatFeedService extends Service {
 
     // add provided activities
     const svcActivities = this.app.service('activities');
-    await svcActivities.create(data);
+    const results = await svcActivities.create(data);
 
     // get all cc activities
     const ccActivities = fp.reduce((acc, item) => {
@@ -78,7 +78,7 @@ export class FlatFeedService extends Service {
     if (Math.random() <= this.options.trimChance) {
       await this._trim(id, null, null, feed);
     }
-    return feed;
+    return results;
   }
 
   /**
@@ -89,13 +89,13 @@ export class FlatFeedService extends Service {
     assert(fp.is(Array, data) && data.length > 0, 'data is an array or is empty.');
 
     const svcActivities = this.app.service('activities');
-    await svcActivities.remove(null, { query: { more: data } });
+    const results = await svcActivities.remove(null, { query: { more: data } });
 
     // trim the feed sometimes
     if (Math.random() <= this.options.trimChance) {
       await this._trim(id, null, null, feed);
     }
-    return feed;
+    return results;
   }
 
   /**
