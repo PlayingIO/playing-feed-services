@@ -76,6 +76,9 @@ export const fanoutOperations = async (app, feed, operation, activities, limit, 
   }
 };
 
+/**
+ * Add activites to feed
+ */
 export const addActivities = (app, feed, activities) => {
   const svcFeeds = app.service(getFeedService(feed));
   if (activities.length > 0) {
@@ -83,6 +86,9 @@ export const addActivities = (app, feed, activities) => {
   }
 };
 
+/**
+ * Remove activites from feed
+ */
 export const removeActivities = (app, feed, activities) => {
   const svcFeeds = app.service(getFeedService(feed));
   if (activities.length > 0) {
@@ -90,6 +96,9 @@ export const removeActivities = (app, feed, activities) => {
   }
 };
 
+/**
+ * Add activites from following target feeds
+ */
 export const followMany = async (app, feed, targets, limit) => {
   const svcFeeds = app.service(getFeedService(feed));
   const svcActivities = app.service('activities');
@@ -108,6 +117,9 @@ export const followMany = async (app, feed, targets, limit) => {
   }
 };
 
+/**
+ * Remove activites from unfollowed source feeds
+ */
 export const unfollowMany = async (app, feed, sources) => {
   const svcFeeds = app.service(getFeedService(feed));
   const svcActivities = app.service('activities');
