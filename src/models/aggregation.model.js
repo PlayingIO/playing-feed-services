@@ -89,6 +89,11 @@ const removeMany = (mongoose, model) => (activities) => {
     });
     bulk.execute((err, result) => {
       if (err) return reject(err);
+      // remove aggregation activity with empty activities
+      Aggregation.collection.remove({
+        type: 'aggregation',
+        activities: { $size: 0 }
+      });
       return resolve(result.toJSON());
     });
   });
