@@ -13,6 +13,9 @@
 const fields = {
   aggregation: { type: String,           // aggregation format
     default: '${verb}-${time}'           // default based on the verb and day
+  },
+  rank: { type: Object,                  // custom ranking
+    default: { updatedAt: -1 }           // default by updatedAt desc
   }
 };
 

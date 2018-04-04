@@ -5,6 +5,9 @@ const fields = {
   aggregation: { type: String,           // aggregation format
     default: '${verb}-${object}-${time}' // default based on the verb, object and day
   },
+  rank: { type: Object,                  // custom ranking
+    default: { updatedAt: -1 }           // default by updatedAt desc
+  },
   seenAt: { type: Date },                // user opened/browsed the content
   readAt: { type: Date }                 // user engaged with the content
 };
