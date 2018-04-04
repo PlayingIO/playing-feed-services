@@ -39,7 +39,7 @@ export class AggregationService extends Service {
     }
     fp.forEach(validator, data);
 
-    const counters = await this.Model.addMany(data, this.options.maxAggregatedLength);
+    const counters = await this.Model.addMany(data, params.$rank, this.options.maxAggregatedLength);
     debug('aggregation addMany', counters);
     return counters;
   }

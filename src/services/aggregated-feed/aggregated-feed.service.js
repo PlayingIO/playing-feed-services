@@ -55,7 +55,7 @@ export class AggregatedFeedService extends Service {
     }, data);
 
     const svcAggregations = this.app.service('aggregations');
-    const results = await svcAggregations.create(data);
+    const results = await svcAggregations.create(data, { $rank: feed.rank });
 
     // aggregated feed do not support cc at present,
     // often an activity is add to a flat feed and cc to an aggregated feed
