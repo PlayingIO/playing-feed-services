@@ -1,12 +1,13 @@
-import aggregatedFeed from './aggregated-feed.model';
-
 /**
  * Notification feeds are similar to aggregated feeds can be marked as seen or read.
  */
-const fields = Object.assign(aggregatedFeed.schema, {
+const fields = {
+  aggregation: { type: String,           // aggregation format
+    default: '${verb}-${object}-${time}' // default based on the verb, object and day
+  },
   seenAt: { type: Date },                // user opened/browsed the content
   readAt: { type: Date }                 // user engaged with the content
-});
+};
 
 export default function model (app, name) {
   const mongoose = app.get('mongoose');

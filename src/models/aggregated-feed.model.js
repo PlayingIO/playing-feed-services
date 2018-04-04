@@ -12,7 +12,7 @@
 
 const fields = {
   aggregation: { type: String,           // aggregation format
-    default: '${verb}-${time}'           // default based on the day and verb
+    default: '${verb}-${time}'           // default based on the verb and day
   }
 };
 
