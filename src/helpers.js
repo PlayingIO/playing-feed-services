@@ -124,3 +124,23 @@ export const unfollowMany = async (app, feed, sources) => {
     return svcFeeds.action('removeMany').patch(feed, activities);
   }
 };
+
+/**
+ * trim the feed activities
+ */
+export const trimFeedActivities = async (app, feed) => {
+  const svcActivities = app.service('activities');
+  if (feed && feed.maxLength) {
+    const maxActivity = await svcActivities.find({
+      query: { feed: feed.id, $select: 'id', $skip: feed.maxLength - 1, $limit: 1 },
+      paginate: false
+    });
+    if (maxActivity && maxActivity.length > 0) {
+      return svcActivities.remove(null, { query: {
+        feed: feed.id,
+        _id: { $lt: maxActivity[0].id },
+        $multi: true
+      }});
+    }
+  }
+};
