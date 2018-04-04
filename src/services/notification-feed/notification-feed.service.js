@@ -17,6 +17,20 @@ export class NotificationFeedService extends aggregatedFeed.Service {
     super.setup(app);
     this.hooks(defaultHooks(this.options));
   }
+
+  async get (id, params) {
+    assert(id && id.indexOf(':') > 0, 'invalid feed id');
+    assert(id.startsWith('notification'), 'feed id is not an notification feed');
+    if (params && params.__action) {
+      return super._action('get', params.__action, id, null, params);
+    }
+
+    let [group, target] =  id.split(':');
+    if (!target || target === 'undefined') {
+      throw new Error('notification-feed target is undefined');
+    }
+    return super._upsert(null, { id, group, target });
+  }
 }
 
 export default function init (app, options, hooks) {
