@@ -69,21 +69,16 @@ export class AggregatedFeedService extends Service {
    */
   async _removeMany (id, data, params, feed) {
     assert(feed, 'feed is not exists.');
-    assert(data.activity || data.foreignId, 'activity or foreignId is not provided.');
+    assert(fp.is(Array, data) && data.length > 0, 'data is an array or is empty.');
 
     const svcAggregations = this.app.service('aggregations');
-    if (data.foreignId) {
-      const more = { foreignId: data.foreignId };
-      await svcAggregations.remove(null, { query: { more } });
-    } else {
-      await svcAggregations.remove(data.activity);
-    }
+    const results = await svcAggregations.remove(null, { query: { more: data } });
 
     // trim the feed sometimes
     if (Math.random() <= this.options.trimChance) {
       await trimFeedActivities(this.app, feed);
     }
-    return feed;
+    return results;
   }
 }
 
