@@ -3,7 +3,7 @@ import makeDebug from 'debug';
 import { Service, helpers, createService } from 'mostly-feathers-mongoose';
 import fp from 'mostly-func';
 
-import { addActivities } from '../../helpers';
+import { addActivities, trimFeedActivities } from '../../helpers';
 import FlatFeedModel from '../../models/flat-feed.model';
 import defaultHooks from './flat-feed.hooks';
 
@@ -76,7 +76,7 @@ export class FlatFeedService extends Service {
 
     // trim the feed sometimes
     if (Math.random() <= this.options.trimChance) {
-      await this._trim(id, null, null, feed);
+      await trimFeedActivities(this.app, feed);
     }
     return results;
   }
@@ -93,28 +93,9 @@ export class FlatFeedService extends Service {
 
     // trim the feed sometimes
     if (Math.random() <= this.options.trimChance) {
-      await this._trim(id, null, null, feed);
+      await trimFeedActivities(this.app, feed);
     }
     return results;
-  }
-
-  /**
-   * trim the feed
-   */
-  async _trim (id, data, params, feed) {
-    const svcActivities = this.app.service('activities');
-    if (feed && feed.maxLength) {
-      const maxActivity = await svcActivities.find({
-        query: { $select: 'id', $skip: feed.maxLength - 1, $limit: 1 },
-        paginate: false
-      });
-      if (maxActivity && maxActivity.length > 0) {
-        return svcActivities.remove(null, { query: {
-          _id: { $lt: maxActivity[0].id },
-          $multi: true
-        }});
-      }
-    }
   }
 }
 
