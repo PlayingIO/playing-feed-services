@@ -18,7 +18,7 @@ const fields = {
 };
 
 // add many
-const addMany = (mongoose, model) => (activities, limit = 15) => {
+const addMany = (mongoose, model) => (activities, rank = { updatedAt: -1 }, limit = 15) => {
   if (!Array.isArray(activities)) activities = [activities];
   const Aggregation = mongoose.model(model);
 
@@ -45,7 +45,7 @@ const addMany = (mongoose, model) => (activities, limit = 15) => {
         $push: {
           activities: {
             $each: items,
-            $sort: { updatedAt: -1 }
+            $sort: rank
           }
         }
       });
