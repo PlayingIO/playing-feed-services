@@ -4,7 +4,6 @@ import activity from './activity.model';
 const options = {
   strict: false
 };
-const MaxAggregatedLength = 15; // max number of aggregated activities in an Aggragation
 
 /**
  * Aggregated activity
@@ -19,7 +18,7 @@ const fields = {
 };
 
 // add many
-const addMany = (mongoose, model) => (activities) => {
+const addMany = (mongoose, model) => (activities, limit = 15) => {
   if (!Array.isArray(activities)) activities = [activities];
   const Aggregation = mongoose.model(model);
 
@@ -39,7 +38,7 @@ const addMany = (mongoose, model) => (activities) => {
       bulk.find({
         feed, group, verb,
         type: 'aggregation',
-        [`activities.${MaxAggregatedLength-1}`]: { $exists: false } // max size to upsert
+        [`activities.${limit-1}`]: { $exists: false } // max size to insert
       }).upsert().updateOne({
         $setOnInsert: { createdAt: new Date() },
         $currentDate: { updatedAt: true },
