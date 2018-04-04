@@ -50,16 +50,24 @@ export class AggregationService extends Service {
     if (params.query.more) {
       let more = fp.splitOrArray(params.query.more);
       if (more.length > 0) {
-        if (more[0].foreignId) {
+        // by object id
+        if (more[0].id) {
+          more = fp.map(fp.prop('id'), more).concat(id || []);
+          return this.Model.removeMany(fp.map(id => ({ id }), more));
+        }
+        // by object foreignId
+        else if (more[0].foreignId) {
           // remove all activities in the feed with the provided foreignId
           return this.Model.removeMany(more);
-        } else {
+        }
+        // by string id
+        else {
           more = fp.concat(more, id || []);
-          return this.Model.removeMany(fp.map(_id => ({ _id }), more));
+          return this.Model.removeMany(fp.map(id => ({ id }), more));
         }
       }
     } else {
-      return this.Model.removeMany([{ _id: id }]);
+      return this.Model.removeMany([{ id }]);
     }
   }
 }
