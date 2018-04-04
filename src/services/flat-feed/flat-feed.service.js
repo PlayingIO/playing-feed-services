@@ -3,7 +3,7 @@ import makeDebug from 'debug';
 import { Service, helpers, createService } from 'mostly-feathers-mongoose';
 import fp from 'mostly-func';
 
-import { addActivities, trimFeedActivities } from '../../helpers';
+import { addActivities, removeActivities, trimFeedActivities } from '../../helpers';
 import FlatFeedModel from '../../models/flat-feed.model';
 import defaultHooks from './flat-feed.hooks';
 
@@ -90,6 +90,24 @@ export class FlatFeedService extends Service {
 
     const svcActivities = this.app.service('activities');
     const results = await svcActivities.remove(null, { query: { more: data } });
+
+    // remove also cc activities if specified by foreginId
+    if (results.length > 0 && data[0].foreignId) {
+      const ccActivities = fp.reduce((acc, activity) => {
+        if (activity.foreignId && activity.cc && activity.cc.length > 0) {
+          activity.cc.forEach(cc => {
+            acc[cc] = acc[cc] || [];
+            acc[cc] = fp.union(acc[cc], [{ foreignId: activity.foreignId }]);
+          });
+        }
+        return acc;
+      }, {}, results);
+      // remove all cc activities
+      const removeAll = fp.map(feed => {
+        return removeActivities(this.app, feed, ccActivities[feed]);
+      }, fp.keys(ccActivities));
+      await Promise.all(removeAll);
+    }
 
     // trim the feed sometimes
     if (Math.random() <= this.options.trimChance) {

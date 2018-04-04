@@ -99,7 +99,6 @@ const removeMany = (mongoose, model) => (activities) => {
   });
 };
 
-
 export default function model (app, name) {
   const mongoose = app.get('mongoose');
   const ActivityModel = mongoose.model('activity');
