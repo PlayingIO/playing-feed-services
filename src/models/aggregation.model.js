@@ -68,13 +68,13 @@ const removeMany = (mongoose, model) => (activities) => {
     const bulk = Aggregation.collection.initializeUnorderedBulkOp();
     activities.forEach(activity => {
       // add timestamp fields
-      const { _id, foreignId } = activity;
-      if (_id) {
+      const { id, foreignId } = activity;
+      if (id) {
         bulk.find({
-          'activities._id': _id
+          'activities._id': id
         }).updateOne({
           $pull: {
-            activities: { _id }
+            activities: { _id: id }
           }
         });
       } else {
