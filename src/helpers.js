@@ -77,6 +77,21 @@ export const fanoutOperations = async (app, feed, operation, activities, limit, 
 };
 
 /**
+ * helper function for other service's hook to add activities to feeds
+ */
+export const addActivity = (app, ...activity) => {
+  const svcFeeds = app.service('feeds');
+  activity = fp.assign(...activity);
+  
+  return {
+    feeds: async (...feeds) => {
+      return Promise.all(fp.map(feed =>
+        svcFeeds.action('addActivity').patch(feed, activity), feeds));
+    }
+  };
+};
+
+/**
  * Add activites to feed
  */
 export const addActivities = (app, feed, activities) => {
