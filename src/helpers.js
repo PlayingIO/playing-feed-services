@@ -85,8 +85,10 @@ export const addActivity = (app, ...activity) => {
   
   return {
     feeds: async (...feeds) => {
-      return Promise.all(fp.map(feed =>
+      feeds = fp.flatten(feeds);
+      await Promise.all(fp.map(feed =>
         svcFeeds.action('addActivity').patch(feed, activity), feeds));
+      return this;
     }
   };
 };
