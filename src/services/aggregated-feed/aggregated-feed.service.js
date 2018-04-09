@@ -39,7 +39,7 @@ export class AggregatedFeedService extends Service {
     if (!target || target === 'undefined') {
       throw new Error('aggregated-feed target is undefined');
     }
-    return super._upsert(null, { id, group, target });
+    return super.upsert(null, { id, group, target });
   }
 
   /**

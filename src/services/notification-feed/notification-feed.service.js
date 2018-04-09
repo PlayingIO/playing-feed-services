@@ -29,7 +29,7 @@ export class NotificationFeedService extends aggregatedFeed.Service {
     if (!target || target === 'undefined') {
       throw new Error('notification-feed target is undefined');
     }
-    return super._upsert(null, { id, group, target });
+    return super.upsert(null, { id, group, target });
   }
 }
 
