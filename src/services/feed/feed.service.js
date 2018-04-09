@@ -94,14 +94,14 @@ export class FeedService extends BaseService {
   /**
    * Add an activity
    */
-  async _addActivity (id, data, params, feed) {
+  async addActivity (id, data, params, feed) {
     return this._addMany(id, [data], params, feed);
   }
 
   /**
    * Add many activities in bulk
    */
-  async _addMany (id, data, params, feed) {
+  async addMany (id, data, params, feed) {
     assert(feed, 'feed is not exists.');
     const svcFeeds = this.app.service(getFeedService(feed.group));
     const results = await svcFeeds.action('addMany').patch(id, data, params);
@@ -116,14 +116,14 @@ export class FeedService extends BaseService {
   /**
    * Remove an activity
    */
-  async _removeActivity (id, data, params, feed) {
+  async removeActivity (id, data, params, feed) {
     return this._removeMany(id, [data], params, feed);
   }
 
   /**
    * Remove many activities in bulk
    */
-  async _removeMany (id, data, params, feed) {
+  async removeMany (id, data, params, feed) {
     assert(feed, 'feed is not exists.');
     const svcFeeds = this.app.service(getFeedService(feed.group));
     const results = await svcFeeds.action('removeMany').patch(id, data, params);
@@ -138,7 +138,7 @@ export class FeedService extends BaseService {
   /**
    * Get activities of the feed
    */
-  async _activities (id, data, params, feed) {
+  async activities (id, data, params, feed) {
     params = fp.assign({ query: {} }, params);
     assert(feed, 'feed is not exists.');
     params.query.feed = feed.id;
@@ -149,7 +149,7 @@ export class FeedService extends BaseService {
   /**
    * Follow target feed
    */
-  async _follow (id, data, params, feed) {
+  async follow (id, data, params, feed) {
     assert(data.target, 'data.target is not provided.');
 
     const svcFollowship = this.app.service('followships');
@@ -178,7 +178,7 @@ export class FeedService extends BaseService {
   /**
    * Unfollow source feed
    */
-  async _unfollow (id, data, params, feed) {
+  async unfollow (id, data, params, feed) {
     assert(data.source, 'data.source is not provided.');
 
     const svcFollowship = this.app.service('followships');

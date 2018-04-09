@@ -45,7 +45,7 @@ export class AggregatedFeedService extends Service {
   /**
    * Add many activities in bulk
    */
-  async _addMany (id, data, params, feed) {
+  async addMany (id, data, params, feed) {
     assert(feed, 'feed is not exists.');
     assert(fp.is(Array, data) && data.length > 0, 'data is an array or is empty.');
     data = fp.map(item => {
@@ -71,7 +71,7 @@ export class AggregatedFeedService extends Service {
   /**
    * Remove an activity in bulk
    */
-  async _removeMany (id, data, params, feed) {
+  async removeMany (id, data, params, feed) {
     assert(feed, 'feed is not exists.');
     assert(fp.is(Array, data) && data.length > 0, 'data is an array or is empty.');
 
