@@ -77,20 +77,17 @@ export const fanoutOperations = async (app, feed, operation, activities, limit, 
 };
 
 /**
- * helper function for other service's hook to add activities to feeds
+ * add and copy activities to feeds
  */
-export const addActivity = (app, ...activity) => {
+export const addActivity = async (app, activity, ...feeds) => {
   const svcFeeds = app.service('feeds');
-  activity = fp.assign(...activity);
-  
-  return {
-    feeds: async (...feeds) => {
-      feeds = fp.flatten(feeds);
-      await Promise.all(fp.map(feed =>
-        svcFeeds.action('addActivity').patch(feed, activity), feeds));
-      return this;
-    }
-  };
+
+  feeds = fp.flatten(feeds);
+  const first = fp.head(feeds), tail = fp.tail(feeds);
+
+  // carbon copy to tail feeds
+  activity.cc = (activity.cc || []).concat(tail);
+  await svcFeeds.action('addActivity').patch(first, activity);
 };
 
 /**
