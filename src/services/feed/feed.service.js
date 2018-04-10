@@ -95,7 +95,7 @@ export class FeedService extends BaseService {
    * Add an activity
    */
   async addActivity (id, data, params, feed) {
-    return this._addMany(id, [data], params, feed);
+    return this.addMany(id, [data], params, feed);
   }
 
   /**
@@ -117,7 +117,7 @@ export class FeedService extends BaseService {
    * Remove an activity
    */
   async removeActivity (id, data, params, feed) {
-    return this._removeMany(id, [data], params, feed);
+    return this.removeMany(id, [data], params, feed);
   }
 
   /**
