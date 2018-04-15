@@ -91,7 +91,7 @@ export const addActivity = async (app, activity, ...feeds) => {
 };
 
 /**
- * Add activites to feed
+ * Add activities to feed
  */
 export const addActivities = (app, feed, activities) => {
   const svcFeeds = app.service(getFeedService(feed));
@@ -101,7 +101,7 @@ export const addActivities = (app, feed, activities) => {
 };
 
 /**
- * Remove activites from feed
+ * Remove activities from feed
  */
 export const removeActivities = (app, feed, activities) => {
   const svcFeeds = app.service(getFeedService(feed));
@@ -111,7 +111,7 @@ export const removeActivities = (app, feed, activities) => {
 };
 
 /**
- * Add activites from following target feeds
+ * Add activities from following target feeds
  */
 export const followMany = async (app, feed, targets, limit) => {
   const svcFeeds = app.service(getFeedService(feed));
@@ -132,7 +132,7 @@ export const followMany = async (app, feed, targets, limit) => {
 };
 
 /**
- * Remove activites from unfollowed source feeds
+ * Remove activities from unfollowed source feeds
  */
 export const unfollowMany = async (app, feed, sources) => {
   const svcFeeds = app.service(getFeedService(feed));
