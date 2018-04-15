@@ -142,7 +142,7 @@ export class FeedService extends BaseService {
     params = fp.assign({ query: {} }, params);
     assert(feed, 'feed is not exists.');
     params.query.feed = feed.id;
-    // match for aggregation/notification acitivities
+    // match for aggregation/notification activities
     const match = params.$match || params.query.$match;
 
     if (match) {
