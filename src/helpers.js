@@ -6,10 +6,15 @@ import { formatter } from 'mostly-utils-common';
 
 const debug = makeDebug('playing:feed-services:helpers');
 
+export const getFeedType = (id) => {
+  if (id.startsWith('aggregated')) return 'aggregated';
+  if (id.startsWith('notification')) return 'notification';
+  return 'flat';
+};
+
 export const getFeedService = (id) => {
-  if (id.startsWith('aggregated')) return 'aggregated-feeds';
-  if (id.startsWith('notification')) return 'notification-feeds';
-  return 'flat-feeds';
+  const type = getFeedType(id);
+  return `${type}-feeds`;
 };
 
 /**
