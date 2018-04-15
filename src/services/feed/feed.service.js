@@ -5,7 +5,7 @@ import fp from 'mostly-func';
 
 import defaultHooks from './feed.hooks';
 import defaultJobs from './feed.jobs';
-import { getFeedService, fanoutOperations } from '../../helpers';
+import { getFeedType, getFeedService, fanoutOperations } from '../../helpers';
 
 const debug = makeDebug('playing:feed-services:feeds');
 
@@ -142,8 +142,20 @@ export class FeedService extends BaseService {
     params = fp.assign({ query: {} }, params);
     assert(feed, 'feed is not exists.');
     params.query.feed = feed.id;
+    // match for aggregation/notification acitivities
+    const match = params.$match || params.query.$match;
 
-    return this.app.service('activities').find(params);
+    if (match) {
+      delete params.query.$match;
+      params.query.activities = { $elemMatch: match };
+      let results = await this.app.service('activities').find(params);
+      const activities = fp.flatMap(fp.prop('activities'), results.data || []);
+      const filter = fp.map(value => fp.equals(value), match);
+      results.data = fp.filter(fp.where(filter), activities);
+      return results;
+    } else {
+      return this.app.service('activities').find(params);
+    }
   }
 
   /**
