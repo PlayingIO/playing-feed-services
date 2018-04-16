@@ -1,3 +1,4 @@
+import mongose from 'mongoose';
 import fp from 'mostly-func';
 import activity from './activity.model';
 
@@ -30,6 +31,7 @@ const addMany = (mongoose, model) => (activities, rank = { updatedAt: -1 }, limi
       // add timestamp fields
       const { feed, group, verb } = items[0];
       items = fp.map(fp.pipe(
+        fp.assoc('_id', new mongoose.Types.ObjectId()),
         fp.assoc('createdAt', new Date()),
         fp.assoc('updatedAt', new Date()),
         fp.dissoc('group')
