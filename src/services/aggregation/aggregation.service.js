@@ -44,33 +44,15 @@ export class AggregationService extends Service {
     return counters;
   }
 
-  async _udpateActivities (activities) {
-    const items = fp.filter(fp.anyPass([
-      fp.has('_id'),
-      fp.has('id'),
-      fp.has('foreignId')
-    ]), activities);
-    return this.Model.updateActivities(items);
-  }
-
-  async update (id, data, params) {
-    let results = null;
-    if (data.activities && data.activities.length > 0) {
-      results = await this._udpateActivities(data.activities);
-      delete data.activities;
-    }
-
-    if (id) {
-      return super.update(id, data, params);
-    } else {
-      return results;
-    }
-  }
-
   async patch (id, data, params) {
     let results = null;
     if (data.activities && data.activities.length > 0) {
-      results = await this._udpateActivities(data.activities);
+      const activities = fp.filter(fp.anyPass([
+        fp.has('_id'),
+        fp.has('id'),
+        fp.has('foreignId')
+      ]), data.activities);
+      results =  this.Model.updateActivities(activities);
       delete data.activities;
     }
 
