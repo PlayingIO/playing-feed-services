@@ -59,6 +59,47 @@ const addMany = (mongoose, model) => (activities, rank = { updatedAt: -1 }, limi
   });
 };
 
+// update many
+const updateMany = (mongoose, model) => (activities) => {
+  if (!Array.isArray(activities)) activities = [activities];
+  const Aggregation = mongoose.model(model);
+
+  return new Promise((resolve, reject) => {
+    // bulk with unordered to increase performance
+    const bulk = Aggregation.collection.initializeUnorderedBulkOp();
+    activities.forEach(activity => {
+      // add timestamp fields
+      const { _id, id, foreignId } = activity;
+      if (_id || id) {
+        bulk.find({
+          'activities._id': _id || id
+        }).updateOne({
+          $set: {
+            activities: activity
+          }
+        });
+      } else {
+        bulk.find({
+          'activities.foreignId': foreignId
+        }).updateOne({
+          $set: {
+            activities: activity
+          }
+        });
+      }
+    });
+    bulk.execute((err, result) => {
+      if (err) return reject(err);
+      // remove aggregation activity with empty activities
+      Aggregation.collection.remove({
+        type: 'aggregation',
+        activities: { $size: 0 }
+      });
+      return resolve(result.toJSON());
+    });
+  });
+};
+
 // remove many
 const removeMany = (mongoose, model) => (activities) => {
   if (!Array.isArray(activities)) activities = [activities];
