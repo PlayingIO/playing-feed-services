@@ -43,10 +43,7 @@ const addActivities = (mongoose, model) => (activities, rank = { updatedAt: -1 }
         update: {
           $setOnInsert: { createdAt: new Date(), updatedAt: new Date() },
           $push: {
-            activities: {
-              $each: items,
-              $sort: rank
-            }
+            activities: { $each: items, $sort: rank }
           }
         },
         upsert: true
@@ -106,39 +103,39 @@ const removeActivities = (mongoose, model) => (activities) => {
   if (!Array.isArray(activities)) activities = [activities];
   const Aggregation = mongoose.model(model);
 
-  return new Promise((resolve, reject) => {
-    // bulk with unordered to increase performance
-    const bulk = Aggregation.collection.initializeUnorderedBulkOp();
-    activities.forEach(activity => {
-      // add timestamp fields
-      const { id, foreignId } = activity;
-      if (id) {
-        bulk.find({
-          'activities._id': id
-        }).updateOne({
-          $pull: {
-            activities: { _id: id }
+  const operations = fp.map(activity => {
+    // add timestamp fields
+    const { _id, id, foreignId } = activity;
+    if (_id || id) {
+      return {
+        updateOne: {
+          filter: { 'activities._id': _id || id },
+          update: {
+            $currentDate: { updatedAt: true },
+            $pull: { activities: { _id: _id || id } }
           }
-        });
-      } else {
-        bulk.find({
-          'activities.foreignId': foreignId
-        }).updateOne({
-          $pull: {
-            activities: { foreignId }
+        }
+      };
+    } else {
+      return {
+        updateOne: {
+          filter: { 'activities.foreignId': foreignId },
+          update: {
+            $currentDate: { updatedAt: true },
+            $pull: { activities: { foreignId } }
           }
-        });
-      }
-    });
-    bulk.execute((err, result) => {
-      if (err) return reject(err);
-      // remove aggregation activity with empty activities
-      Aggregation.remove({
-        type: 'aggregation',
-        activities: { $size: 0 }
-      });
-      return resolve(result.toJSON());
-    });
+        }
+      };
+    }
+  }, activities);
+  // bulk with unordered to increase performance
+  return Aggregation.bulkWrite(operations, { ordered: false }).then(results => {
+    // remove aggregation activity with empty activities
+    Aggregation.remove({
+      type: 'aggregation',
+      activities: { $size: 0 }
+    }).exec();
+    return results.toJSON();
   });
 };
 
