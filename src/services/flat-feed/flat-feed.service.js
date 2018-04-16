@@ -50,7 +50,7 @@ export class FlatFeedService extends Service {
    */
   async addMany (id, data, params, feed) {
     assert(feed, 'feed is not exists.');
-    assert(fp.is(Array, data) && data.length > 0, 'data is an array or is empty.');
+    assert(fp.is(Array, data) && data.length > 0, 'data is an array not empty.');
     data = fp.map(fp.assoc('feed', feed.id), data);
 
     // add provided activities
@@ -82,11 +82,28 @@ export class FlatFeedService extends Service {
   }
 
   /**
+   * Update many activities in bulk
+   */
+  async updateMany (id, data, params, feed) {
+    assert(feed, 'feed is not exists.');
+    assert(fp.is(Array, data) && data.length > 0, 'data is an array not empty.');
+
+    const svcActivities = this.app.service('activities');
+    const results = await svcActivities.patch(null, data, { $multi: true });
+
+    // trim the feed sometimes
+    if (Math.random() <= this.options.trimChance) {
+      await trimFeedActivities(this.app, feed);
+    }
+    return results;
+  }
+
+  /**
    * Remove many activities in bulk
    */
   async removeMany (id, data, params, feed) {
     assert(feed, 'feed is not exists.');
-    assert(fp.is(Array, data) && data.length > 0, 'data is an array or is empty.');
+    assert(fp.is(Array, data) && data.length > 0, 'data is an array not empty.');
 
     const svcActivities = this.app.service('activities');
     const results = await svcActivities.remove(null, { query: { more: data } });
