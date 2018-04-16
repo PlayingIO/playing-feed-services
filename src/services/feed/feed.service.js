@@ -1,5 +1,6 @@
 import assert from 'assert';
 import makeDebug from 'debug';
+import mongoose from 'mongoose';
 import { Service as BaseService } from 'mostly-feathers';
 import fp from 'mostly-func';
 
@@ -142,11 +143,14 @@ export class FeedService extends BaseService {
     params = fp.assign({ query: {} }, params);
     assert(feed, 'feed is not exists.');
     params.query.feed = feed.id;
-    // match for aggregation/notification activities
+    // match for aggregated activities
     const match = params.$match || params.query.$match;
 
     if (match) {
       delete params.query.$match;
+      if (match._id && fp.isObjectId(match._id)) {
+        match._id = new mongoose.Types.ObjectId(match._id);
+      }
       params.query.activities = { $elemMatch: match };
       let results = await this.app.service('activities').find(params);
       const activities = fp.flatMap(fp.prop('activities'), results.data || []);
