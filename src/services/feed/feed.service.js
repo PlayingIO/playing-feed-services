@@ -115,6 +115,24 @@ export class FeedService extends BaseService {
   }
 
   /**
+   * Update an actitity
+   */
+  async updateActivity (id, data, params, feed) {
+    return this.updateMany(id, [data], params, feed);
+  }
+
+  /**
+   * Update many actitity in bulk
+   */
+  async updateMany (id, data, params, feed) {
+    assert(feed, 'feed is not exists.');
+    const svcFeeds = this.app.service(getFeedService(feed.group));
+    const results = await svcFeeds.action('updateMany').patch(id, data, params);
+
+    return results;
+  }
+
+  /**
    * Remove an activity
    */
   async removeActivity (id, data, params, feed) {
