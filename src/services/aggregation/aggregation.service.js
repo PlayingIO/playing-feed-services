@@ -39,36 +39,46 @@ export class AggregationService extends Service {
     }
     fp.forEach(validator, data);
 
-    const counters = await this.Model.addMany(data, params.$rank, this.options.maxAggregatedLength);
-    debug('aggregation addMany', counters);
+    const counters = await this.Model.addActivities(data, params.$rank, this.options.maxAggregatedLength);
+    debug('aggregation addActivities', counters);
     return counters;
   }
 
   async _udpateActivities (activities) {
-    const items = fp.filter(fp.any(
+    const items = fp.filter(fp.anyPass([
       fp.has('_id'),
       fp.has('id'),
       fp.has('foreignId')
-    ), activities);
-    return this.Model.updateMany(items);
+    ]), activities);
+    return this.Model.updateActivities(items);
   }
 
   async update (id, data, params) {
+    let results = null;
     if (data.activities && data.activities.length > 0) {
-      await this._udpateActivities(data.activities);
+      results = await this._udpateActivities(data.activities);
       delete data.activities;
     }
 
-    return super.update(id, data, params);
+    if (id) {
+      return super.update(id, data, params);
+    } else {
+      return results;
+    }
   }
 
   async patch (id, data, params) {
+    let results = null;
     if (data.activities && data.activities.length > 0) {
-      await this._udpateActivities(data.activities);
+      results = await this._udpateActivities(data.activities);
       delete data.activities;
     }
 
-    return super.patch(id, data, params);
+    if (id) {
+      return super.patch(id, data, params);
+    } else {
+      return results;
+    }
   }
 
   async remove (id, params) {
@@ -81,21 +91,21 @@ export class AggregationService extends Service {
         // by object id
         if (more[0].id) {
           more = fp.map(fp.prop('id'), more).concat(id || []);
-          return this.Model.removeMany(fp.map(id => ({ id }), more));
+          return this.Model.removeActivities(fp.map(id => ({ id }), more));
         }
         // by object foreignId
         else if (more[0].foreignId) {
           // remove all activities in the feed with the provided foreignId
-          return this.Model.removeMany(more);
+          return this.Model.removeActivities(more);
         }
         // by string id
         else {
           more = fp.concat(more, id || []);
-          return this.Model.removeMany(fp.map(id => ({ id }), more));
+          return this.Model.removeActivities(fp.map(id => ({ id }), more));
         }
       }
     } else {
-      return this.Model.removeMany([{ id }]);
+      return this.Model.removeActivities([{ id }]);
     }
   }
 }
