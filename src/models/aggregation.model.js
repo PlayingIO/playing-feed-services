@@ -64,39 +64,34 @@ const updateActivities = (mongoose, model) => (activities) => {
   if (!Array.isArray(activities)) activities = [activities];
   const Aggregation = mongoose.model(model);
 
-  return new Promise((resolve, reject) => {
-    // bulk with unordered to increase performance
-    const bulk = Aggregation.collection.initializeUnorderedBulkOp();
-    activities.forEach(activity => {
-      // add timestamp fields
-      const { _id, id, foreignId } = activity;
-      if (_id || id) {
-        bulk.find({
-          'activities._id': _id || id
-        }).updateOne({
-          $set: {
-            activities: activity
-          }
-        });
-      } else {
-        bulk.find({
-          'activities.foreignId': foreignId
-        }).updateOne({
-          $set: {
-            activities: activity
-          }
-        });
-      }
-    });
-    bulk.execute((err, result) => {
-      if (err) return reject(err);
-      // remove aggregation activity with empty activities
-      Aggregation.collection.remove({
-        type: 'aggregation',
-        activities: { $size: 0 }
-      });
-      return resolve(result.toJSON());
-    });
+  const operations = fp.map(activity => {
+    // add timestamp fields
+    const { _id, id, foreignId } = activity;
+    activity.updatedAt = new Date();
+    if (_id || id) {
+      return {
+        updateOne: {
+          filter: { 'activities._id': _id || id },
+          update: { $set: { 'activities.$': activity } }
+        }
+      };
+    } else {
+      return {
+        updateOne: {
+          filter: { 'activities.foreignId': foreignId },
+          update: { $set: { 'activities.$': activity } }
+        }
+      };
+    }
+  }, activities);
+  // bulk with unordered to increase performance
+  return Aggregation.bulkWrite(operations, { ordered: false }).then(results => {
+    // remove aggregation activity with empty activities
+    Aggregation.remove({
+      type: 'aggregation',
+      activities: { $size: 0 }
+    }).exec();
+    return results.toJSON();
   });
 };
 
@@ -132,7 +127,7 @@ const removeActivities = (mongoose, model) => (activities) => {
     bulk.execute((err, result) => {
       if (err) return reject(err);
       // remove aggregation activity with empty activities
-      Aggregation.collection.remove({
+      Aggregation.remove({
         type: 'aggregation',
         activities: { $size: 0 }
       });
@@ -146,6 +141,8 @@ export default function model (app, name) {
   const ActivityModel = mongoose.model('activity');
   const schema = new mongoose.Schema(fields, options);
   schema.index({ feed: 1, group: 1, verb: 1 });
+  schema.index({ 'activities._id': 1 });
+  schema.index({ 'activities.feed': 1, 'activities.group': 1, 'activities.verb': 1 });
 
   schema.statics.addActivities = addActivities(mongoose, name);
   schema.statics.updateActivities = updateActivities(mongoose, name);
