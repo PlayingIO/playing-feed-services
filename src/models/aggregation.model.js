@@ -19,7 +19,7 @@ const fields = {
 };
 
 // add many
-const addMany = (mongoose, model) => (activities, rank = { updatedAt: -1 }, limit = 15) => {
+const addActivities = (mongoose, model) => (activities, rank = { updatedAt: -1 }, limit = 15) => {
   if (!Array.isArray(activities)) activities = [activities];
   const Aggregation = mongoose.model(model);
 
@@ -59,8 +59,8 @@ const addMany = (mongoose, model) => (activities, rank = { updatedAt: -1 }, limi
   });
 };
 
-// update many
-const updateMany = (mongoose, model) => (activities) => {
+// update activities
+const updateActivities = (mongoose, model) => (activities) => {
   if (!Array.isArray(activities)) activities = [activities];
   const Aggregation = mongoose.model(model);
 
@@ -101,7 +101,7 @@ const updateMany = (mongoose, model) => (activities) => {
 };
 
 // remove many
-const removeMany = (mongoose, model) => (activities) => {
+const removeActivities = (mongoose, model) => (activities) => {
   if (!Array.isArray(activities)) activities = [activities];
   const Aggregation = mongoose.model(model);
 
@@ -147,8 +147,9 @@ export default function model (app, name) {
   const schema = new mongoose.Schema(fields, options);
   schema.index({ feed: 1, group: 1, verb: 1 });
 
-  schema.statics.addMany = addMany(mongoose, name);
-  schema.statics.removeMany = removeMany(mongoose, name);
+  schema.statics.addActivities = addActivities(mongoose, name);
+  schema.statics.updateActivities = updateActivities(mongoose, name);
+  schema.statics.removeActivities = removeActivities(mongoose, name);
 
   return ActivityModel.discriminator(name, schema);
 }
