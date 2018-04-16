@@ -72,14 +72,20 @@ const updateActivities = (mongoose, model) => (activities) => {
       return {
         updateOne: {
           filter: { 'activities._id': _id || id },
-          update: { $set: { 'activities.$': activity } }
+          update: {
+            $currentDate: { updatedAt: true },
+            $set: { 'activities.$': activity }
+          }
         }
       };
     } else {
       return {
         updateOne: {
           filter: { 'activities.foreignId': foreignId },
-          update: { $set: { 'activities.$': activity } }
+          update: {
+            $currentDate: { updatedAt: true },
+            $set: { 'activities.$': activity }
+          }
         }
       };
     }
