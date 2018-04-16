@@ -44,6 +44,33 @@ export class AggregationService extends Service {
     return counters;
   }
 
+  async _udpateActivities (activities) {
+    const items = fp.filter(fp.any(
+      fp.has('_id'),
+      fp.has('id'),
+      fp.has('foreignId')
+    ), activities);
+    return this.Model.updateMany(items);
+  }
+
+  async update (id, data, params) {
+    if (data.activities && data.activities.length > 0) {
+      await this._udpateActivities(data.activities);
+      delete data.activities;
+    }
+
+    return super.update(id, data, params);
+  }
+
+  async patch (id, data, params) {
+    if (data.activities && data.activities.length > 0) {
+      await this._udpateActivities(data.activities);
+      delete data.activities;
+    }
+
+    return super.patch(id, data, params);
+  }
+
   async remove (id, params) {
     params = fp.assign({ query: {} }, params);
     assert(id || params.query.more, 'id or more is not provided.');
