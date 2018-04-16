@@ -24,38 +24,38 @@ const addActivities = (mongoose, model) => (activities, rank = { updatedAt: -1 }
   const Aggregation = mongoose.model(model);
 
   const groupedActivities = fp.groupWith(a => a.feed + a.group + a.verb, activities);
-  return new Promise((resolve, reject) => {
-    // bulk with unordered to increase performance
-    const bulk = Aggregation.collection.initializeUnorderedBulkOp();
-    groupedActivities.forEach(items => {
-      // add timestamp fields
-      const { feed, group, verb } = items[0];
-      items = fp.map(fp.pipe(
-        fp.assoc('_id', new mongoose.Types.ObjectId()),
-        fp.assoc('createdAt', new Date()),
-        fp.assoc('updatedAt', new Date()),
-        fp.dissoc('group')
-      ), items);
-      // bulk upsert
-      bulk.find({
-        feed, group, verb,
-        type: 'aggregation',
-        [`activities.${limit-1}`]: { $exists: false } // max size to insert
-      }).upsert().updateOne({
-        $setOnInsert: { createdAt: new Date() },
-        $currentDate: { updatedAt: true },
-        $push: {
-          activities: {
-            $each: items,
-            $sort: rank
+  const operations = fp.map(items => {
+    // add timestamp fields
+    const { feed, group, verb } = items[0];
+    items = fp.map(fp.pipe(
+      fp.assoc('_id', new mongoose.Types.ObjectId()),
+      fp.assoc('createdAt', new Date()),
+      fp.assoc('updatedAt', new Date()),
+      fp.dissoc('group')
+    ), items);
+    return {
+      updateOne: {
+        filter: {
+          feed, group, verb,
+          type: 'aggregation',
+          [`activities.${limit-1}`]: { $exists: false } // max size to insert
+        },
+        update: {
+          $setOnInsert: { createdAt: new Date(), updatedAt: new Date() },
+          $push: {
+            activities: {
+              $each: items,
+              $sort: rank
+            }
           }
-        }
-      });
-    });
-    bulk.execute((err, result) => {
-      if (err) return reject(err);
-      return resolve(result.toJSON());
-    });
+        },
+        upsert: true
+      }
+    };
+  }, groupedActivities);
+  // bulk with unordered to increase performance
+  return Aggregation.bulkWrite(operations, { ordered: false }).then(results => {
+    return results.toJSON();
   });
 };
 
