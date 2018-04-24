@@ -2,6 +2,7 @@ import assert from 'assert';
 import makeDebug from 'debug';
 import mongoose from 'mongoose';
 import { Service as BaseService } from 'mostly-feathers';
+import { helpers } from 'mostly-feathers-mongoose';
 import fp from 'mostly-func';
 
 import defaultHooks from './feed.hooks';
@@ -171,7 +172,8 @@ export class FeedService extends BaseService {
       }
       params.query.activities = { $elemMatch: match };
       let results = await this.app.service('activities').find(params);
-      const activities = fp.flatMap(fp.prop('activities'), results.data || []);
+      let activities = fp.flatMap(fp.prop('activities'), results.data || []);
+      activities = helpers.transform(activities);
       const filter = fp.map(value => fp.equals(value), match);
       results.data = fp.filter(fp.where(filter), activities);
       return results;
