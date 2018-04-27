@@ -52,7 +52,7 @@ export class AggregationService extends Service {
         fp.has('id'),
         fp.has('foreignId')
       ]), data.activities);
-      results =  this.Model.updateActivities(activities);
+      results =  await this.Model.updateActivities(activities);
       delete data.activities;
     }
 
