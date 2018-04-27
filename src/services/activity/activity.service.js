@@ -44,6 +44,19 @@ export class ActivityService extends Service {
     }
   }
 
+  async patch (id, data, params) {
+    assert(id || data.id || data.foreignId, 'id or foreignId is not provided.');
+    if (id || data.id) {
+      return super.patch(id || data.id, data, params);
+    }
+    if (data.foreignId) {
+      return super.patch(null, data, {
+        query: { foreignId: data.foreignId },
+        $multi: true
+      });
+    }
+  }
+
   async remove (id, params) {
     params = fp.assign({ query: {} }, params);
     assert(id || params.query.more, 'id or more is not provided.');
