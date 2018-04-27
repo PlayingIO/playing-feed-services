@@ -63,12 +63,22 @@ const updateActivities = (mongoose, model) => (activities) => {
 
   const operations = fp.map(activity => {
     // add timestamp fields
-    const { _id, id, foreignId } = activity;
+    activity = fp.renameKeys({ id: '_id' }, activity);
     activity.updatedAt = new Date();
-    if (_id || id) {
+    if (activity._id) {
       return {
         updateOne: {
-          filter: { 'activities._id': _id || id },
+          filter: { 'activities._id': activity._id },
+          update: {
+            $currentDate: { updatedAt: true },
+            $set: { 'activities.$': activity }
+          }
+        }
+      };
+    } else if (activity.foreignId) {
+      return {
+        updateOne: {
+          filter: { 'activities.foreignId': activity.foreignId },
           update: {
             $currentDate: { updatedAt: true },
             $set: { 'activities.$': activity }
@@ -76,15 +86,7 @@ const updateActivities = (mongoose, model) => (activities) => {
         }
       };
     } else {
-      return {
-        updateOne: {
-          filter: { 'activities.foreignId': foreignId },
-          update: {
-            $currentDate: { updatedAt: true },
-            $set: { 'activities.$': activity }
-          }
-        }
-      };
+      return [];
     }
   }, activities);
   // bulk with unordered to increase performance
