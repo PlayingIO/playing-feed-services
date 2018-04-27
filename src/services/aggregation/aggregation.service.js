@@ -46,12 +46,13 @@ export class AggregationService extends Service {
 
   async patch (id, data, params) {
     let results = null;
-    if (data.activities && data.activities.length > 0) {
-      const activities = fp.filter(fp.anyPass([
+    if (!id || data.activities) {
+      let activities = fp.is(Array, data) ? data : (data.activities || [data]);
+      activities = fp.filter(fp.anyPass([
         fp.has('_id'),
         fp.has('id'),
         fp.has('foreignId')
-      ]), data.activities);
+      ]), activities);
       results =  await this.Model.updateActivities(activities);
       delete data.activities;
     }
