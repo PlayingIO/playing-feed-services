@@ -76,9 +76,7 @@ export class AggregatedFeedService extends Service {
     assert(fp.is(Array, data) && data.length > 0, 'data is an array not empty.');
 
     const svcAggregations = this.app.service('aggregations');
-    const results = await Promise.all(fp.flatMap(aggregation =>
-      svcAggregations.patch(aggregation.id, aggregation, { $multi: true }),
-      data));
+    const results = await svcAggregations.patch(null, data, { $multi: true });
 
     // trim the feed sometimes
     if (Math.random() <= this.options.trimChance) {
