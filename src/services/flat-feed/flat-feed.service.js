@@ -89,7 +89,8 @@ export class FlatFeedService extends Service {
     assert(fp.is(Array, data) && data.length > 0, 'data is an array not empty.');
 
     const svcActivities = this.app.service('activities');
-    const results = await svcActivities.patch(null, data, { $multi: true });
+    const results = await Promise.all(fp.map(activity =>
+      svcActivities.patch(activity.id, activity), data));
 
     // trim the feed sometimes
     if (Math.random() <= this.options.trimChance) {
