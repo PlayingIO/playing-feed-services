@@ -44,16 +44,29 @@ export class ActivityService extends Service {
     }
   }
 
+  async update (id, data, params) {
+    assert(id || data.id || data.foreignId, 'id or foreignId is not provided.');
+    if (id || data.id) {
+      return super.update(id || data.id, data, params);
+    }
+    if (data.foreignId) {
+      return super.update(null, data, fp.assign({
+        query: { foreignId: data.foreignId },
+        $multi: true
+      }, params));
+    }
+  }
+
   async patch (id, data, params) {
     assert(id || data.id || data.foreignId, 'id or foreignId is not provided.');
     if (id || data.id) {
       return super.patch(id || data.id, data, params);
     }
     if (data.foreignId) {
-      return super.patch(null, data, {
+      return super.patch(null, data, fp.assign({
         query: { foreignId: data.foreignId },
         $multi: true
-      });
+      }, params));
     }
   }
 
