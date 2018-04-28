@@ -62,16 +62,16 @@ const updateActivities = (mongoose, model) => (activities) => {
   const Aggregation = mongoose.model(model);
 
   const operations = fp.map(activity => {
-    // add timestamp fields
     activity = fp.renameKeys({ id: '_id' }, activity);
     activity.updatedAt = new Date();
+    const fields = fp.mapKeys(fp.concat('activities.$.'), activity);
     if (activity._id) {
       return {
         updateOne: {
           filter: { 'activities._id': activity._id },
           update: {
             $currentDate: { updatedAt: true },
-            $set: { 'activities.$': activity }
+            $set: fields
           }
         }
       };
@@ -81,7 +81,7 @@ const updateActivities = (mongoose, model) => (activities) => {
           filter: { 'activities.foreignId': activity.foreignId },
           update: {
             $currentDate: { updatedAt: true },
-            $set: { 'activities.$': activity }
+            $set: fields
           }
         }
       };
