@@ -53,6 +53,7 @@ export class AggregationService extends Service {
         fp.has('id'),
         fp.has('foreignId')
       ]), activities);
+      assert(activities.length, 'cannot patch empty array of aggregation activities');
       results =  await this.Model.updateActivities(activities);
       delete data.activities;
     }
