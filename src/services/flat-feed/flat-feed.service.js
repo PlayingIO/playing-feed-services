@@ -109,21 +109,20 @@ export class FlatFeedService extends Service {
     const svcActivities = this.app.service('activities');
     const results = await svcActivities.remove(null, { query: { more: data } });
 
-    // remove also cc activities if specified by foreginId
-    if (results.length > 0 && data[0].foreignId) {
+    // remove also cc activities
+    if (results.length > 0) {
       const ccActivities = fp.reduce((acc, activity) => {
-        if (activity.foreignId && activity.cc && activity.cc.length > 0) {
+        if (activity.cc && activity.cc.length > 0) {
           activity.cc.forEach(cc => {
             acc[cc] = acc[cc] || [];
-            acc[cc] = fp.union(acc[cc], [{ foreignId: activity.foreignId }]);
+            acc[cc] = fp.union(acc[cc], [{ id: activity.id }]);
           });
         }
         return acc;
       }, {}, results);
       // remove all cc activities
-      const removeAll = fp.map(feed => {
-        return removeActivities(this.app, feed, ccActivities[feed]);
-      }, fp.keys(ccActivities));
+      const removeAll = fp.mapKV(([feed, activities]) =>
+        removeActivities(this.app, feed, activities), ccActivities);
       await Promise.all(removeAll);
     }
 
