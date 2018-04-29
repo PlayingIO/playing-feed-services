@@ -68,9 +68,9 @@ export class FlatFeedService extends Service {
     }, {}, data);
     if (!fp.isEmpty(ccActivities)) {
       // add all cc activities
-      const addAll = fp.map(feed => {
-        return addActivities(this.app, feed, ccActivities[feed]);
-      }, fp.keys(ccActivities));
+      const addAll = fp.map(([feed, activities]) =>
+        addActivities(this.app, feed, activities),
+        fp.toPairs(ccActivities));
       await Promise.all(addAll);
     }
 
@@ -121,8 +121,9 @@ export class FlatFeedService extends Service {
         return acc;
       }, {}, results);
       // remove all cc activities
-      const removeAll = fp.mapKV(([feed, activities]) =>
-        removeActivities(this.app, feed, activities), ccActivities);
+      const removeAll = fp.map(([feed, activities]) =>
+        removeActivities(this.app, feed, activities),
+        fp.toPairs(ccActivities));
       await Promise.all(removeAll);
     }
 
