@@ -1,5 +1,4 @@
 import assert from 'assert';
-import makeDebug from 'debug';
 import mongoose from 'mongoose';
 import { Service as BaseService } from 'mostly-feathers';
 import { helpers } from 'mostly-feathers-mongoose';
@@ -9,8 +8,6 @@ import sift from 'sift';
 import defaultHooks from './feed.hooks';
 import defaultJobs from './feed.jobs';
 import { getFeedType, getFeedService, fanoutOperations } from '../../helpers';
-
-const debug = makeDebug('playing:feed-services:feeds');
 
 const defaultOptions = {
   name: 'feeds',
