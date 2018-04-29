@@ -1,10 +1,6 @@
 import dateFn from 'date-fns';
-import makeDebug from 'debug';
-import { helpers } from 'mostly-feathers-mongoose';
 import fp from 'mostly-func';
 import { formatter } from 'mostly-utils-common';
-
-const debug = makeDebug('playing:feed-services:helpers');
 
 export const getFeedType = (id) => {
   if (id.startsWith('aggregated')) return 'aggregated';
