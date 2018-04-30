@@ -15,7 +15,7 @@ const defaultOptions = {
 
 export class AggregationService extends Service {
   constructor (options) {
-    options = Object.assign({}, defaultOptions, options);
+    options = fp.assign(defaultOptions, options);
     super(options);
   }
 

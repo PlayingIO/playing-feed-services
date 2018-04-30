@@ -19,7 +19,7 @@ const defaultOptions = {
 
 export class AggregatedFeedService extends Service {
   constructor (options) {
-    options = Object.assign({}, defaultOptions, options);
+    options = fp.assign(defaultOptions, options);
     super(options);
   }
 
@@ -104,7 +104,7 @@ export class AggregatedFeedService extends Service {
 }
 
 export default function init (app, options, hooks) {
-  options = Object.assign({ ModelName: 'aggregated' }, options);
+  options = fp.assign({ ModelName: 'aggregated' }, options);
   return createService(app, AggregatedFeedService, AggregatedFeedModel, options);
 }
 

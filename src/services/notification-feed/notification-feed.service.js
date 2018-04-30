@@ -34,7 +34,7 @@ export class NotificationFeedService extends aggregatedFeed.Service {
 }
 
 export default function init (app, options, hooks) {
-  options = Object.assign({ ModelName: 'notification' }, options);
+  options = fp.assign({ ModelName: 'notification' }, options);
   return createService(app, NotificationFeedService, NotificationFeedModel, options);
 }
 

@@ -20,7 +20,7 @@ const defaultOptions = {
  */
 export class FlatFeedService extends Service {
   constructor (options) {
-    options = Object.assign({}, defaultOptions, options);
+    options = fp.assign(defaultOptions, options);
     super(options);
   }
 
@@ -136,7 +136,7 @@ export class FlatFeedService extends Service {
 }
 
 export default function init (app, options, hooks) {
-  options = Object.assign({ ModelName: 'feed' }, options);
+  options = fp.assign({ ModelName: 'feed' }, options);
   return createService(app, FlatFeedService, FlatFeedModel, options);
 }
 

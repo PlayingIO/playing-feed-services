@@ -14,7 +14,7 @@ const defaultOptions = {
 
 export class ActivityService extends Service {
   constructor (options) {
-    options = Object.assign({}, defaultOptions, options);
+    options = fp.assign(defaultOptions, options);
     super(options);
   }
 
@@ -102,7 +102,7 @@ export class ActivityService extends Service {
 }
 
 export default function init (app, options, hooks) {
-  options = Object.assign({ ModelName: 'activity' }, options);
+  options = fp.assign({ ModelName: 'activity' }, options);
   return createService(app, ActivityService, ActivityModel, options);
 }
 

@@ -22,7 +22,7 @@ const defaultOptions = {
  */
 export class FeedService extends BaseService {
   constructor (options) {
-    options = Object.assign({}, defaultOptions, options);
+    options = fp.assign(defaultOptions, options);
     super(options);
   }
 
