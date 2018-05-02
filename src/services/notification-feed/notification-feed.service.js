@@ -1,6 +1,7 @@
 import assert from 'assert';
 import makeDebug from 'debug';
 import { createService } from 'mostly-feathers-mongoose';
+import fp from 'mostly-func';
 
 import aggregatedFeed from '../aggregated-feed/aggregated-feed.service';
 import NotificationFeedModel from '../../models/notification-feed.model';
