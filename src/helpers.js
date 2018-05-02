@@ -86,23 +86,23 @@ export const fanoutOperations = async (app, feed, operation, activities, limit, 
  * add and copy activities to feeds
  */
 export const addActivity = async (app, activity, ...feeds) => {
-  const svcFeeds = app.service('feeds');
+  const svcFeedsActivities = app.service('feeds/activities');
 
   feeds = fp.flatten(feeds);
   const first = fp.head(feeds), tail = fp.tail(feeds);
 
   // carbon copy to tail feeds
   activity.cc = (activity.cc || []).concat(tail);
-  await svcFeeds.action('addActivity').patch(first, activity);
+  await svcFeedsActivities.create(activity, { sid: first });
 };
 
 /**
  * Add activities to feed
  */
 export const addActivities = (app, feed, activities) => {
-  const svcFeeds = app.service(getFeedService(feed));
+  const svcFeedsActivities = app.service(getFeedActivityService(feed));
   if (activities.length > 0) {
-    return svcFeeds.action('addMany').patch(feed, activities);
+    return svcFeedsActivities.create(activities, { sid: feed });
   }
 };
 
@@ -110,9 +110,9 @@ export const addActivities = (app, feed, activities) => {
  * Remove activities from feed
  */
 export const removeActivities = (app, feed, activities) => {
-  const svcFeeds = app.service(getFeedService(feed));
+  const svcFeedsActivities = app.service(getFeedActivityService(feed));
   if (activities.length > 0) {
-    return svcFeeds.action('removeMany').patch(feed, activities);
+    return svcFeedsActivities.remove(null, { more: activities, sid: feed });
   }
 };
 
@@ -120,7 +120,7 @@ export const removeActivities = (app, feed, activities) => {
  * Add activities from following target feeds
  */
 export const followMany = async (app, feed, targets, limit) => {
-  const svcFeeds = app.service(getFeedService(feed));
+  const svcFeedsActivities = app.service(getFeedActivityService(feed));
   const svcActivities = app.service('activities');
 
   let activities = await Promise.all(fp.map((target) => svcActivities.find({
@@ -133,7 +133,7 @@ export const followMany = async (app, feed, targets, limit) => {
     fp.dissoc('id')
   ), activities);
   if (activities.length > 0) {
-    return svcFeeds.action('addMany').patch(feed, activities);
+    return svcFeedsActivities.create(activities, { sid: feed });
   }
 };
 
@@ -141,7 +141,7 @@ export const followMany = async (app, feed, targets, limit) => {
  * Remove activities from unfollowed source feeds
  */
 export const unfollowMany = async (app, feed, sources) => {
-  const svcFeeds = app.service(getFeedService(feed));
+  const svcFeedsActivities = app.service(getFeedActivityService(feed));
   const svcActivities = app.service('activities');
 
   // TODO agenda do not support async, callback will break after await
@@ -153,7 +153,7 @@ export const unfollowMany = async (app, feed, sources) => {
   });
   activities = fp.filter(activity => fp.contains(activity.source, sources), activities);
   if (activities.length > 0) {
-    return svcFeeds.action('removeMany').patch(feed, activities);
+    return svcFeedsActivities.remove(null, { more: activities, sid: feed });
   }
 };
 
