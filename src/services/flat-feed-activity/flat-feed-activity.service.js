@@ -37,7 +37,7 @@ export class FlatFeedActivityService {
 
     // add provided activities
     const svcActivities = this.app.service('activities');
-    const results = await svcActivities.create(data);
+    const results = await svcActivities.create(data, params);
 
     // get all cc activities
     const ccActivities = fp.reduce((acc, item) => {
