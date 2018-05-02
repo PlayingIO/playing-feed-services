@@ -46,24 +46,6 @@ export class FlatFeedService extends Service {
   }
 
   /**
-   * Update many activities in bulk
-   */
-  async updateMany (id, data, params, feed) {
-    assert(feed, 'feed is not exists.');
-    assert(fp.is(Array, data) && data.length > 0, 'data is an array not empty.');
-
-    const svcActivities = this.app.service('activities');
-    const results = await Promise.all(fp.map(activity =>
-      svcActivities.patch(activity.id, activity), data));
-
-    // trim the feed sometimes
-    if (Math.random() <= this.options.trimChance) {
-      await trimFeedActivities(this.app, feed);
-    }
-    return results;
-  }
-
-  /**
    * Remove many activities in bulk
    */
   async removeMany (id, data, params, feed) {

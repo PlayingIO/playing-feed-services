@@ -62,6 +62,25 @@ export class FlatFeedActivityService {
     }
     return results;
   }
+
+  /**
+   * Update an actitity or many activities in bulk
+   */
+  async patch (id, data, params) {
+    const feed = params.feed;
+    assert(feed, 'feed is not provided');
+    if (!fp.is(Array, data)) data = [data];
+
+    const svcActivities = this.app.service('activities');
+    const results = await Promise.all(fp.map(activity =>
+      svcActivities.patch(activity.id, activity), data));
+
+    // trim the feed sometimes
+    if (Math.random() <= this.options.trimChance) {
+      await trimFeedActivities(this.app, feed);
+    }
+    return results;
+  }
 }
 
 export default function init (app, options, hooks) {
