@@ -89,28 +89,6 @@ export class FeedService extends BaseService {
   }
 
   /**
-   * Remove an activity
-   */
-  async removeActivity (id, data, params, feed) {
-    return this.removeMany(id, [data], params, feed);
-  }
-
-  /**
-   * Remove many activities in bulk
-   */
-  async removeMany (id, data, params, feed) {
-    assert(feed, 'feed is not exists.');
-    const svcFeeds = this.app.service(getFeedService(feed.group));
-    const results = await svcFeeds.action('removeMany').patch(id, data, params);
-
-    // fanout for all following feeds
-    const activities = fp.map(fp.assoc('source', feed.id), data);
-    fanoutOperations(this.app, feed.id, 'removeActivities', activities, this.options.fanoutLimit);
-
-    return results;
-  }
-
-  /**
    * Follow target feed
    */
   async follow (id, data, params, feed) {
