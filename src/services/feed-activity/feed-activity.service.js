@@ -6,6 +6,7 @@ import fp from 'mostly-func';
 import sift from 'sift';
 
 import defaultHooks from './feed-activity.hooks';
+import { getFeedActivityService, fanoutOperations } from '../../helpers';
 
 const debug = makeDebug('playing:mission-services:feed/activities');
 
@@ -47,6 +48,25 @@ export class FeedActivityService {
     } else {
       return this.app.service('activities').find(params);
     }
+  }
+
+  /**
+   * Add an activity or many activities in bulk
+   */
+  async create (data, params) {
+    const feed = params.feed;
+    assert(feed, 'feed is not provided');
+    if (!fp.is(Array, data)) data = [data];
+
+    // Add many activities in bulk
+    const svcFeeds = this.app.service(getFeedActivityService(feed.group));
+    const results = await svcFeeds.create(data, params);
+
+    // fanout for all following feeds
+    const activities = fp.map(fp.assoc('source', params.feed.id), data);
+    fanoutOperations(this.app, params.feed.id, 'addActivities', activities, this.options.fanoutLimit);
+
+    return results;
   }
 }
 
