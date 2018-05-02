@@ -83,6 +83,24 @@ export class FeedActivityService {
 
     return results;
   }
+
+  /**
+   * Remove an activity or more activities in bulk
+   */
+  async remove (id, params) {
+    const feed = params.feed;
+    assert(feed, 'feed is not provided');
+
+    // remove many activities in bulk
+    const svcFeedsActivities = this.app.service(getFeedActivityService(feed.group));
+    const results = await svcFeedsActivities.remove(id, params);
+
+    // fanout for all following feeds
+    const activities = fp.map(fp.assoc('source', feed.id), results);
+    fanoutOperations(this.app, feed.id, 'removeActivities', activities, this.options.fanoutLimit);
+
+    return results;
+  }
 }
 
 export default function init (app, options, hooks) {
