@@ -1,9 +1,6 @@
 import assert from 'assert';
-import mongoose from 'mongoose';
 import { Service as BaseService } from 'mostly-feathers';
-import { helpers } from 'mostly-feathers-mongoose';
 import fp from 'mostly-func';
-import sift from 'sift';
 
 import defaultHooks from './feed.hooks';
 import defaultJobs from './feed.jobs';
@@ -151,31 +148,6 @@ export class FeedService extends BaseService {
     fanoutOperations(this.app, feed.id, 'removeActivities', activities, this.options.fanoutLimit);
 
     return results;
-  }
-
-  /**
-   * Get activities of the feed
-   */
-  async activities (id, data, params, feed) {
-    params = fp.assign({ query: {} }, params);
-    assert(feed, 'feed is not exists.');
-    params.query.feed = feed.id;
-    // match for aggregated activities
-    const match = params.$match || params.query.$match;
-
-    if (match) {
-      delete params.query.$match;
-      if (match._id && fp.isObjectId(match._id)) {
-        match._id = new mongoose.Types.ObjectId(match._id);
-      }
-      params.query.activities = { $elemMatch: match };
-      let results = await this.app.service('activities').find(params);
-      let activities = fp.flatMap(fp.prop('activities'), results.data || []);
-      results.data = sift(match, helpers.transform(activities));
-      return results;
-    } else {
-      return this.app.service('activities').find(params);
-    }
   }
 
   /**
