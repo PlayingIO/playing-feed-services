@@ -44,41 +44,6 @@ export class FlatFeedService extends Service {
     }
     return super.upsert(null, { id, group, target });
   }
-
-  /**
-   * Remove many activities in bulk
-   */
-  async removeMany (id, data, params, feed) {
-    assert(feed, 'feed is not exists.');
-    assert(fp.is(Array, data) && data.length > 0, 'data is an array not empty.');
-
-    const svcActivities = this.app.service('activities');
-    const results = await svcActivities.remove(null, { query: { more: data } });
-
-    // remove also cc activities
-    if (results.length > 0) {
-      const ccActivities = fp.reduce((acc, activity) => {
-        if (activity.cc && activity.cc.length > 0) {
-          activity.cc.forEach(cc => {
-            acc[cc] = acc[cc] || [];
-            acc[cc] = fp.union(acc[cc], [{ id: activity.id }]);
-          });
-        }
-        return acc;
-      }, {}, results);
-      // remove all cc activities
-      const removeAll = fp.map(([feed, activities]) =>
-        removeActivities(this.app, feed, activities),
-        fp.toPairs(ccActivities));
-      await Promise.all(removeAll);
-    }
-
-    // trim the feed sometimes
-    if (Math.random() <= this.options.trimChance) {
-      await trimFeedActivities(this.app, feed);
-    }
-    return results;
-  }
 }
 
 export default function init (app, options, hooks) {

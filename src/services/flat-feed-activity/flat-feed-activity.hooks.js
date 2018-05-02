@@ -13,6 +13,9 @@ export default function (options = {}) {
       ],
       patch: [
         hooks.nestServiceObject('feed', { service: 'feeds' })
+      ],
+      remove: [
+        hooks.nestServiceObject('feed', { service: 'feeds' })
       ]
     },
     after: {
