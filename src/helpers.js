@@ -13,6 +13,11 @@ export const getFeedService = (id) => {
   return `${type}-feeds`;
 };
 
+export const getFeedActivityService = (id) => {
+  const type = getFeedType(id);
+  return `${type}-feeds/activities`;
+};
+
 /**
  * Apply the aggregation format, available variables:
  *  ${verb}, ${time}, ${object}, ${target}, ${id}, ${actor}, ${feed}
