@@ -10,6 +10,9 @@ export default function (options = {}) {
       ],
       create: [
         hooks.nestServiceObject('feed', { service: 'feeds' })
+      ],
+      patch: [
+        hooks.nestServiceObject('feed', { service: 'feeds' })
       ]
     },
     after: {
