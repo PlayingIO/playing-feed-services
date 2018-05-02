@@ -34,8 +34,8 @@ export class FlatFeedService extends Service {
    */
   async get (id, params) {
     assert(id && id.indexOf(':') > 0, 'invalid feed id');
-    if (params && params.__action) {
-      return super._action('get', params.__action, id, null, params);
+    if (params && params.action) {
+      return super._action('get', params.action, id, null, params);
     }
 
     let [group, target] =  id.split(':');
