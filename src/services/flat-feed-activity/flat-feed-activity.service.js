@@ -25,6 +25,43 @@ export class FlatFeedActivityService {
     this.hooks(defaultHooks(this.options));
   }
 
+  /**
+   * Add an activity or many activities in bulk
+   */
+  async create (data, params) {
+    const feed = params.feed;
+    assert(feed, 'feed is not provided');
+    if (!fp.is(Array, data)) data = [data];
+
+    data = fp.map(fp.assoc('feed', feed.id), data);
+
+    // add provided activities
+    const svcActivities = this.app.service('activities');
+    const results = await svcActivities.create(data);
+
+    // get all cc activities
+    const ccActivities = fp.reduce((acc, item) => {
+      const cc = [].concat(item.cc || []);
+      for (const feed of cc) {
+        acc[feed] = acc[feed] || [];
+        acc[feed].push(fp.dissoc('cc', item));
+      }
+      return acc;
+    }, {}, data);
+    if (!fp.isEmpty(ccActivities)) {
+      // add all cc activities
+      const addAll = fp.map(([feed, activities]) =>
+        addActivities(this.app, feed, activities),
+        fp.toPairs(ccActivities));
+      await Promise.all(addAll);
+    }
+
+    // trim the feed sometimes
+    if (Math.random() <= this.options.trimChance) {
+      await trimFeedActivities(this.app, feed);
+    }
+    return results;
+  }
 }
 
 export default function init (app, options, hooks) {
