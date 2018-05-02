@@ -89,28 +89,6 @@ export class FeedService extends BaseService {
   }
 
   /**
-   * Add an activity
-   */
-  async addActivity (id, data, params, feed) {
-    return this.addMany(id, [data], params, feed);
-  }
-
-  /**
-   * Add many activities in bulk
-   */
-  async addMany (id, data, params, feed) {
-    assert(feed, 'feed is not exists.');
-    const svcFeeds = this.app.service(getFeedService(feed.group));
-    const results = await svcFeeds.action('addMany').patch(id, data, params);
-
-    // fanout for all following feeds
-    const activities = fp.map(fp.assoc('source', feed.id), data);
-    fanoutOperations(this.app, feed.id, 'addActivities', activities, this.options.fanoutLimit);
-
-    return results;
-  }
-
-  /**
    * Update an actitity
    */
   async updateActivity (id, data, params, feed) {
