@@ -4,7 +4,7 @@ import fp from 'mostly-func';
 
 import defaultHooks from './feed.hooks';
 import defaultJobs from './feed.jobs';
-import { getFeedType, getFeedService, fanoutOperations } from '../../helpers';
+import { getFeedService } from '../../helpers';
 
 const defaultOptions = {
   name: 'feeds',

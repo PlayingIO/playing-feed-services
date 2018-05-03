@@ -3,7 +3,6 @@ import makeDebug from 'debug';
 import { Service, createService } from 'mostly-feathers-mongoose';
 import fp from 'mostly-func';
 
-import { addActivities, formatAggregation, trimFeedActivities } from '../../helpers';
 import AggregatedFeedModel from '../../models/aggregated-feed.model';
 import defaultHooks from './aggregated-feed.hooks';
 
