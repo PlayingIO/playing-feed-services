@@ -90,7 +90,7 @@ export class FlatFeedActivityService {
     assert(feed, 'feed is not provided');
 
     const svcActivities = this.app.service('activities');
-    const results = await svcActivities.remove(null, params);
+    const results = await svcActivities.remove(id, params);
 
     // remove also cc activities
     if (results.length > 0) {
