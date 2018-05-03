@@ -28,7 +28,7 @@ const addActivities = (mongoose, model) => (activities, rank = { updatedAt: -1 }
     // add timestamp fields
     const { feed, group, verb } = items[0];
     items = fp.map(fp.pipe(
-      fp.assoc('_id', new mongoose.Types.ObjectId()),
+      fp.assocWith(() => new mongoose.Types.ObjectId(), '_id'),
       fp.assoc('createdAt', new Date()),
       fp.assoc('updatedAt', new Date()),
       fp.dissoc('group')
