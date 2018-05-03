@@ -32,11 +32,7 @@ export class AggregationService extends Service {
       assert(item.group, 'group is not provided');
       assert(item.object && item.object.indexOf(':undefined') === -1, 'object is undefined');
     };
-    if (fp.is(Array, data)) {
-      assert(data.length, 'cannot create empty array of activities.');
-    } else {
-      data = [data];
-    }
+    data = fp.asArray(data);
     fp.forEach(validator, data);
 
     const counters = await this.Model.addActivities(data, params.$rank, this.options.maxAggregatedLength);
@@ -47,7 +43,7 @@ export class AggregationService extends Service {
   async patch (id, data, params) {
     let results = null;
     if (!id || data.activities) {
-      let activities = fp.is(Array, data) ? data : (data.activities || [data]);
+      let activities = fp.isArray(data) ? data : (data.activities || [data]);
       activities = fp.filter(fp.anyPass([
         fp.has('_id'),
         fp.has('id'),

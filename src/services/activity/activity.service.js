@@ -30,11 +30,7 @@ export class ActivityService extends Service {
       assert(item.verb, 'verb is not provided');
       assert(item.object && item.object.indexOf(':undefined') === -1, 'object is undefined');
     };
-    if (fp.is(Array, data)) {
-      assert(data.length, 'cannot create empty array of activities.');
-    } else {
-      data = [data];
-    }
+    data = fp.asArray(data);
     fp.forEach(validator, data);
 
     if (data.length === 1) {

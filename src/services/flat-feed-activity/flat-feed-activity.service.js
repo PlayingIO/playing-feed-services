@@ -31,7 +31,7 @@ export class FlatFeedActivityService {
   async create (data, params) {
     const feed = params.feed;
     assert(feed, 'feed is not provided');
-    if (!fp.is(Array, data)) data = [data];
+    data = fp.asArray(data);
 
     data = fp.map(fp.assoc('feed', feed.id), data);
 
@@ -69,7 +69,7 @@ export class FlatFeedActivityService {
   async patch (id, data, params) {
     const feed = params.feed;
     assert(feed, 'feed is not provided');
-    if (!fp.is(Array, data)) data = [data];
+    data = fp.asArray(data);
 
     const svcActivities = this.app.service('activities');
     const results = await Promise.all(fp.map(activity =>

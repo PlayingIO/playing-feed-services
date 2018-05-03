@@ -47,7 +47,7 @@ export class AggregatedFeedService extends Service {
    */
   async addMany (id, data, params, feed) {
     assert(feed, 'feed is not exists.');
-    assert(fp.is(Array, data) && data.length > 0, 'data is an array not empty.');
+    assert(fp.isArray(data) && data.length > 0, 'data is an array not empty.');
     data = fp.map(item => {
       item.feed = feed.id,
       item.group = formatAggregation(feed.aggregation, item);
@@ -73,7 +73,7 @@ export class AggregatedFeedService extends Service {
    */
   async updateMany (id, data, params, feed) {
     assert(feed, 'feed is not exists.');
-    assert(fp.is(Array, data) && data.length > 0, 'data is an array not empty.');
+    assert(fp.isArray(data) && data.length > 0, 'data is an array not empty.');
 
     const svcAggregations = this.app.service('aggregations');
     const results = await svcAggregations.patch(null, data, { $multi: true });
@@ -90,7 +90,7 @@ export class AggregatedFeedService extends Service {
    */
   async removeMany (id, data, params, feed) {
     assert(feed, 'feed is not exists.');
-    assert(fp.is(Array, data) && data.length > 0, 'data is an array not empty.');
+    assert(fp.isArray(data) && data.length > 0, 'data is an array not empty.');
 
     const svcAggregations = this.app.service('aggregations');
     const results = await svcAggregations.remove(null, { query: { more: data } });
