@@ -24,6 +24,33 @@ export class AggregatedFeedActivityService {
     this.app = app;
     this.hooks(defaultHooks(this.options));
   }
+
+  /**
+   * Add an activity or many activities in bulk
+   */
+  async create (data, params) {
+    const feed = params.feed;
+    assert(feed, 'feed is not provided');
+
+    data = fp.map(item => {
+      item.feed = feed.id,
+      item.group = formatAggregation(feed.aggregation, item);
+      return item;
+    }, fp.asArray(data));
+
+    const svcAggregations = this.app.service('aggregations');
+    const results = await svcAggregations.create(data, { $rank: feed.rank });
+
+    // aggregated feed do not support cc at present,
+    // often an activity is add to a flat feed and cc to an aggregated feed
+    // so there maybe duplication when the aggregated feed is following the flat feed
+
+    // trim the feed sometimes
+    if (Math.random() <= this.options.trimChance) {
+      await trimFeedActivities(this.app, feed);
+    }
+    return results;
+  }
 }
 
 export default function init (app, options, hooks) {
