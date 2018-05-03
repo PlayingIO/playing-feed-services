@@ -93,7 +93,7 @@ export const addActivity = async (app, activity, ...feeds) => {
 
   // carbon copy to tail feeds
   activity.cc = (activity.cc || []).concat(tail);
-  await svcFeedsActivities.create(activity, { sid: first });
+  await svcFeedsActivities.create(activity, { primary: first });
 };
 
 /**
@@ -102,7 +102,7 @@ export const addActivity = async (app, activity, ...feeds) => {
 export const addActivities = (app, feed, activities) => {
   const svcFeedsActivities = app.service(getFeedActivityService(feed));
   if (activities.length > 0) {
-    return svcFeedsActivities.create(activities, { sid: feed });
+    return svcFeedsActivities.create(activities, { primary: feed });
   }
 };
 
@@ -112,7 +112,7 @@ export const addActivities = (app, feed, activities) => {
 export const removeActivities = (app, feed, activities) => {
   const svcFeedsActivities = app.service(getFeedActivityService(feed));
   if (activities.length > 0) {
-    return svcFeedsActivities.remove(null, { more: activities, sid: feed });
+    return svcFeedsActivities.remove(null, { more: activities, primary: feed });
   }
 };
 
@@ -133,7 +133,7 @@ export const followMany = async (app, feed, targets, limit) => {
     fp.dissoc('id')
   ), activities);
   if (activities.length > 0) {
-    return svcFeedsActivities.create(activities, { sid: feed });
+    return svcFeedsActivities.create(activities, { primary: feed });
   }
 };
 
@@ -153,7 +153,7 @@ export const unfollowMany = async (app, feed, sources) => {
   });
   activities = fp.filter(activity => fp.contains(activity.source, sources), activities);
   if (activities.length > 0) {
-    return svcFeedsActivities.remove(null, { more: activities, sid: feed });
+    return svcFeedsActivities.remove(null, { more: activities, primary: feed });
   }
 };
 

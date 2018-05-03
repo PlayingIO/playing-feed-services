@@ -29,9 +29,9 @@ export class FeedActivityService {
    * Get activities of the feed
    */
   async find (params) {
-    assert(params.sid, 'feed id is not provided.');
+    assert(params.primary, 'feed id is not provided.');
     params = fp.assign({ query: {} }, params);
-    params.query.feed = params.sid;
+    params.query.feed = params.primary;
     // match for aggregated activities
     const match = params.$match || params.query.$match;
 
