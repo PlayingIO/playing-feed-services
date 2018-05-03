@@ -11,7 +11,8 @@ import { addActivities, removeActivities, trimFeedActivities } from '../../helpe
 const debug = makeDebug('playing:mission-services:flat-feeds/activities');
 
 const defaultOptions = {
-  name: 'flat-feeds/activities'
+  name: 'flat-feeds/activities',
+  trimChance: 0.01  // the chance to trim the feed, not to grow to infinite size
 };
 
 export class FlatFeedActivityService {

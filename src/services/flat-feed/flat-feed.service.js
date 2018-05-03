@@ -11,8 +11,7 @@ const debug = makeDebug('playing:feed-services:flat-feeds');
 
 const defaultOptions = {
   id: 'id',
-  name: 'flat-feeds',
-  trimChance: 0.01  // the chance to trim the feed, not to grow to infinite size
+  name: 'flat-feeds'
 };
 
 /**
