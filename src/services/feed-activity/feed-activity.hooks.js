@@ -9,13 +9,13 @@ export default function (options = {}) {
         cache(options.cache)
       ],
       create: [
-        hooks.nestServiceObject('feed', { service: 'feeds' })
+        hooks.primaryResource('feed', { service: 'feeds' })
       ],
       patch: [
-        hooks.nestServiceObject('feed', { service: 'feeds' })
+        hooks.primaryResource('feed', { service: 'feeds' })
       ],
       remove: [
-        hooks.nestServiceObject('feed', { service: 'feeds' })
+        hooks.primaryResource('feed', { service: 'feeds' })
       ]
     },
     after: {
