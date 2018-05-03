@@ -31,9 +31,6 @@ export class AggregatedFeedService extends Service {
   async get (id, params) {
     assert(id && id.indexOf(':') > 0, 'invalid feed id');
     assert(id.startsWith('aggregated'), 'feed id is not an aggregated feed');
-    if (params && params.action) {
-      return super._action('get', params.action, id, null, params);
-    }
 
     let [group, target] =  id.split(':');
     if (!target || target === 'undefined') {

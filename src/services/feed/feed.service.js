@@ -41,12 +41,9 @@ export class FeedService extends BaseService {
    */
   async get (id, params) {
     assert(id && id.indexOf(':') > 0, 'invalid feed id');
-    if (params && params.action) {
-      return super._action('get', params.action, id, null, params);
-    } else {
-      const [group, target] =  id.split(':');
-      return this.app.service(getFeedService(group)).get(id, params);
-    }
+
+    const [group, target] =  id.split(':');
+    return this.app.service(getFeedService(group)).get(id, params);
   }
 
   /**
@@ -54,12 +51,9 @@ export class FeedService extends BaseService {
    */
   async update (id, data, params) {
     assert(id && id.indexOf(':') > 0, 'invalid feed id');
-    if (params && params.action) {
-      return super._action('update', params.action, id, data, params);
-    } else {
-      const [group, target] =  id.split(':');
-      return this.app.service(getFeedService(group)).update(id, data, params);
-    }
+
+    const [group, target] =  id.split(':');
+    return this.app.service(getFeedService(group)).update(id, data, params);
   }
 
   /**
@@ -67,12 +61,9 @@ export class FeedService extends BaseService {
    */
   async patch (id, data, params) {
     assert(id && id.indexOf(':') > 0, 'invalid feed id');
-    if (params && params.action) {
-      return super._action('patch', params.action, id, data, params);
-    } else {
-      const [group, target] =  id.split(':');
-      return this.app.service(getFeedService(group)).patch(id, data, params);
-    }
+
+    const [group, target] =  id.split(':');
+    return this.app.service(getFeedService(group)).patch(id, data, params);
   }
 
   /**
@@ -80,12 +71,9 @@ export class FeedService extends BaseService {
    */
   async remove (id, params) {
     assert(id && id.indexOf(':') > 0, 'invalid feed id');
-    if (params && params.action) {
-      return super._action('remove', params.action, id, null, params);
-    } else {
-      const [group, target] =  id.split(':');
-      return this.app.service(getFeedService(group)).remove(id, params);
-    }
+
+    const [group, target] =  id.split(':');
+    return this.app.service(getFeedService(group)).remove(id, params);
   }
 
   /**
