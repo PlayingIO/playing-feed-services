@@ -41,23 +41,6 @@ export class AggregatedFeedService extends Service {
     }
     return super.upsert(null, { id, group, target });
   }
-
-  /**
-   * Remove an activity in bulk
-   */
-  async removeMany (id, data, params, feed) {
-    assert(feed, 'feed is not exists.');
-    assert(fp.isArray(data) && data.length > 0, 'data is an array not empty.');
-
-    const svcAggregations = this.app.service('aggregations');
-    const results = await svcAggregations.remove(null, { query: { more: data } });
-
-    // trim the feed sometimes
-    if (Math.random() <= this.options.trimChance) {
-      await trimFeedActivities(this.app, feed);
-    }
-    return results;
-  }
 }
 
 export default function init (app, options, hooks) {

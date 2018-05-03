@@ -69,6 +69,23 @@ export class AggregatedFeedActivityService {
     }
     return results;
   }
+
+  /**
+   * Remove an activity or more activities in bulk
+   */
+  async remove (id, params) {
+    const feed = params.feed;
+    assert(feed, 'feed is not provided');
+
+    const svcAggregations = this.app.service('aggregations');
+    const results = await svcAggregations.remove(id, params);
+
+    // trim the feed sometimes
+    if (Math.random() <= this.options.trimChance) {
+      await trimFeedActivities(this.app, feed);
+    }
+    return results;
+  }
 }
 
 export default function init (app, options, hooks) {
