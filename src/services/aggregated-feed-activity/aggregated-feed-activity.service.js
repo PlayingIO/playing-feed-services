@@ -39,11 +39,29 @@ export class AggregatedFeedActivityService {
     }, fp.asArray(data));
 
     const svcAggregations = this.app.service('aggregations');
-    const results = await svcAggregations.create(data, { $rank: feed.rank });
+    const results = await svcAggregations.create(data, fp.assoc('$rank', feed.rank, params));
 
     // aggregated feed do not support cc at present,
     // often an activity is add to a flat feed and cc to an aggregated feed
     // so there maybe duplication when the aggregated feed is following the flat feed
+
+    // trim the feed sometimes
+    if (Math.random() <= this.options.trimChance) {
+      await trimFeedActivities(this.app, feed);
+    }
+    return results;
+  }
+
+  /**
+   * Update an actitity or many activities in bulk
+   */
+  async patch (id, data, params) {
+    const feed = params.feed;
+    assert(feed, 'feed is not provided');
+    data = fp.asArray(data);
+
+    const svcAggregations = this.app.service('aggregations');
+    const results = await svcAggregations.patch(null, data, params);
 
     // trim the feed sometimes
     if (Math.random() <= this.options.trimChance) {

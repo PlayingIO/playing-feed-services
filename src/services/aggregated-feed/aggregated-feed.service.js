@@ -43,23 +43,6 @@ export class AggregatedFeedService extends Service {
   }
 
   /**
-   * Update many activities in bulk
-   */
-  async updateMany (id, data, params, feed) {
-    assert(feed, 'feed is not exists.');
-    assert(fp.isArray(data) && data.length > 0, 'data is an array not empty.');
-
-    const svcAggregations = this.app.service('aggregations');
-    const results = await svcAggregations.patch(null, data, { $multi: true });
-
-    // trim the feed sometimes
-    if (Math.random() <= this.options.trimChance) {
-      await trimFeedActivities(this.app, feed);
-    }
-    return results;
-  }
-
-  /**
    * Remove an activity in bulk
    */
   async removeMany (id, data, params, feed) {
