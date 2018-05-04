@@ -11,7 +11,8 @@ import { getFeedActivityService, fanoutOperations } from '../../helpers';
 const debug = makeDebug('playing:mission-services:feed/activities');
 
 const defaultOptions = {
-  name: 'feeds/activities'
+  name: 'feeds/activities',
+  fanoutLimit: 100,  // number of following feeds are handled in one task when doing the fanout
 };
 
 export class FeedActivityService {

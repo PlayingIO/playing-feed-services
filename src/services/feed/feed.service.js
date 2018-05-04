@@ -9,7 +9,6 @@ import { getFeedService } from '../../helpers';
 const defaultOptions = {
   name: 'feeds',
   followLimit: 500,  // the number of activities which enter your feed when you follow someone
-  fanoutLimit: 100,  // number of following feeds are handled in one task when doing the fanout
   keepHistory: false // whether the activities from the unfollowed feed should be removed
 };
 
