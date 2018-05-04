@@ -35,13 +35,15 @@ export class FeedFollowshipService {
     assert(feed, 'feed is not provided');
     assert(data.target, 'data.target is not provided.');
 
+    const svcFeeds = this.app.service('feeds');
     const svcFollowship = this.app.service('followships');
+
     let followship = await svcFollowship.action('first').find({ query: {
       follower: feed.id, followee: data.target
     }});
     if (followship) return followship; // already followed
 
-    const targetFeed = await this.get(data.target);
+    const targetFeed = await svcFeeds.get(data.target);
     assert(targetFeed, 'target feed is not exists.');
     assert(!fp.contains(targetFeed.group,
       ['aggregated', 'notification']), 'target feed must be a flat feed.');
@@ -64,15 +66,17 @@ export class FeedFollowshipService {
   async remove (id, params) {
     const feed = params.feed;
     assert(feed, 'feed is not provided');
-    assert(params.query.source, 'params.query.source is not provided.');
+    assert(id, 'source id is not provided.');
 
+    const svcFeeds = this.app.service('feeds');
     const svcFollowship = this.app.service('followships');
+
     let followship = await svcFollowship.action('first').find({ query: {
-      follower: feed.id, followee: params.query.source
+      follower: feed.id, followee: id
     }});
     if (!followship) return null; // already unfollowed
 
-    const sourceFeed = await this.get(params.query.source);
+    const sourceFeed = await svcFeeds.get(id);
     assert(sourceFeed, 'source feed is not exists.');
     assert(!fp.contains(sourceFeed.group,
       ['aggregated', 'notification']), 'target feed must be a flat feed.');
