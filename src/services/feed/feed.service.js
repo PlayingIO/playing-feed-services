@@ -8,7 +8,6 @@ import { getFeedService } from '../../helpers';
 
 const defaultOptions = {
   name: 'feeds',
-  followLimit: 500,  // the number of activities which enter your feed when you follow someone
   keepHistory: false // whether the activities from the unfollowed feed should be removed
 };
 
@@ -73,35 +72,6 @@ export class FeedService extends BaseService {
 
     const [group, target] =  id.split(':');
     return this.app.service(getFeedService(group)).remove(id, params);
-  }
-
-  /**
-   * Follow target feed
-   */
-  async follow (id, data, params, feed) {
-    assert(data.target, 'data.target is not provided.');
-
-    const svcFollowship = this.app.service('followships');
-    let followship = await svcFollowship.action('first').find({ query: {
-      follower: feed.id, followee: data.target
-    }});
-    if (followship) return followship; // already followed
-
-    const targetFeed = await this.get(data.target);
-    assert(targetFeed, 'target feed is not exists.');
-    assert(!fp.contains(targetFeed.group,
-      ['aggregated', 'notification']), 'target feed must be a flat feed.');
-
-    followship = await svcFollowship.create({
-      follower: feed.id, followee: targetFeed.id
-    });
-
-    // task to follow activities
-    this.app.agenda.now('feed_follow_many', {
-      feed: feed.id, targets: [targetFeed.id], limit: this.options.followLimit
-    });
-
-    return followship;
   }
 
   /**
