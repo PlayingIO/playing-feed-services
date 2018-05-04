@@ -6,6 +6,7 @@ import fp from 'mostly-func';
 import sift from 'sift';
 
 import defaultHooks from './feed-followship.hooks';
+import defaultJobs from './feed-followship.jobs';
 
 const debug = makeDebug('playing:mission-services:feeds/followships');
 
@@ -23,6 +24,7 @@ export class FeedFollowshipService {
   setup (app) {
     this.app = app;
     this.hooks(defaultHooks(this.options));
+    defaultJobs(app, this.options);
   }
 
   /**
