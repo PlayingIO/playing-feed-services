@@ -10,6 +10,9 @@ export default function (options = {}) {
       ],
       create: [
         hooks.primaryResource('feed', { service: 'feeds' })
+      ],
+      remove: [
+        hooks.primaryResource('feed', { service: 'feeds' })
       ]
     },
     after: {

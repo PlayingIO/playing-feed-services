@@ -55,6 +55,40 @@ export class FeedFollowshipService {
 
     return followship;
   }
+
+  /**
+   * Unfollow source feed
+   */
+  async remove (id, params) {
+    const feed = params.feed;
+    assert(feed, 'feed is not provided');
+    assert(params.query.source, 'params.query.source is not provided.');
+
+    const svcFollowship = this.app.service('followships');
+    let followship = await svcFollowship.action('first').find({ query: {
+      follower: feed.id, followee: params.query.source
+    }});
+    if (!followship) return null; // already unfollowed
+
+    const sourceFeed = await this.get(params.query.source);
+    assert(sourceFeed, 'source feed is not exists.');
+    assert(!fp.contains(sourceFeed.group,
+      ['aggregated', 'notification']), 'target feed must be a flat feed.');
+
+    followship = await svcFollowship.remove(null, {
+      query: { follower: feed.id, followee: sourceFeed.id },
+      $multi: true
+    });
+
+    // task to unfollow activities if not keep history
+    if (!(params.query.keepHistory || this.options.keepHistory)) {
+      this.app.agenda.now('feed_unfollow_many', {
+        feed: feed.id, sources: [sourceFeed.id]
+      });
+    }
+
+    return followship;
+  }
 }
 
 export default function init (app, options, hooks) {
