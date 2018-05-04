@@ -93,7 +93,7 @@ export const addActivity = async (app, activity, ...feeds) => {
 
   // carbon copy to tail feeds
   activity.cc = (activity.cc || []).concat(tail);
-  await svcFeedsActivities.create(activity, { primary: first });
+  return svcFeedsActivities.create(activity, { primary: first });
 };
 
 /**
