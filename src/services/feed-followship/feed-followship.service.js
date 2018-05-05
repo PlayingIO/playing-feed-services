@@ -38,9 +38,9 @@ export class FeedFollowshipService {
     const svcFeeds = this.app.service('feeds');
     const svcFollowship = this.app.service('followships');
 
-    let followship = await svcFollowship.action('first').find({ query: {
-      follower: feed.id, followee: data.target
-    }});
+    let followship = await svcFollowship.get(null, {
+      query: { follower: feed.id, followee: data.target }
+    });
     if (followship) return followship; // already followed
 
     const targetFeed = await svcFeeds.get(data.target);
@@ -71,7 +71,7 @@ export class FeedFollowshipService {
     const svcFeeds = this.app.service('feeds');
     const svcFollowship = this.app.service('followships');
 
-    let followship = await svcFollowship.action('first').find({ query: {
+    let followship = await svcFollowship.get(null, { query: {
       follower: feed.id, followee: id
     }});
     if (!followship) return null; // already unfollowed
