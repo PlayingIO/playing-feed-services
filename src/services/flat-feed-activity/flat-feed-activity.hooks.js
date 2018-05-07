@@ -9,13 +9,13 @@ export default function (options = {}) {
         cache(options.cache)
       ],
       create: [
-        hooks.primaryResource('feed', { service: 'feeds' })
+        hooks.addRouteObject('feed', { service: 'feeds' })
       ],
       patch: [
-        hooks.primaryResource('feed', { service: 'feeds' })
+        hooks.addRouteObject('feed', { service: 'feeds' })
       ],
       remove: [
-        hooks.primaryResource('feed', { service: 'feeds' })
+        hooks.addRouteObject('feed', { service: 'feeds' })
       ]
     },
     after: {
