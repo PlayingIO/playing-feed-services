@@ -6,7 +6,7 @@ import fp from 'mostly-func';
 import sift from 'sift';
 
 import defaultHooks from './feed-activity.hooks';
-import { getFeedActivityService, fanoutOperations } from '../../helpers';
+import { getFeedType, getFeedActivityService, fanoutOperations } from '../../helpers';
 
 const debug = makeDebug('playing:mission-services:feed/activities');
 
@@ -33,18 +33,18 @@ export class FeedActivityService {
     assert(params.primary, 'feed id is not provided.');
     params = fp.assign({ query: {} }, params);
     params.query.feed = params.primary;
-    // match for aggregated activities
-    const match = params.$match || params.query.$match;
 
-    if (match) {
-      delete params.query.$match;
+    // match for aggregated activities
+    if (getFeedType(params.query.feed) !== 'flat') {
+      const match = fp.clone(params.query);
       if (match._id && fp.isObjectId(match._id)) {
         match._id = new mongoose.Types.ObjectId(match._id);
+        delete params.query._id;
       }
       params.query.activities = { $elemMatch: match };
       let results = await this.app.service('activities').find(params);
       let activities = fp.flatMap(fp.prop('activities'), results.data || []);
-      results.data = sift(match, helpers.transform(activities));
+      results.data = helpers.transform(sift(match, activities));
       return results;
     } else {
       return this.app.service('activities').find(params);
