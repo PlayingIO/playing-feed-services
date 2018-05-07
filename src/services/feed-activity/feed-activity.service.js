@@ -32,21 +32,23 @@ export class FeedActivityService {
   async find (params) {
     assert(params.primary, 'feed id is not provided.');
     params = fp.assign({ query: {} }, params);
-    params.query.feed = params.primary;
 
     // match for aggregated activities
-    if (getFeedType(params.query.feed) !== 'flat') {
+    if (getFeedType(params.primary) !== 'flat') {
       const match = fp.clone(params.query);
       if (match._id && fp.isObjectId(match._id)) {
         match._id = new mongoose.Types.ObjectId(match._id);
-        delete params.query._id;
       }
+      // keep all special query starts with $
+      params.query = fp.filterWithKeys(fp.startsWith('$'), params.query);
+      params.query.feed = params.primary;
       params.query.activities = { $elemMatch: match };
       let results = await this.app.service('activities').find(params);
       let activities = fp.flatMap(fp.prop('activities'), results.data || []);
       results.data = helpers.transform(sift(match, activities));
       return results;
     } else {
+      params.query.feed = params.primary;
       return this.app.service('activities').find(params);
     }
   }
