@@ -88,7 +88,7 @@ export const fanoutOperations = async (app, feed, operation, activities, limit, 
 export const addActivity = async (app, activity, ...feeds) => {
   const svcFeedsActivities = app.service('feeds/activities');
 
-  feeds = fp.flatten(feeds);
+  feeds = fp.uniq(fp.flatten(feeds));
   const first = fp.head(feeds), tail = fp.tail(feeds);
 
   // carbon copy to tail feeds

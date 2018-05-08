@@ -42,7 +42,7 @@ export class FlatFeedActivityService {
 
     // get all cc activities
     const ccActivities = fp.reduce((acc, item) => {
-      const cc = [].concat(item.cc || []);
+      const cc = fp.uniq(item.cc || []); // dedup cc
       for (const feed of cc) {
         acc[feed] = acc[feed] || [];
         acc[feed].push(fp.dissoc('cc', item));
