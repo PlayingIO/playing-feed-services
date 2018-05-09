@@ -27,7 +27,7 @@ export class FeedActivityService {
   }
 
   async _elemMatchActivities (id, params) {
-    const match = fp.clone(params.query);
+    const match = fp.filterWithKeys(fp.complement(fp.startsWith('$')), params.query);
     id = id || match._id;
     if (id && fp.isObjectId(id)) {
       match._id = new mongoose.Types.ObjectId(id);
@@ -36,7 +36,12 @@ export class FeedActivityService {
     params.query = fp.filterWithKeys(fp.startsWith('$'), params.query);
     params.query.feed = params.primary;
     params.query.activities = { $elemMatch: match };
-    let results = await this.app.service('activities').find(params);
+    // $select for actvities
+    if (params.query.$select) {
+      const fields = fp.splitOrArray(params.query.$select);
+      params.query.$select = fp.map(fp.concat('activities.'), fields);
+    }
+    let results = await this.app.service('aggregations').find(params);
     let activities = fp.flatMap(fp.prop('activities'), results.data || []);
     results.data = helpers.transform(sift(match, activities));
     return results;
