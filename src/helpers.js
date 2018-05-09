@@ -71,6 +71,7 @@ export const getFollowees = async (app, source, limit, skip) => {
  * Fanout activities to follower feeds by chunks
  */
 export const fanoutOperations = async (app, feed, operation, activities, limit, skip = 0) => {
+  // get batch of followers with skip/limit
   const priorityFollowers = await getFollowers(app, feed, limit, skip);
   if (!fp.isEmpty(priorityFollowers)) {
     fp.forEachObjIndexed((followers, priority) => {
@@ -78,6 +79,7 @@ export const fanoutOperations = async (app, feed, operation, activities, limit, 
         operation, targets: followers, activities
       }).priority(priority);
     }, priorityFollowers);
+    // process next batch of followers
     await fanoutOperations(app, feed, operation, activities, limit, skip + limit);
   }
 };
@@ -112,7 +114,10 @@ export const addActivities = (app, feed, activities) => {
 export const removeActivities = (app, feed, activities) => {
   const svcFeedsActivities = app.service(getFeedActivityService(feed));
   if (activities.length > 0) {
-    return svcFeedsActivities.remove(null, { more: activities, primary: feed });
+    return svcFeedsActivities.remove(null, {
+      primary: feed,
+      query: { more: activities }
+    });
   }
 };
 
