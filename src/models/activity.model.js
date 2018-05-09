@@ -18,7 +18,7 @@ const fields = {
   type: { type: String, default: 'activity' }, // discriminator key
   cc: { type: Array, default: undefined },     // list of feeds to be copied
   foreignId: { type: String },                 // unique ID for update this activity later in your app
-  source: { type: String },                    // source feed of followship
+  source: { type: String },                    // source feed of cc/followship
   state: { type: String },                     // state of the activity
   popularity: { type: Number, default: 1 },    // ranking of the activity
   // other free form fields as needed

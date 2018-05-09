@@ -41,11 +41,12 @@ export class FlatFeedActivityService {
     const results = await svcActivities.create(data, params);
 
     // get all cc activities
-    const ccActivities = fp.reduce((acc, item) => {
-      const cc = fp.uniq(item.cc || []); // dedup cc
-      for (const feed of cc) {
-        acc[feed] = acc[feed] || [];
-        acc[feed].push(fp.dissoc('cc', item));
+    const ccActivities = fp.reduce((acc, activity) => {
+      const ccFeeds = fp.uniq(activity.cc || []); // dedup cc
+      for (const cc of ccFeeds) {
+        const item = fp.assoc('source', feed.id, fp.dissoc('cc', activity));
+        acc[cc] = acc[cc] || [];
+        acc[cc].push(item);
       }
       return acc;
     }, {}, data);

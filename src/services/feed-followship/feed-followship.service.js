@@ -28,7 +28,7 @@ export class FeedFollowshipService {
   }
 
   /**
-   * Follow target feed
+   * Follow target feed (flat)
    */
   async create (data, params) {
     const feed = params.feed;
@@ -47,6 +47,7 @@ export class FeedFollowshipService {
     assert(targetFeed, 'target feed is not exists.');
     assert(!fp.contains(targetFeed.group,
       ['aggregated', 'notification']), 'target feed must be a flat feed.');
+    // TODO whether current user can create followship?
 
     followship = await svcFollowship.create({
       follower: feed.id, followee: targetFeed.id
@@ -61,7 +62,7 @@ export class FeedFollowshipService {
   }
 
   /**
-   * Unfollow source feed
+   * Unfollow source feed (flat)
    */
   async remove (id, params) {
     const feed = params.feed;
@@ -80,6 +81,7 @@ export class FeedFollowshipService {
     assert(sourceFeed, 'source feed is not exists.');
     assert(!fp.contains(sourceFeed.group,
       ['aggregated', 'notification']), 'target feed must be a flat feed.');
+    // TODO whether current user can remove followship?
 
     followship = await svcFollowship.remove(null, {
       query: { follower: feed.id, followee: sourceFeed.id },
