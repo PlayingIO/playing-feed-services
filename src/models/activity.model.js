@@ -32,7 +32,7 @@ export default function model (app, name) {
   const schema = new mongoose.Schema(fields, options);
   schema.index({ feed: 1, actor: 1, verb: 1, object: 1, type: 1 });
   schema.index({ feed: 1, verb: 1, state: 1 });
-  schema.index({ time: 1, foreignId: 1 }, { unique: true });
+  schema.index({ feed: 1, time: 1, foreignId: 1 });
   return mongoose.model(name, schema);
 }
 
