@@ -128,7 +128,7 @@ export class FeedActivityService {
     const results = await svcFeedsActivities.remove(id, params);
 
     // fanout for all following feeds
-    const activities = fp.map(fp.assoc('source', feed.id), results);
+    const activities = fp.asArray(results && results.data || results);
     fanoutOperations(this.app, feed.id, 'removeActivities', activities, this.options.fanoutLimit);
 
     return results;
