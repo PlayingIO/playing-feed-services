@@ -45,9 +45,8 @@ export class AggregationService extends Service {
     if (!id || data.activities) {
       let activities = fp.isArray(data) ? data : (data.activities || [data]);
       activities = fp.filter(fp.anyPass([
-        fp.has('_id'),
-        fp.has('id'),
-        fp.has('foreignId')
+        fp.either(fp.has('_id'), fp.has('id')),
+        fp.both(fp.has('foreignId'), fp.has('time'))
       ]), activities);
       assert(activities.length, 'cannot patch empty array of aggregation activities');
       results =  await this.Model.updateActivities(activities);
@@ -73,9 +72,9 @@ export class AggregationService extends Service {
           more = fp.map(fp.prop('id'), more).concat(id || []);
           return this.Model.removeActivities(fp.map(id => ({ id }), more));
         }
-        // by object foreignId
-        else if (more[0].foreignId) {
-          // remove all activities in the feed with the provided foreignId
+        // by object foreignId/time
+        else if (more[0].foreignId && more[0].time) {
+          // remove all activities in the feed with the provided foreignId/time
           return this.Model.removeActivities(more);
         }
         // by string id

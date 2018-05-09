@@ -41,26 +41,26 @@ export class ActivityService extends Service {
   }
 
   async update (id, data, params) {
-    assert(id || data.id || data.foreignId, 'id or foreignId is not provided.');
+    assert(id || data.id || (data.foreignId && data.time), 'id or foreignId/time is not provided.');
     if (id || data.id) {
       return super.update(id || data.id, data, params);
     }
-    if (data.foreignId) {
+    if (data.foreignId && data.time) {
       return super.update(null, data, fp.assign({
-        query: { foreignId: data.foreignId },
+        query: { foreignId: data.foreignId, time: data.time },
         $multi: true
       }, params));
     }
   }
 
   async patch (id, data, params) {
-    assert(id || data.id || data.foreignId, 'id or foreignId is not provided.');
+    assert(id || data.id || (data.foreignId && data.time), 'id or foreignId/time is not provided.');
     if (id || data.id) {
       return super.patch(id || data.id, data, params);
     }
-    if (data.foreignId) {
+    if (data.foreignId && data.time) {
       return super.patch(null, data, fp.assign({
-        query: { foreignId: data.foreignId },
+        query: { foreignId: data.foreignId, time: data.time },
         $multi: true
       }, params));
     }
@@ -80,9 +80,9 @@ export class ActivityService extends Service {
           query = { _id: { $in: more } };
         }
         // by object foreignId
-        else if (more[0].foreignId) {
-          // remove all activities in the feed with the provided foreignId
-          query = { foreignId: { $in: fp.map(fp.prop('foreignId'), more) } };
+        else if (more[0].foreignId && more[0].time) {
+          // remove all activities in the feed with the provided foreignId/time
+          query = { $or: fp.map(fp.pick(['foreignId', 'time']), more) };
         }
         // by string id
         else {

@@ -61,7 +61,7 @@ const updateActivities = (mongoose, model) => (activities) => {
   if (!Array.isArray(activities)) activities = [activities];
   const Aggregation = mongoose.model(model);
 
-  const operations = fp.map(activity => {
+  const operations = fp.flatMap(activity => {
     activity = fp.renameKeys({ id: '_id' }, activity);
     activity.updatedAt = new Date();
     const fields = fp.mapKeys(fp.concat('activities.$.'), activity);
@@ -75,10 +75,13 @@ const updateActivities = (mongoose, model) => (activities) => {
           }
         }
       };
-    } else if (activity.foreignId) {
+    } else if (activity.foreignId && activity.time) {
       return {
         updateOne: {
-          filter: { 'activities.foreignId': activity.foreignId },
+          filter: {
+            'activities.foreignId': activity.foreignId,
+            'activities.time': activity.time
+          },
           update: {
             $currentDate: { updatedAt: true },
             $set: fields
@@ -105,9 +108,9 @@ const removeActivities = (mongoose, model) => (activities) => {
   if (!Array.isArray(activities)) activities = [activities];
   const Aggregation = mongoose.model(model);
 
-  const operations = fp.map(activity => {
+  const operations = fp.flatMap(activity => {
     // add timestamp fields
-    const { _id, id, foreignId } = activity;
+    const { _id, id } = activity;
     if (_id || id) {
       return {
         updateOne: {
@@ -118,16 +121,26 @@ const removeActivities = (mongoose, model) => (activities) => {
           }
         }
       };
-    } else {
+    } else if (activity.foreignId && activity.time) {
       return {
         updateOne: {
-          filter: { 'activities.foreignId': foreignId },
+          filter: {
+            'activities.foreignId': activity.foreignId,
+            'activities.time': activity.time
+          },
           update: {
             $currentDate: { updatedAt: true },
-            $pull: { activities: { foreignId } }
+            $pull: {
+              activities: {
+                foreignId: activity.foreignId,
+                time: activity.time
+              }
+            }
           }
         }
       };
+    } else {
+      return [];
     }
   }, activities);
   // bulk with unordered to increase performance
