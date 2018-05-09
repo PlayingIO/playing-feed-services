@@ -17,7 +17,10 @@ const fields = {
   target: { type: String },                    // optional target where the activity is belongs to, i.e. Surf board
   type: { type: String, default: 'activity' }, // discriminator key
   cc: { type: Array, default: undefined },     // list of feeds to be copied
-  foreignId: { type: String },                 // unique ID for update this activity later in your app
+  foreignId: { type: String },                 // unique id for update this activity with time
+  time: { type: String, default:               // time of the activity, isoformat (UTC localtime)
+    () => new Date().toISOString()
+  },
   source: { type: String },                    // source feed of cc/followship
   state: { type: String },                     // state of the activity
   popularity: { type: Number, default: 1 },    // ranking of the activity
@@ -29,7 +32,7 @@ export default function model (app, name) {
   const schema = new mongoose.Schema(fields, options);
   schema.index({ feed: 1, actor: 1, verb: 1, object: 1, type: 1 });
   schema.index({ feed: 1, verb: 1, state: 1 });
-  schema.index({ createdAt: -1, foreignId: 1 }, { unique: true });
+  schema.index({ time: 1, foreignId: 1 }, { unique: true });
   return mongoose.model(name, schema);
 }
 
