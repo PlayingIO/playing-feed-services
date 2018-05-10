@@ -44,6 +44,33 @@ export class ActivityService extends Service {
   }
 
   /**
+   * Update an activity or many activities in bulk
+   */
+  async update (id, data, params) {
+    params = fp.assign({ query: {} }, params);
+    const validator = (item) => {
+      assert(item.id || (item.foreignId && item.time), '');
+    };
+    // bulk update with data array
+    if (fp.isArray(data)) {
+      fp.forEach(validator, data);
+      return this.Model.updateActivities(data);
+    }
+    // update one with id
+    if (id || params.query.id) {
+      return super.update(id || params.query.id, data, params);
+    }
+    // update one with foreignId/time
+    if (params.query.foreignId && params.query.time) {
+      return super.update(null, data, fp.assign({
+        query: { foreignId: params.query.foreignId, time: params.query.time },
+        $multi: true
+      }, params));
+    }
+    throw new Error('id or foreignId/time is not provided');
+  }
+
+  /**
    * Patch an activity or many activities in bulk
    */
   async patch (id, data, params) {
