@@ -55,6 +55,23 @@ export class AggregatedFeedActivityService {
   /**
    * Update an actitity or many activities in bulk
    */
+  async update (id, data, params) {
+    const feed = params.feed;
+    assert(feed, 'feed is not provided');
+
+    const svcAggregations = this.app.service('aggregations');
+    const results = await svcAggregations.update(id, data, params);
+
+    // trim the feed sometimes
+    if (Math.random() <= this.options.trimChance) {
+      await trimFeedActivities(this.app, feed);
+    }
+    return results;
+  }
+
+  /**
+   * Patch an actitity or many activities in bulk
+   */
   async patch (id, data, params) {
     const feed = params.feed;
     assert(feed, 'feed is not provided');
