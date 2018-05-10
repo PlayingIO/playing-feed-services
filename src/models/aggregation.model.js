@@ -1,4 +1,3 @@
-import mongose from 'mongoose';
 import fp from 'mostly-func';
 import activity from './activity.model';
 
@@ -63,7 +62,7 @@ const updateActivities = (mongoose, model) => (activities) => {
 
   const operations = fp.flatMap(activity => {
     activity = fp.renameKeys({ id: '_id' }, activity);
-    activity.updatedAt = new Date();
+    activity.updatedAt = new Date(); // root updatedAt
     const fields = fp.mapKeys(fp.concat('activities.$.'), activity);
     if (activity._id) {
       return {
