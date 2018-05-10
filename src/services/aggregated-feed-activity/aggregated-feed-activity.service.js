@@ -58,10 +58,9 @@ export class AggregatedFeedActivityService {
   async patch (id, data, params) {
     const feed = params.feed;
     assert(feed, 'feed is not provided');
-    data = fp.asArray(data);
 
     const svcAggregations = this.app.service('aggregations');
-    const results = await svcAggregations.patch(null, data, params);
+    const results = await svcAggregations.patch(id, data, params);
 
     // trim the feed sometimes
     if (Math.random() <= this.options.trimChance) {
