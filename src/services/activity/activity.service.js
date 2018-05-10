@@ -5,6 +5,7 @@ import fp from 'mostly-func';
 
 import ActivityModel from '../../models/activity.model';
 import defaultHooks from './activity.hooks';
+import { validateUpdateActivity } from '../../helpers';
 
 const debug = makeDebug('playing:feed-services:activities');
 
@@ -48,12 +49,9 @@ export class ActivityService extends Service {
    */
   async update (id, data, params) {
     params = fp.assign({ query: {} }, params);
-    const validator = (item) => {
-      assert(item.id || (item.foreignId && item.time), '');
-    };
     // bulk update with data array
     if (fp.isArray(data)) {
-      fp.forEach(validator, data);
+      fp.forEach(validateUpdateActivity, data);
       return this.Model.updateActivities(data);
     }
     // update one with id
@@ -75,12 +73,9 @@ export class ActivityService extends Service {
    */
   async patch (id, data, params) {
     params = fp.assign({ query: {} }, params);
-    const validator = (item) => {
-      assert(item.id || (item.foreignId && item.time), 'id or foreignId/time is not provided.');
-    };
     // bulk update with data array
     if (fp.isArray(data)) {
-      fp.forEach(validator, data);
+      fp.forEach(validateUpdateActivity, data);
       return this.Model.updateActivities(data);
     }
     // update one with id

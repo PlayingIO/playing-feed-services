@@ -1,3 +1,4 @@
+import assert from 'assert';
 import dateFn from 'date-fns';
 import fp from 'mostly-func';
 import { formatter } from 'mostly-utils-common';
@@ -82,6 +83,13 @@ export const fanoutOperations = async (app, feed, operation, activities, limit, 
     // process next batch of followers
     await fanoutOperations(app, feed, operation, activities, limit, skip + limit);
   }
+};
+
+/**
+ * validate activity with id/foreignId/time
+ */
+export const validateUpdateActivity = (item) => {
+  assert(item.id || (item.foreignId && item.time), 'id or foreignId/time is not provided.');
 };
 
 /**
