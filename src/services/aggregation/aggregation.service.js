@@ -45,6 +45,36 @@ export class AggregationService extends Service {
   }
 
   /**
+   * Update an activity or many activities in bulk
+   */
+  async update (id, data, params) {
+    // bulk update sub activities with data array
+    if (fp.isArray(data)) {
+      fp.forEach(validateUpdateActivity, data);
+      return this.Model.updateActivities(data);
+    }
+    // update one sub activity with foreignId/time
+    if (params.query.foreignId && params.query.time) {
+      data.foreignId = params.query.foreignId;
+      data.time = params.query.time;
+      return this.Model.updateActivities([data]);
+    }
+    if (id) {
+      const root = await this.get(id);
+      if (root) {
+        // update root aggreagtion
+        return super.update(id, data, params);
+      } else {
+        // update one sub activity with id
+        data.id = id;
+        return this.Model.updateActivities([data]);
+      }
+    } else {
+      return super.update(id, data, params);
+    }
+  }
+
+  /**
    * Patch an activity or many activities in bulk
    */
   async patch (id, data, params) {
