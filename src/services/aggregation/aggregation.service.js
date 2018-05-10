@@ -59,13 +59,19 @@ export class AggregationService extends Service {
       data.time = params.query.time;
       return this.Model.updateActivities([data]);
     }
-    // update one sub activity with id
-    if (params.query.id) {
-      data.id = params.query.id;
-      return this.Model.updateActivities([data]);
+    if (id) {
+      const root = await this.get(id);
+      if (root) {
+        // update root aggreagtion
+        return super.patch(id, data, params);
+      } else {
+        // update one sub activity with id
+        data.id = id;
+        return this.Model.updateActivities([data]);
+      }
+    } else {
+      return super.patch(id, data, params);
     }
-    // update root aggreagtion
-    return super.patch(id, data, params);
   }
 
   /**
