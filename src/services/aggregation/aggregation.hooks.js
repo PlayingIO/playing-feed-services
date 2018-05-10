@@ -11,10 +11,10 @@ export default function (options = {}) {
         cache(options.cache)
       ],
       update: [
-        hooks.discardFields('createdAt', 'updatedAt')
+        hooks.discardFields('activities', 'createdAt', 'updatedAt')
       ],
       patch: [
-        hooks.discardFields('createdAt', 'updatedAt')
+        hooks.discardFields('activities', 'createdAt', 'updatedAt')
       ]
     },
     after: {
