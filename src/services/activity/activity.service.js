@@ -23,6 +23,9 @@ export class ActivityService extends Service {
     this.hooks(defaultHooks(this.options));
   }
 
+  /**
+   * Create an activity or many activities in bulk
+   */
   async create (data, params) {
     const validator = (item) => {
       assert(item.feed && item.feed.indexOf(':undefined') === -1, 'feed is undefined');
@@ -40,32 +43,36 @@ export class ActivityService extends Service {
     }
   }
 
-  async update (id, data, params) {
-    assert(id || data.id || (data.foreignId && data.time), 'id or foreignId/time is not provided.');
-    if (id || data.id) {
-      return super.update(id || data.id, data, params);
-    }
-    if (data.foreignId && data.time) {
-      return super.update(null, data, fp.assign({
-        query: { foreignId: data.foreignId, time: data.time },
-        $multi: true
-      }, params));
-    }
-  }
-
+  /**
+   * Patch an activity or many activities in bulk
+   */
   async patch (id, data, params) {
-    assert(id || data.id || (data.foreignId && data.time), 'id or foreignId/time is not provided.');
-    if (id || data.id) {
-      return super.patch(id || data.id, data, params);
+    params = fp.assign({ query: {} }, params);
+    const validator = (item) => {
+      assert(item.id || (item.foreignId && item.time), 'id or foreignId/time is not provided.');
+    };
+    // bulk update with data array
+    if (fp.isArray(data)) {
+      fp.forEach(validator, data);
+      return this.Model.updateActivities(data);
     }
-    if (data.foreignId && data.time) {
+    // update one with id
+    if (id || params.query.id) {
+      return super.patch(id || params.query.id, data, params);
+    }
+    // update one with foreignId/time
+    if (params.query.foreignId && params.query.time) {
       return super.patch(null, data, fp.assign({
-        query: { foreignId: data.foreignId, time: data.time },
+        query: { foreignId: params.query.foreignId, time: params.query.time },
         $multi: true
       }, params));
     }
+    throw new Error('id or foreignId/time is not provided');
   }
 
+  /**
+   * Remove an activity or many activities in bulk
+   */
   async remove (id, params) {
     params = fp.assign({ query: {} }, params);
     assert(id || params.query.more, 'id or more is not provided.');
