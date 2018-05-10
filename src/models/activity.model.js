@@ -1,3 +1,5 @@
+import fp from 'mostly-func';
+
 const options = {
   timestamps: true,
   discriminatorKey: 'type',
@@ -27,12 +29,55 @@ const fields = {
   // other free form fields as needed
 };
 
+
+// update activities
+const updateActivities = (mongoose, model) => (activities) => {
+  if (!Array.isArray(activities)) activities = [activities];
+  const Activity = mongoose.model(model);
+
+  const operations = fp.flatMap(activity => {
+    const fields = fp.renameKeys({ id: '_id' }, activity);
+    if (activity._id) {
+      return {
+        updateOne: {
+          filter: { '_id': activity._id },
+          update: {
+            $currentDate: { updatedAt: true },
+            $set: fields
+          }
+        }
+      };
+    } else if (activity.foreignId && activity.time) {
+      return {
+        updateOne: {
+          filter: {
+            'foreignId': activity.foreignId,
+            'time': activity.time
+          },
+          update: {
+            $currentDate: { updatedAt: true },
+            $set: fields
+          }
+        }
+      };
+    } else {
+      return [];
+    }
+  }, activities);
+  // bulk with unordered to increase performance
+  return Activity.bulkWrite(operations, { ordered: false })
+    .then(results => results.toJSON());
+};
+
 export default function model (app, name) {
   const mongoose = app.get('mongoose');
   const schema = new mongoose.Schema(fields, options);
   schema.index({ feed: 1, actor: 1, verb: 1, object: 1, type: 1 });
   schema.index({ feed: 1, verb: 1, state: 1 });
   schema.index({ feed: 1, time: 1, foreignId: 1 });
+
+  schema.statics.updateActivities = updateActivities(mongoose, name);
+
   return mongoose.model(name, schema);
 }
 
