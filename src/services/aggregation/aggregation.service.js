@@ -5,6 +5,7 @@ import fp from 'mostly-func';
 
 import AggregationModel from '../../models/aggregation.model';
 import defaultHooks from './aggregation.hooks';
+import { validateUpdateActivity } from '../../helpers';
 
 const debug = makeDebug('playing:feed-services:aggregations');
 
@@ -24,6 +25,9 @@ export class AggregationService extends Service {
     this.hooks(defaultHooks(this.options));
   }
 
+  /**
+   * Create an activity or many activities in bulk
+   */
   async create (data, params) {
     const validator = (item) => {
       assert(item.feed && item.feed.indexOf(':undefined') === -1, 'feed is undefined');
@@ -40,26 +44,33 @@ export class AggregationService extends Service {
     return counters;
   }
 
+  /**
+   * Patch an activity or many activities in bulk
+   */
   async patch (id, data, params) {
-    let results = null;
-    if (!id || data.activities) {
-      let activities = fp.isArray(data) ? data : (data.activities || [data]);
-      activities = fp.filter(fp.anyPass([
-        fp.either(fp.has('_id'), fp.has('id')),
-        fp.both(fp.has('foreignId'), fp.has('time'))
-      ]), activities);
-      assert(activities.length, 'cannot patch empty array of aggregation activities');
-      results =  await this.Model.updateActivities(activities);
-      delete data.activities;
+    // bulk update sub activities with data array
+    if (fp.isArray(data)) {
+      fp.forEach(validateUpdateActivity, data);
+      return this.Model.updateActivities(data);
     }
-
-    if (id) {
-      return super.patch(id, data, params);
-    } else {
-      return results;
+    // update one sub activity with foreignId/time
+    if (params.query.foreignId && params.query.time) {
+      data.foreignId = params.query.foreignId;
+      data.time = params.query.time;
+      return this.Model.updateActivities([data]);
     }
+    // update one sub activity with id
+    if (params.query.id) {
+      data.id = params.query.id;
+      return this.Model.updateActivities([data]);
+    }
+    // update root aggreagtion
+    return super.patch(id, data, params);
   }
 
+  /**
+   * Remove an activity or many activities in bulk
+   */
   async remove (id, params) {
     params = fp.assign({ query: {} }, params);
     assert(id || params.query.more, 'id or more is not provided.');
