@@ -101,6 +101,20 @@ export class FeedActivityService {
   }
 
   /**
+   * Update an actitity or many activities in bulk
+   */
+  async update (id, data, params) {
+    const feed = params.feed;
+    assert(feed, 'feed is not provided');
+
+    // update many activities in bulk
+    const svcFeedsActivities = this.app.service(getFeedActivityService(feed.group));
+    const results = await svcFeedsActivities.update(id, data, params);
+
+    return results;
+  }
+
+  /**
    * Patch an actitity or many activities in bulk
    */
   async patch (id, data, params) {
