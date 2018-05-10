@@ -54,10 +54,6 @@ export class ActivityService extends Service {
       fp.forEach(validateUpdateActivity, data);
       return this.Model.updateActivities(data);
     }
-    // update one with id
-    if (id || params.query.id) {
-      return super.update(id || params.query.id, data, params);
-    }
     // update one with foreignId/time
     if (params.query.foreignId && params.query.time) {
       return super.update(null, data, fp.assign({
@@ -65,7 +61,7 @@ export class ActivityService extends Service {
         $multi: true
       }, params));
     }
-    throw new Error('id or foreignId/time is not provided');
+    return super.update(id, data, params);
   }
 
   /**
@@ -78,10 +74,6 @@ export class ActivityService extends Service {
       fp.forEach(validateUpdateActivity, data);
       return this.Model.updateActivities(data);
     }
-    // update one with id
-    if (id || params.query.id) {
-      return super.patch(id || params.query.id, data, params);
-    }
     // update one with foreignId/time
     if (params.query.foreignId && params.query.time) {
       return super.patch(null, data, fp.assign({
@@ -89,7 +81,7 @@ export class ActivityService extends Service {
         $multi: true
       }, params));
     }
-    throw new Error('id or foreignId/time is not provided');
+    return super.patch(id, data, params);
   }
 
   /**
