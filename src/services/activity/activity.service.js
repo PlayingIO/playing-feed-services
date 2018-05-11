@@ -56,10 +56,11 @@ export class ActivityService extends Service {
     }
     // update one with foreignId/time
     if (params.query.foreignId && params.query.time) {
-      return super.update(null, data, fp.assign({
+      return super.update(null, data, {
         query: { foreignId: params.query.foreignId, time: params.query.time },
-        $multi: true
-      }, params));
+        $multi: true,
+        ...params
+      });
     }
     return super.update(id, data, params);
   }
@@ -76,10 +77,11 @@ export class ActivityService extends Service {
     }
     // update one with foreignId/time
     if (params.query.foreignId && params.query.time) {
-      return super.patch(null, data, fp.assign({
+      return super.patch(null, data, {
         query: { foreignId: params.query.foreignId, time: params.query.time },
-        $multi: true
-      }, params));
+        $multi: true,
+        ...params
+      });
     }
     return super.patch(id, data, params);
   }
