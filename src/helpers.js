@@ -24,10 +24,7 @@ export const getFeedActivityService = (id) => {
  *  ${verb}, ${time}, ${object}, ${target}, ${id}, ${actor}, ${feed}
  */
 export const formatAggregation = (format, activity) => {
-  const variables = fp.assign(activity, {
-    time: dateFn.format(activity.createdAt || new Date(), 'YYYY-MM-DD'),
-  });
-  return formatter(format, variables);
+  return formatter(format, activity);
 };
 
 const groupByPriority = fp.groupBy(followship => {
