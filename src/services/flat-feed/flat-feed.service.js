@@ -42,7 +42,7 @@ export class FlatFeedService extends Service {
 }
 
 export default function init (app, options, hooks) {
-  options = fp.assign({ ModelName: 'feed' }, options);
+  options = { ModelName: 'feed', ...options };
   return createService(app, FlatFeedService, FlatFeedModel, options);
 }
 

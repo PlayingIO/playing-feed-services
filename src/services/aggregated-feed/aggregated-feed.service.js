@@ -40,7 +40,7 @@ export class AggregatedFeedService extends Service {
 }
 
 export default function init (app, options, hooks) {
-  options = fp.assign({ ModelName: 'aggregated' }, options);
+  options = { ModelName: 'aggregated', ...options };
   return createService(app, AggregatedFeedService, AggregatedFeedModel, options);
 }
 

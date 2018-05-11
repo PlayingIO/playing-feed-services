@@ -119,7 +119,7 @@ export class ActivityService extends Service {
 }
 
 export default function init (app, options, hooks) {
-  options = fp.assign({ ModelName: 'activity' }, options);
+  options = { ModelName: 'activity', ...options };
   return createService(app, ActivityService, ActivityModel, options);
 }
 
