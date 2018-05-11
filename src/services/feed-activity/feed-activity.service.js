@@ -17,7 +17,7 @@ const defaultOptions = {
 
 export class FeedActivityService {
   constructor (options) {
-    this.options = fp.assign(defaultOptions, options);
+    this.options = fp.assignAll(defaultOptions, options);
     this.name = this.options.name;
   }
 

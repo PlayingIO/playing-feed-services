@@ -18,7 +18,7 @@ const defaultOptions = {
  */
 export class FlatFeedService extends Service {
   constructor (options) {
-    options = fp.assign(defaultOptions, options);
+    options = fp.assignAll(defaultOptions, options);
     super(options);
   }
 
