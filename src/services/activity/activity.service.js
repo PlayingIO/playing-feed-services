@@ -48,7 +48,7 @@ export class ActivityService extends Service {
    * Update an activity or many activities in bulk
    */
   async update (id, data, params) {
-    params = fp.assign({ query: {} }, params);
+    params = { query: {}, ...params };
     // bulk update with data array
     if (fp.isArray(data)) {
       fp.forEach(validateUpdateActivity, data);
@@ -68,7 +68,7 @@ export class ActivityService extends Service {
    * Patch an activity or many activities in bulk
    */
   async patch (id, data, params) {
-    params = fp.assign({ query: {} }, params);
+    params = { query: {}, ...params };
     // bulk update with data array
     if (fp.isArray(data)) {
       fp.forEach(validateUpdateActivity, data);
@@ -88,7 +88,7 @@ export class ActivityService extends Service {
    * Remove an activity or many activities in bulk
    */
   async remove (id, params) {
-    params = fp.assign({ query: {} }, params);
+    params = { query: {}, ...params };
     assert(id || params.query.more, 'id or more is not provided.');
 
     if (params.query.more) {

@@ -52,7 +52,7 @@ export class FeedActivityService {
    */
   async find (params) {
     assert(params.primary, 'feed id is not provided.');
-    params = fp.assign({ query: {} }, params);
+    params = { query: {}, ...params };
 
     // match for aggregated activities
     params.query.feed = params.primary;
@@ -68,7 +68,7 @@ export class FeedActivityService {
    */
   async get (id, params) {
     assert(params.primary, 'feed id is not provided.');
-    params = fp.assign({ query: {} }, params);
+    params = { query: {}, ...params };
 
     // match for aggregated activity
     if (getFeedType(params.primary) !== 'flat') {

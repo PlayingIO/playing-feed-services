@@ -108,7 +108,7 @@ export class AggregationService extends Service {
    * Remove an activity or many activities in bulk
    */
   async remove (id, params) {
-    params = fp.assign({ query: {} }, params);
+    params = { query: {}, ...params };
     assert(id || params.query.more, 'id or more is not provided.');
 
     if (params.query.more) {
