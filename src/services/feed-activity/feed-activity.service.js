@@ -38,8 +38,7 @@ export class FeedActivityService {
     params.query.activities = { $elemMatch: match };
     // $select for actvities
     if (params.query.$select) {
-      const fields = fp.splitOrArray(params.query.$select);
-      params.query.$select = fp.map(fp.concat('activities.'), fields);
+      params.query.$select = helpers.prefixSelect(params.query.$select, 'activities');
     }
     let results = await this.app.service('aggregations').find(params);
     let activities = fp.flatMap(fp.prop('activities'), results.data || []);
