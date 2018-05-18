@@ -1,13 +1,8 @@
-import assert from 'assert';
 import makeDebug from 'debug';
-import mongoose from 'mongoose';
-import { helpers } from 'mostly-feathers-mongoose';
 import fp from 'mostly-func';
-import sift from 'sift';
 
 import aggregatedFeedActivity from '../aggregated-feed-activity/aggregated-feed-activity.service';
 import defaultHooks from './notification-feed-activity.hooks';
-import { addActivities, formatAggregation, trimFeedActivities } from '../../helpers';
 
 const debug = makeDebug('playing:mission-services:notification-feeds/activities');
 

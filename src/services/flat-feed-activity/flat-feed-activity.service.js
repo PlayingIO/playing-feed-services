@@ -1,9 +1,6 @@
 import assert from 'assert';
 import makeDebug from 'debug';
-import mongoose from 'mongoose';
-import { helpers } from 'mostly-feathers-mongoose';
 import fp from 'mostly-func';
-import sift from 'sift';
 
 import defaultHooks from './flat-feed-activity.hooks';
 import { addActivities, removeActivities, trimFeedActivities } from '../../helpers';
