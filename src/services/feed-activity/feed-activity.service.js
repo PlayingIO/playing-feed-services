@@ -93,8 +93,8 @@ export class FeedActivityService {
     const results = await svcFeedsActivities.create(data, params);
 
     // fanout for all following feeds
-    const activities = fp.map(fp.assoc('source', params.feed.id), data);
-    fanoutOperations(this.app, params.feed.id, 'addActivities', activities, this.options.fanoutLimit);
+    const activities = fp.map(fp.assoc('source', feed.id), data);
+    fanoutOperations(this.app, feed.id, 'addActivities', activities, this.options.fanoutLimit);
 
     return results;
   }
