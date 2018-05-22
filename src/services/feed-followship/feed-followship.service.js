@@ -28,7 +28,7 @@ export class FeedFollowshipService {
    * Follow target feed (flat)
    */
   async create (data, params) {
-    const feed = params.feed;
+    const feed = params.primary;
     assert(feed, 'feed is not provided');
     assert(data.target, 'data.target is not provided.');
 
@@ -62,7 +62,7 @@ export class FeedFollowshipService {
    * Unfollow source feed (flat)
    */
   async remove (id, params) {
-    const feed = params.feed;
+    const feed = params.primary;
     assert(feed, 'feed is not provided');
     assert(id, 'source id is not provided.');
 

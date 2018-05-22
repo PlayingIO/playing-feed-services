@@ -26,7 +26,7 @@ export class AggregatedFeedActivityService {
    * Add an activity or many activities in bulk
    */
   async create (data, params) {
-    const feed = params.feed;
+    const feed = params.primary;
     assert(feed, 'feed is not provided');
 
     data = fp.map(item => {
@@ -53,7 +53,7 @@ export class AggregatedFeedActivityService {
    * Update an actitity or many activities in bulk
    */
   async update (id, data, params) {
-    const feed = params.feed;
+    const feed = params.primary;
     assert(feed, 'feed is not provided');
 
     const svcAggregations = this.app.service('aggregations');
@@ -70,7 +70,7 @@ export class AggregatedFeedActivityService {
    * Patch an actitity or many activities in bulk
    */
   async patch (id, data, params) {
-    const feed = params.feed;
+    const feed = params.primary;
     assert(feed, 'feed is not provided');
 
     const svcAggregations = this.app.service('aggregations');
@@ -87,7 +87,7 @@ export class AggregatedFeedActivityService {
    * Remove an activity or more activities in bulk
    */
   async remove (id, params) {
-    const feed = params.feed;
+    const feed = params.primary;
     assert(feed, 'feed is not provided');
 
     const svcAggregations = this.app.service('aggregations');

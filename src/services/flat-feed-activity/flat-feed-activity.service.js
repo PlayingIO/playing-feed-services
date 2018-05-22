@@ -27,7 +27,7 @@ export class FlatFeedActivityService {
    * Add an activity or many activities in bulk
    */
   async create (data, params) {
-    const feed = params.feed;
+    const feed = params.primary;
     assert(feed, 'feed is not provided');
     data = fp.asArray(data);
 
@@ -66,7 +66,7 @@ export class FlatFeedActivityService {
    * Update an actitity or many activities in bulk
    */
   async update (id, data, params) {
-    const feed = params.feed;
+    const feed = params.primary;
     assert(feed, 'feed is not provided');
 
     const svcActivities = this.app.service('activities');
@@ -83,7 +83,7 @@ export class FlatFeedActivityService {
    * Patch an actitity or many activities in bulk
    */
   async patch (id, data, params) {
-    const feed = params.feed;
+    const feed = params.primary;
     assert(feed, 'feed is not provided');
 
     const svcActivities = this.app.service('activities');
@@ -100,7 +100,7 @@ export class FlatFeedActivityService {
    * Remove an activity or more activities in bulk
    */
   async remove (id, params) {
-    const feed = params.feed;
+    const feed = params.primary;
     assert(feed, 'feed is not provided');
 
     const svcActivities = this.app.service('activities');

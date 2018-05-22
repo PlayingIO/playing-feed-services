@@ -84,7 +84,7 @@ export class FeedActivityService {
    * Add an activity or many activities in bulk
    */
   async create (data, params) {
-    const feed = params.feed;
+    const feed = params.primary;
     assert(feed, 'feed is not provided');
     data = fp.asArray(data);
 
@@ -103,7 +103,7 @@ export class FeedActivityService {
    * Update an actitity or many activities in bulk
    */
   async update (id, data, params) {
-    const feed = params.feed;
+    const feed = params.primary;
     assert(feed, 'feed is not provided');
 
     // update many activities in bulk
@@ -117,7 +117,7 @@ export class FeedActivityService {
    * Patch an actitity or many activities in bulk
    */
   async patch (id, data, params) {
-    const feed = params.feed;
+    const feed = params.primary;
     assert(feed, 'feed is not provided');
 
     // patch many activities in bulk
@@ -131,7 +131,7 @@ export class FeedActivityService {
    * Remove an activity or more activities in bulk
    */
   async remove (id, params) {
-    const feed = params.feed;
+    const feed = params.primary;
     assert(feed, 'feed is not provided');
 
     // remove many activities in bulk
