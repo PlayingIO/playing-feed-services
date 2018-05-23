@@ -171,7 +171,7 @@ export const unfollowMany = async (app, feed, sources) => {
 };
 
 /**
- * trim the feed activities
+ * Trim the feed activities
  */
 export const trimFeedActivities = async (app, feed) => {
   const svcActivities = app.service('activities');
@@ -188,4 +188,30 @@ export const trimFeedActivities = async (app, feed) => {
       }});
     }
   }
+};
+
+/**
+ * Get pending state activities
+ */
+export const getPendingActivity = async (app, primary, id) => {
+  const svcFeedsActivities = app.service('feeds/activities');
+  return await svcFeedsActivities.get(id, { primary, query: { state: 'PENDING' } });
+};
+
+/**
+ * Update state of activities
+ */
+export const updateActivityState = async (app, activity) => {
+  const svcFeedsActivities = app.service('feeds/activities');
+  const feeds = fp.reject(fp.isNil, [activity.feed].concat(activity.source || activity.cc));
+  // update activity in all feeds by foreignId/time
+  const updateAll = fp.map(feed => {
+    return svcFeedsActivities.patch(null, {
+      state: activity.state
+    }, {
+      primary: feed,
+      query: { foreignId: activity.foreignId, time: activity.time }
+    });
+  });
+  return Promise.all(updateAll(feeds));
 };
