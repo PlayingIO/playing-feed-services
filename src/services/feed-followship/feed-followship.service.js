@@ -29,7 +29,7 @@ export class FeedFollowshipService {
    */
   async create (data, params) {
     const feed = params.primary;
-    assert(feed, 'feed is not provided');
+    assert(feed && feed.id, 'feed is not provided');
     assert(data.target, 'data.target is not provided.');
 
     const svcFeeds = this.app.service('feeds');
@@ -63,7 +63,7 @@ export class FeedFollowshipService {
    */
   async remove (id, params) {
     const feed = params.primary;
-    assert(feed, 'feed is not provided');
+    assert(feed && feed.id, 'feed is not provided');
     assert(id, 'source id is not provided.');
 
     const svcFeeds = this.app.service('feeds');

@@ -27,7 +27,7 @@ export class AggregatedFeedActivityService {
    */
   async create (data, params) {
     const feed = params.primary;
-    assert(feed, 'feed is not provided');
+    assert(feed && feed.id, 'feed is not provided');
 
     data = fp.map(item => {
       item.feed = feed.id,
@@ -54,7 +54,7 @@ export class AggregatedFeedActivityService {
    */
   async update (id, data, params) {
     const feed = params.primary;
-    assert(feed, 'feed is not provided');
+    assert(feed && feed.id, 'feed is not provided');
 
     const svcAggregations = this.app.service('aggregations');
     const results = await svcAggregations.update(id, data, params);
@@ -71,7 +71,7 @@ export class AggregatedFeedActivityService {
    */
   async patch (id, data, params) {
     const feed = params.primary;
-    assert(feed, 'feed is not provided');
+    assert(feed && feed.id, 'feed is not provided');
 
     const svcAggregations = this.app.service('aggregations');
     const results = await svcAggregations.patch(id, data, params);
@@ -88,7 +88,7 @@ export class AggregatedFeedActivityService {
    */
   async remove (id, params) {
     const feed = params.primary;
-    assert(feed, 'feed is not provided');
+    assert(feed && feed.id, 'feed is not provided');
 
     const svcAggregations = this.app.service('aggregations');
     const results = await svcAggregations.remove(id, params);

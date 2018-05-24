@@ -28,7 +28,7 @@ export class FlatFeedActivityService {
    */
   async create (data, params) {
     const feed = params.primary;
-    assert(feed, 'feed is not provided');
+    assert(feed && feed.id, 'feed is not provided');
     data = fp.asArray(data);
 
     data = fp.map(fp.assoc('feed', feed.id), data);
@@ -67,7 +67,7 @@ export class FlatFeedActivityService {
    */
   async update (id, data, params) {
     const feed = params.primary;
-    assert(feed, 'feed is not provided');
+    assert(feed && feed.id, 'feed is not provided');
 
     const svcActivities = this.app.service('activities');
     const results = await svcActivities.update(id, data, params);
@@ -84,7 +84,7 @@ export class FlatFeedActivityService {
    */
   async patch (id, data, params) {
     const feed = params.primary;
-    assert(feed, 'feed is not provided');
+    assert(feed && feed.id, 'feed is not provided');
 
     const svcActivities = this.app.service('activities');
     const results = await svcActivities.patch(id, data, params);
@@ -101,7 +101,7 @@ export class FlatFeedActivityService {
    */
   async remove (id, params) {
     const feed = params.primary;
-    assert(feed, 'feed is not provided');
+    assert(feed && feed.id, 'feed is not provided');
 
     const svcActivities = this.app.service('activities');
     const results = await svcActivities.remove(id, params);
