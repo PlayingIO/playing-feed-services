@@ -91,22 +91,6 @@ export const validateUpdateActivity = (item) => {
 };
 
 /**
- * add and copy activities to feeds
- */
-export const addActivity = async (app, activity, ...feeds) => {
-  const svcFeedsActivities = app.service('feeds/activities');
-  feeds = fp.uniq(fp.flatten(feeds));
-
-  // aggregated feed do not support cc, first feed should be a flat feed
-  const first = fp.find(fp.eqBy(getFeedType, 'flat'), feeds);
-  const tail = fp.without([first], feeds);
-
-  // carbon copy to tail feeds
-  activity.cc = (activity.cc || []).concat(tail);
-  return svcFeedsActivities.create(activity, { primary: first });
-};
-
-/**
  * Add activities to feed
  */
 export const addActivities = (app, feed, activities) => {
@@ -188,30 +172,4 @@ export const trimFeedActivities = async (app, feed) => {
       }});
     }
   }
-};
-
-/**
- * Get pending state activities
- */
-export const getPendingActivity = async (app, primary, id) => {
-  const svcFeedsActivities = app.service('feeds/activities');
-  return await svcFeedsActivities.get(id, { primary, query: { state: 'PENDING' } });
-};
-
-/**
- * Update state of activities
- */
-export const updateActivityState = async (app, activity) => {
-  const svcFeedsActivities = app.service('feeds/activities');
-  const feeds = fp.reject(fp.isNil, [activity.feed].concat(activity.source || activity.cc));
-  // update activity in all feeds by foreignId/time
-  const updateAll = fp.map(feed => {
-    return svcFeedsActivities.patch(null, {
-      state: activity.state
-    }, {
-      primary: feed,
-      query: { foreignId: activity.foreignId, time: activity.time }
-    });
-  });
-  return Promise.all(updateAll(feeds));
 };
