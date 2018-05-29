@@ -2,12 +2,7 @@ import assert from 'assert';
 import dateFn from 'date-fns';
 import fp from 'mostly-func';
 import { formatter } from 'mostly-utils-common';
-
-export const getFeedType = (id) => {
-  if (id.startsWith('aggregated')) return 'aggregated';
-  if (id.startsWith('notification')) return 'notification';
-  return 'flat';
-};
+import { getFeedType } from 'playing-feed-common';
 
 export const getFeedService = (id) => {
   const type = getFeedType(id);

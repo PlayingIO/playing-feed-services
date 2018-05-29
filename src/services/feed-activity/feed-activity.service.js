@@ -4,9 +4,10 @@ import mongoose from 'mongoose';
 import { helpers } from 'mostly-feathers-mongoose';
 import fp from 'mostly-func';
 import sift from 'sift';
+import { getFeedType } from 'playing-feed-common';
 
 import defaultHooks from './feed-activity.hooks';
-import { getFeedType, getFeedActivityService, fanoutOperations } from '../../helpers';
+import { getFeedActivityService, fanoutOperations } from '../../helpers';
 
 const debug = makeDebug('playing:mission-services:feed/activities');
 
