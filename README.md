@@ -1,7 +1,7 @@
 Playing Feed Services
 =====================
 
-Feed management microservices for playful applications.
+Feed management microservices for building playful applications.
 
 # Usage
 
