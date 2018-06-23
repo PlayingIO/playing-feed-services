@@ -4,4 +4,4 @@ const NotificationFeedEntity = new Entity('NotificationFeed');
 
 NotificationFeedEntity.discard('_id');
 
-export default NotificationFeedEntity.asImmutable();
+export default NotificationFeedEntity.freeze();

@@ -4,4 +4,4 @@ const FlatFeedEntity = new Entity('FlatFeed');
 
 FlatFeedEntity.discard('_id');
 
-export default FlatFeedEntity.asImmutable();
+export default FlatFeedEntity.freeze();
