@@ -4,4 +4,4 @@ const ActivityEntity = new Entity('Activity');
 
 ActivityEntity.discard('_id');
 
-export default ActivityEntity.asImmutable();
+export default ActivityEntity.freeze();

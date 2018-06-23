@@ -4,4 +4,4 @@ const AggregationEntity = new Entity('Aggregation');
 
 AggregationEntity.discard('_id');
 
-export default AggregationEntity.asImmutable();
+export default AggregationEntity.freeze();
