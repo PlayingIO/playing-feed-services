@@ -3,7 +3,7 @@ import makeDebug from 'debug';
 import fp from 'mostly-func';
 import { addActivities, removeActivities } from '../../helpers';
 
-const debug = makeDebug('playing:feed-services:feed:jobs');
+const debug = makeDebug('playing:feed-services:feeds:jobs');
 
 export default function (app, options) {
   const agenda = app.agenda;
