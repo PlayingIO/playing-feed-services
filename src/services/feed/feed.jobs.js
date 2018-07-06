@@ -11,8 +11,8 @@ export default function (app, options) {
   assert(agenda, 'agenda not configured properly, check your app');
 
   // fanout the operations to target feeds
-  agenda.define('fanout_operation', { lockLifetime }, function (job, next) {
-    debug('>>> fanout_operation', job.attrs.data);
+  agenda.define('fanout_activities', { lockLifetime }, function (job, next) {
+    debug('>>> fanout_activities', job.attrs.data);
     const { operation, targets, activities } = job.attrs.data;
     if (operation && targets && activities && targets.length > 0 && activities.length > 0) {
       const operations = fp.map(feed => {
@@ -24,7 +24,7 @@ export default function (app, options) {
       }, targets);
       Promise.all(operations).then(next);
     } else {
-      console.error('fanout_operation job is not provided:', job.attrs.data);
+      console.error('fanout_activities job is not provided:', job.attrs.data);
       next();
     }
   });
