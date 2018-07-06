@@ -7,7 +7,7 @@ import sift from 'sift';
 import { getFeedType } from 'playing-feed-common';
 
 import defaultHooks from './feed-activity.hooks';
-import { getFeedActivityService, fanoutOperations } from '../../helpers';
+import { getFeedActivityService, fanoutActivities } from '../../helpers';
 
 const debug = makeDebug('playing:mission-services:feed/activities');
 
@@ -95,7 +95,7 @@ export class FeedActivityService {
 
     // fanout for all following feeds
     const activities = fp.map(fp.assoc('source', feed.id), data);
-    fanoutOperations(this.app, feed.id, 'addActivities', activities, this.options.fanoutLimit);
+    fanoutActivities(this.app, feed.id, 'addActivities', activities, this.options.fanoutLimit);
 
     return results;
   }
@@ -141,7 +141,7 @@ export class FeedActivityService {
 
     // fanout for all following feeds
     const activities = fp.asArray(fp.propOf('data', results));
-    fanoutOperations(this.app, feed.id, 'removeActivities', activities, this.options.fanoutLimit);
+    fanoutActivities(this.app, feed.id, 'removeActivities', activities, this.options.fanoutLimit);
 
     return results;
   }
