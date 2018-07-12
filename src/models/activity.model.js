@@ -1,4 +1,4 @@
-import fp from 'mostly-func';
+const fp = require('mostly-func');
 
 const options = {
   timestamps: true,
@@ -69,7 +69,7 @@ const updateActivities = (mongoose, model) => (activities) => {
     .then(results => results.toJSON());
 };
 
-export default function model (app, name) {
+module.exports = function model (app, name) {
   const mongoose = app.get('mongoose');
   const schema = new mongoose.Schema(fields, options);
   schema.index({ feed: 1, actor: 1, verb: 1, object: 1, type: 1 });
@@ -79,6 +79,5 @@ export default function model (app, name) {
   schema.statics.updateActivities = updateActivities(mongoose, name);
 
   return mongoose.model(name, schema);
-}
-
-model.schema = fields;
+};
+module.exports.schema = fields;

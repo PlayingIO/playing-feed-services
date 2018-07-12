@@ -19,11 +19,10 @@ const fields = {
   }
 };
 
-export default function model (app, name) {
+module.exports = function model (app, name) {
   const mongoose = app.get('mongoose');
   const FeedModel = mongoose.model('feed');
   const schema = new mongoose.Schema(fields);
   return FeedModel.discriminator(name, schema);
-}
-
-model.schema = fields;
+};
+module.exports.schema = fields;

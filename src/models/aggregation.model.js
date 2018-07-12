@@ -1,5 +1,5 @@
-import fp from 'mostly-func';
-import activity from './activity.model';
+const fp = require('mostly-func');
+const activity = require('./activity.model');
 
 const options = {
   strict: false
@@ -153,7 +153,7 @@ const removeActivities = (mongoose, model) => (activities) => {
   });
 };
 
-export default function model (app, name) {
+module.exports = function model (app, name) {
   const mongoose = app.get('mongoose');
   const ActivityModel = mongoose.model('activity');
   const schema = new mongoose.Schema(fields, options);
@@ -166,6 +166,5 @@ export default function model (app, name) {
   schema.statics.removeActivities = removeActivities(mongoose, name);
 
   return ActivityModel.discriminator(name, schema);
-}
-
-model.schema = fields;
+};
+module.exports.schema = fields;
