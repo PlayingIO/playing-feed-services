@@ -1,9 +1,9 @@
-import assert from 'assert';
-import makeDebug from 'debug';
-import fp from 'mostly-func';
+const assert = require('assert');
+const makeDebug = require('debug');
+const fp = require('mostly-func');
 
-import defaultHooks from './feed-followship.hooks';
-import defaultJobs from './feed-followship.jobs';
+const defaultHooks = require('./feed-followship.hooks');
+const defaultJobs = require('./feed-followship.jobs');
 
 const debug = makeDebug('playing:mission-services:feeds/followships');
 
@@ -12,7 +12,7 @@ const defaultOptions = {
   followLimit: 500,  // the number of activities which enter your feed when you follow someone
 };
 
-export class FeedFollowshipService {
+class FeedFollowshipService {
   constructor (options) {
     this.options = fp.assignAll(defaultOptions, options);
     this.name = this.options.name;
@@ -96,8 +96,7 @@ export class FeedFollowshipService {
   }
 }
 
-export default function init (app, options, hooks) {
+module.exports = function init (app, options, hooks) {
   return new FeedFollowshipService(options);
-}
-
-init.Service = FeedFollowshipService;
+};
+module.exports.Service = FeedFollowshipService;

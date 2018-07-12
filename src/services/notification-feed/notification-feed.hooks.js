@@ -1,9 +1,9 @@
-import { hooks } from 'mostly-feathers-mongoose';
-import { cache } from 'mostly-feathers-cache';
+const { hooks } = require('mostly-feathers-mongoose');
+const { cache } = require('mostly-feathers-cache');
 
-import NotificationFeedEntity from '../../entities/notification-feed.entity';
+const NotificationFeedEntity = require('../../entities/notification-feed.entity');
 
-export default function (options = {}) {
+module.exports = function (options = {}) {
   return {
     before: {
       all: []
@@ -15,4 +15,4 @@ export default function (options = {}) {
       ]
     }
   };
-}
+};

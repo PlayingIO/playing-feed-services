@@ -1,10 +1,10 @@
-import assert from 'assert';
-import { Service as BaseService } from 'mostly-feathers';
-import fp from 'mostly-func';
+const assert = require('assert');
+const { Service: BaseService } = require('mostly-feathers');
+const fp = require('mostly-func');
 
-import defaultHooks from './feed.hooks';
-import defaultJobs from './feed.jobs';
-import { getFeedService } from '../../helpers';
+const defaultHooks = require('./feed.hooks');
+const defaultJobs = require('./feed.jobs');
+const { getFeedService } = require('../../helpers');
 
 const defaultOptions = {
   name: 'feeds',
@@ -15,7 +15,7 @@ const defaultOptions = {
  * The Feed Manager class handles the fanout from a user's activity
  *  to all their follower's feeds
  */
-export class FeedService extends BaseService {
+class FeedService extends BaseService {
   constructor (options) {
     options = fp.assignAll(defaultOptions, options);
     super(options);
@@ -75,8 +75,7 @@ export class FeedService extends BaseService {
   }
 }
 
-export default function init (app, options, hooks) {
+module.exports = function init (app, options, hooks) {
   return new FeedService(options);
-}
-
-init.Service = FeedService;
+};
+module.exports.Service = FeedService;

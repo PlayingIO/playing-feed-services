@@ -1,9 +1,9 @@
-import assert from 'assert';
-import makeDebug from 'debug';
-import fp from 'mostly-func';
+const assert = require('assert');
+const makeDebug = require('debug');
+const fp = require('mostly-func');
 
-import defaultHooks from './aggregated-feed-activity.hooks';
-import { formatAggregation, trimFeedActivities } from '../../helpers';
+const defaultHooks = require('./aggregated-feed-activity.hooks');
+const { formatAggregation, trimFeedActivities } = require('../../helpers');
 
 const debug = makeDebug('playing:mission-services:aggregated-feeds/activities');
 
@@ -11,7 +11,7 @@ const defaultOptions = {
   name: 'aggregated-feeds/activities'
 };
 
-export class AggregatedFeedActivityService {
+class AggregatedFeedActivityService {
   constructor (options) {
     this.options = fp.assignAll(defaultOptions, options);
     this.name = this.options.name;
@@ -101,8 +101,7 @@ export class AggregatedFeedActivityService {
   }
 }
 
-export default function init (app, options, hooks) {
+module.exports = function init (app, options, hooks) {
   return new AggregatedFeedActivityService(options);
-}
-
-init.Service = AggregatedFeedActivityService;
+};
+module.exports.Service = AggregatedFeedActivityService;

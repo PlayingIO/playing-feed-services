@@ -1,10 +1,10 @@
-import assert from 'assert';
-import makeDebug from 'debug';
-import { Service, createService } from 'mostly-feathers-mongoose';
-import fp from 'mostly-func';
+const assert = require('assert');
+const makeDebug = require('debug');
+const { Service, createService } = require('mostly-feathers-mongoose');
+const fp = require('mostly-func');
 
-import FlatFeedModel from '../../models/flat-feed.model';
-import defaultHooks from './flat-feed.hooks';
+const FlatFeedModel = require('../../models/flat-feed.model');
+const defaultHooks = require('./flat-feed.hooks');
 
 const debug = makeDebug('playing:feed-services:flat-feeds');
 
@@ -16,7 +16,7 @@ const defaultOptions = {
 /**
  * The feed service allows you to add and remove activities from a feed.
  */
-export class FlatFeedService extends Service {
+class FlatFeedService extends Service {
   constructor (options) {
     options = fp.assignAll(defaultOptions, options);
     super(options);
@@ -41,9 +41,8 @@ export class FlatFeedService extends Service {
   }
 }
 
-export default function init (app, options, hooks) {
+module.exports = function init (app, options, hooks) {
   options = { ModelName: 'feed', ...options };
   return createService(app, FlatFeedService, FlatFeedModel, options);
-}
-
-init.Service = FlatFeedService;
+};
+module.exports.Service = FlatFeedService;

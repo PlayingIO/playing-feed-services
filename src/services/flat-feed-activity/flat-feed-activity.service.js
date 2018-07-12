@@ -1,9 +1,9 @@
-import assert from 'assert';
-import makeDebug from 'debug';
-import fp from 'mostly-func';
+const assert = require('assert');
+const makeDebug = require('debug');
+const fp = require('mostly-func');
 
-import defaultHooks from './flat-feed-activity.hooks';
-import { addActivities, removeActivities, trimFeedActivities } from '../../helpers';
+const defaultHooks = require('./flat-feed-activity.hooks');
+const { addActivities, removeActivities, trimFeedActivities } = require('../../helpers');
 
 const debug = makeDebug('playing:mission-services:flat-feeds/activities');
 
@@ -12,7 +12,7 @@ const defaultOptions = {
   trimChance: 0.01  // the chance to trim the feed, not to grow to infinite size
 };
 
-export class FlatFeedActivityService {
+class FlatFeedActivityService {
   constructor (options) {
     this.options = fp.assignAll(defaultOptions, options);
     this.name = this.options.name;
@@ -132,8 +132,7 @@ export class FlatFeedActivityService {
   }
 }
 
-export default function init (app, options, hooks) {
+module.exports = function init (app, options, hooks) {
   return new FlatFeedActivityService(options);
-}
-
-init.Service = FlatFeedActivityService;
+};
+module.exports.Service = FlatFeedActivityService;

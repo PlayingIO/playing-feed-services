@@ -1,15 +1,15 @@
-import assert from 'assert';
-import makeDebug from 'debug';
-import { createService } from 'mostly-feathers-mongoose';
-import fp from 'mostly-func';
+const assert = require('assert');
+const makeDebug = require('debug');
+const { createService } = require('mostly-feathers-mongoose');
+const fp = require('mostly-func');
 
-import aggregatedFeed from '../aggregated-feed/aggregated-feed.service';
-import NotificationFeedModel from '../../models/notification-feed.model';
-import defaultHooks from './notification-feed.hooks';
+const aggregatedFeed = require('../aggregated-feed/aggregated-feed.service');
+const NotificationFeedModel = require('../../models/notification-feed.model');
+const defaultHooks = require('./notification-feed.hooks');
 
 const debug = makeDebug('playing:feed-services:notification-feeds');
 
-export class NotificationFeedService extends aggregatedFeed.Service {
+class NotificationFeedService extends aggregatedFeed.Service {
   constructor (options) {
     super(options);
   }
@@ -31,9 +31,8 @@ export class NotificationFeedService extends aggregatedFeed.Service {
   }
 }
 
-export default function init (app, options, hooks) {
+module.exports = function init (app, options, hooks) {
   options = { ModelName: 'notification', ...options };
   return createService(app, NotificationFeedService, NotificationFeedModel, options);
-}
-
-init.Service = NotificationFeedService;
+};
+module.exports.Service = NotificationFeedService;

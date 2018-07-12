@@ -1,10 +1,10 @@
-import assert from 'assert';
-import makeDebug from 'debug';
-import { Service, createService } from 'mostly-feathers-mongoose';
-import fp from 'mostly-func';
+const assert = require('assert');
+const makeDebug = require('debug');
+const { Service, createService } = require('mostly-feathers-mongoose');
+const fp = require('mostly-func');
 
-import AggregatedFeedModel from '../../models/aggregated-feed.model';
-import defaultHooks from './aggregated-feed.hooks';
+const AggregatedFeedModel = require('../../models/aggregated-feed.model');
+const defaultHooks = require('./aggregated-feed.hooks');
 
 const debug = makeDebug('playing:feed-services:aggregated-feeds');
 
@@ -16,7 +16,7 @@ const defaultOptions = {
   trimChance: 0.01    // the chance to trim the feed, not to grow to infinite size
 };
 
-export class AggregatedFeedService extends Service {
+class AggregatedFeedService extends Service {
   constructor (options) {
     options = fp.assignAll(defaultOptions, options);
     super(options);
@@ -39,9 +39,8 @@ export class AggregatedFeedService extends Service {
   }
 }
 
-export default function init (app, options, hooks) {
+module.exports = function init (app, options, hooks) {
   options = { ModelName: 'aggregated', ...options };
   return createService(app, AggregatedFeedService, AggregatedFeedModel, options);
-}
-
-init.Service = AggregatedFeedService;
+};
+module.exports.Service = AggregatedFeedService;

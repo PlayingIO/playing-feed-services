@@ -1,8 +1,8 @@
-import makeDebug from 'debug';
-import fp from 'mostly-func';
+const makeDebug = require('debug');
+const fp = require('mostly-func');
 
-import aggregatedFeedActivity from '../aggregated-feed-activity/aggregated-feed-activity.service';
-import defaultHooks from './notification-feed-activity.hooks';
+const aggregatedFeedActivity = require('../aggregated-feed-activity/aggregated-feed-activity.service');
+const defaultHooks = require('./notification-feed-activity.hooks');
 
 const debug = makeDebug('playing:mission-services:notification-feeds/activities');
 
@@ -10,7 +10,7 @@ const defaultOptions = {
   name: 'notification-feeds/activities'
 };
 
-export class NotificationFeedActivityService extends aggregatedFeedActivity.Service {
+class NotificationFeedActivityService extends aggregatedFeedActivity.Service {
   constructor (options) {
     super(options);
   }
@@ -21,8 +21,7 @@ export class NotificationFeedActivityService extends aggregatedFeedActivity.Serv
   }
 }
 
-export default function init (app, options, hooks) {
+module.exports = function init (app, options, hooks) {
   return new NotificationFeedActivityService(options);
-}
-
-init.Service = NotificationFeedActivityService;
+};
+module.exports.Service = NotificationFeedActivityService;

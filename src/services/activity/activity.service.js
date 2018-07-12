@@ -1,11 +1,11 @@
-import assert from 'assert';
-import makeDebug from 'debug';
-import { Service, createService } from 'mostly-feathers-mongoose';
-import fp from 'mostly-func';
+const assert = require('assert');
+const makeDebug = require('debug');
+const { Service, createService } = require('mostly-feathers-mongoose');
+const fp = require('mostly-func');
 
-import ActivityModel from '../../models/activity.model';
-import defaultHooks from './activity.hooks';
-import { validateUpdateActivity } from '../../helpers';
+const ActivityModel = require('../../models/activity.model');
+const defaultHooks = require('./activity.hooks');
+const { validateUpdateActivity } = require('../../helpers');
 
 const debug = makeDebug('playing:feed-services:activities');
 
@@ -13,7 +13,7 @@ const defaultOptions = {
   name: 'activities'
 };
 
-export class ActivityService extends Service {
+class ActivityService extends Service {
   constructor (options) {
     options = fp.assignAll(defaultOptions, options);
     super(options);
@@ -120,9 +120,8 @@ export class ActivityService extends Service {
   }
 }
 
-export default function init (app, options, hooks) {
+module.exports = function init (app, options, hooks) {
   options = { ModelName: 'activity', ...options };
   return createService(app, ActivityService, ActivityModel, options);
-}
-
-init.Service = ActivityService;
+};
+module.exports.Service = ActivityService;

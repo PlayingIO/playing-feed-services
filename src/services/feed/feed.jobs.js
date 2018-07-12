@@ -1,11 +1,11 @@
-import assert from 'assert';
-import makeDebug from 'debug';
-import fp from 'mostly-func';
-import { addActivities, removeActivities } from '../../helpers';
+const assert = require('assert');
+const makeDebug = require('debug');
+const fp = require('mostly-func');
+const { addActivities, removeActivities } = require('../../helpers');
 
 const debug = makeDebug('playing:feed-services:feeds:jobs');
 
-export default function (app, options) {
+module.exports = function (app, options) {
   const agenda = app.agenda;
   const lockLifetime = options.agenda && options.agenda.lockLifetime || 300 * 1000;
   assert(agenda, 'agenda not configured properly, check your app');
@@ -28,4 +28,4 @@ export default function (app, options) {
       next();
     }
   });
-}
+};

@@ -1,11 +1,11 @@
-import assert from 'assert';
-import makeDebug from 'debug';
-import { Service, createService } from 'mostly-feathers-mongoose';
-import fp from 'mostly-func';
+const assert = require('assert');
+const makeDebug = require('debug');
+const { Service, createService } = require('mostly-feathers-mongoose');
+const fp = require('mostly-func');
 
-import AggregationModel from '../../models/aggregation.model';
-import defaultHooks from './aggregation.hooks';
-import { validateUpdateActivity } from '../../helpers';
+const AggregationModel = require('../../models/aggregation.model');
+const defaultHooks = require('./aggregation.hooks');
+const { validateUpdateActivity } = require('../../helpers');
 
 const debug = makeDebug('playing:feed-services:aggregations');
 
@@ -14,7 +14,7 @@ const defaultOptions = {
   maxAggregatedLength: 15 // max number of aggregated activities in an Aggragation
 };
 
-export class AggregationService extends Service {
+class AggregationService extends Service {
   constructor (options) {
     options = fp.assignAll(defaultOptions, options);
     super(options);
@@ -136,12 +136,11 @@ export class AggregationService extends Service {
   }
 }
 
-export default function init (app, options, hooks) {
+module.exports = function init (app, options, hooks) {
   options = Object.assign({
     ModelName: 'aggregation',
     maxAggregatedLength: defaultOptions.maxAggregatedLength
   }, options);
   return createService(app, AggregationService, AggregationModel, options);
-}
-
-init.Service = AggregationService;
+};
+module.exports.Service = AggregationService;

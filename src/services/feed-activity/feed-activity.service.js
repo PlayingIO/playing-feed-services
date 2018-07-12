@@ -1,13 +1,13 @@
-import assert from 'assert';
-import makeDebug from 'debug';
-import mongoose from 'mongoose';
-import { helpers } from 'mostly-feathers-mongoose';
-import fp from 'mostly-func';
-import sift from 'sift';
-import { getFeedType } from 'playing-feed-common';
+const assert = require('assert');
+const makeDebug = require('debug');
+const mongoose = require('mongoose');
+const { helpers } = require('mostly-feathers-mongoose');
+const fp = require('mostly-func');
+const sift = require('sift');
+const { getFeedType } = require('playing-feed-common');
 
-import defaultHooks from './feed-activity.hooks';
-import { getFeedActivityService, fanoutActivities } from '../../helpers';
+const defaultHooks = require('./feed-activity.hooks');
+const { getFeedActivityService, fanoutActivities } = require('../../helpers');
 
 const debug = makeDebug('playing:mission-services:feed/activities');
 
@@ -16,7 +16,7 @@ const defaultOptions = {
   fanoutLimit: 100,  // number of following feeds are handled in one task when doing the fanout
 };
 
-export class FeedActivityService {
+class FeedActivityService {
   constructor (options) {
     this.options = fp.assignAll(defaultOptions, options);
     this.name = this.options.name;
@@ -147,8 +147,7 @@ export class FeedActivityService {
   }
 }
 
-export default function init (app, options, hooks) {
+module.exports = function init (app, options, hooks) {
   return new FeedActivityService(options);
-}
-
-init.Service = FeedActivityService;
+};
+module.exports.Service = FeedActivityService;
