@@ -1,7 +1,7 @@
-import Entity from 'mostly-entity';
+const Entity = require('mostly-entity');
 
 const NotificationFeedEntity = new Entity('NotificationFeed');
 
 NotificationFeedEntity.discard('_id');
 
-export default NotificationFeedEntity.freeze();
+module.exports = NotificationFeedEntity.freeze();

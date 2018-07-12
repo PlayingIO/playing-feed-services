@@ -1,7 +1,7 @@
-import Entity from 'mostly-entity';
+const Entity = require('mostly-entity');
 
 const ActivityEntity = new Entity('Activity');
 
 ActivityEntity.discard('_id');
 
-export default ActivityEntity.freeze();
+module.exports = ActivityEntity.freeze();

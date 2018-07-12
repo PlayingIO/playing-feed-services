@@ -1,7 +1,7 @@
-import Entity from 'mostly-entity';
+const Entity = require('mostly-entity');
 
 const FlatFeedEntity = new Entity('FlatFeed');
 
 FlatFeedEntity.discard('_id');
 
-export default FlatFeedEntity.freeze();
+module.exports = FlatFeedEntity.freeze();
