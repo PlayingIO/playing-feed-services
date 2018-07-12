@@ -1,15 +1,15 @@
-import assert from 'assert';
-import dateFn from 'date-fns';
-import fp from 'mostly-func';
-import { formatter } from 'mostly-utils-common';
-import { getFeedType } from 'playing-feed-common';
+const assert = require('assert');
+const dateFn = require('date-fns');
+const fp = require('mostly-func');
+const { formatter } = require('mostly-utils-common');
+const { getFeedType } = require('playing-feed-common');
 
-export const getFeedService = (id) => {
+const getFeedService = (id) => {
   const type = getFeedType(id);
   return `${type}-feeds`;
 };
 
-export const getFeedActivityService = (id) => {
+const getFeedActivityService = (id) => {
   const type = getFeedType(id);
   return `${type}-feeds/activities`;
 };
@@ -18,7 +18,7 @@ export const getFeedActivityService = (id) => {
  * Apply the aggregation format, available variables:
  *  ${verb}, ${time}, ${object}, ${target}, ${id}, ${actor}, ${feed}
  */
-export const formatAggregation = (format, activity) => {
+const formatAggregation = (format, activity) => {
   const variables = { ...activity, time: dateFn.format(activity.time, 'YYYY-MM-DD') };
   return formatter(format, variables);
 };
@@ -34,7 +34,7 @@ const groupByPriority = fp.groupBy(followship => {
 /**
  * Get follower feeds by chunks
  */
-export const getFollowers = async (app, target, limit, skip) => {
+const getFollowers = async (app, target, limit, skip) => {
   const svcFollowship = app.service('followships');
   const followships = await svcFollowship.find({
     query: { followee: target, $sort: { priority: -1 }, $limit: limit, $skip: skip },
@@ -49,7 +49,7 @@ export const getFollowers = async (app, target, limit, skip) => {
 /**
  * Get followee feeds by chunks
  */
-export const getFollowees = async (app, source, limit, skip) => {
+const getFollowees = async (app, source, limit, skip) => {
   const svcFollowship = app.service('followships');
   const followships = await svcFollowship.find({
     query: { follower: source, $sort: { priority: -1 }, $limit: limit, $skip: skip },
@@ -64,7 +64,7 @@ export const getFollowees = async (app, source, limit, skip) => {
 /**
  * Fanout activities to follower feeds by chunks
  */
-export const fanoutActivities = async (app, feed, operation, activities, limit, skip = 0) => {
+const fanoutActivities = async (app, feed, operation, activities, limit, skip = 0) => {
   // get batch of followers with skip/limit
   const priorityFollowers = await getFollowers(app, feed, limit, skip);
   if (!fp.isEmpty(priorityFollowers)) {
@@ -81,14 +81,14 @@ export const fanoutActivities = async (app, feed, operation, activities, limit, 
 /**
  * validate activity with id/foreignId/time
  */
-export const validateUpdateActivity = (item) => {
+const validateUpdateActivity = (item) => {
   assert(item.id || (item.foreignId && item.time), 'id or foreignId/time is not provided.');
 };
 
 /**
  * Add activities to feed
  */
-export const addActivities = (app, feed, activities) => {
+const addActivities = (app, feed, activities) => {
   const svcFeedsActivities = app.service(getFeedActivityService(feed));
   if (activities.length > 0) {
     return svcFeedsActivities.create(activities, { primary: feed });
@@ -98,7 +98,7 @@ export const addActivities = (app, feed, activities) => {
 /**
  * Remove activities from feed
  */
-export const removeActivities = (app, feed, activities) => {
+const removeActivities = (app, feed, activities) => {
   const svcFeedsActivities = app.service(getFeedActivityService(feed));
   if (activities.length > 0) {
     return svcFeedsActivities.remove(null, {
@@ -111,7 +111,7 @@ export const removeActivities = (app, feed, activities) => {
 /**
  * Add activities from following target feeds
  */
-export const followMany = async (app, feed, targets, limit) => {
+const followMany = async (app, feed, targets, limit) => {
   const svcFeedsActivities = app.service(getFeedActivityService(feed));
   const svcActivities = app.service('activities');
 
@@ -132,7 +132,7 @@ export const followMany = async (app, feed, targets, limit) => {
 /**
  * Remove activities from unfollowed source feeds
  */
-export const unfollowMany = async (app, feed, sources) => {
+const unfollowMany = async (app, feed, sources) => {
   const svcFeedsActivities = app.service(getFeedActivityService(feed));
   const svcActivities = app.service('activities');
 
@@ -152,7 +152,7 @@ export const unfollowMany = async (app, feed, sources) => {
 /**
  * Trim the feed activities
  */
-export const trimFeedActivities = async (app, feed) => {
+const trimFeedActivities = async (app, feed) => {
   const svcActivities = app.service('activities');
   if (feed && feed.maxLength) {
     const maxActivity = await svcActivities.find({
@@ -167,4 +167,19 @@ export const trimFeedActivities = async (app, feed) => {
       }});
     }
   }
+};
+
+module.exports = {
+  addActivities,
+  followMany,
+  fanoutActivities,
+  formatAggregation,
+  getFeedService,
+  getFeedActivityService,
+  getFollowers,
+  getFollowees,
+  removeActivities,
+  trimFeedActivities,
+  unfollowMany,
+  validateUpdateActivity
 };
