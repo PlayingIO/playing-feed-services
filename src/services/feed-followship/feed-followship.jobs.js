@@ -9,7 +9,7 @@ module.exports = function (app, options) {
   const agenda = app.agenda;
   const lockLifetime = options.agenda && options.agenda.lockLifetime || 300 * 1000;
   assert(agenda, 'agenda not configured properly, check your app');
-  
+
   // follow many feeds
   agenda.define('feed_follow_many', { lockLifetime }, function (job, next) {
     debug('>>> feed_follow_many', job.attrs.data);
